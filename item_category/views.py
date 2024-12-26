@@ -5,17 +5,17 @@ from .models import Category  # Ensure this matches your actual model
 def index(request):
     # Get the number of rows per page, default to 10 if not set
     rows_per_page = int(request.GET.get('rows', 10))  # Default to 10 if no 'rows' parameter
-    
+
     # Get the page number from the request, default to 1 if not set
     page_number = request.GET.get('page', 1)
-    
+
     # Fetch all categories
     categories = Category.objects.all()
 
     # Create the paginator object
     paginator = Paginator(categories, rows_per_page)
 
-    # Check if the current page number is valid after changing rows per page
+    # Check if the current page is valid
     try:
         categories_page = paginator.page(page_number)
     except PageNotAnInteger:
@@ -25,16 +25,12 @@ def index(request):
         # If the page number is out of range, fall back to the last page
         categories_page = paginator.page(paginator.num_pages)
 
-    # Ensure that the current page is valid and within the total number of pages
-    if categories_page.number > 1:
-        categories_page = paginator.page(1)
-
     # Pass the categories, rows_per_page, and paginator to the template
     return render(request, 'item_category/index.html', {
         'categories': categories_page,
         'rows_per_page': rows_per_page,
-        'paginator': paginator,
     })
+
 
 def add_category(request):
     if request.method == 'POST':

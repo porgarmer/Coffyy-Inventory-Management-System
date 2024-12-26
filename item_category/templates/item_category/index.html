@@ -63,13 +63,13 @@
                         <a class="page-link" href="#" tabindex="-1">Previous</a>
                     </li>
                     {% endif %}
-
+                
                     {% for num in categories.paginator.page_range %}
                     <li class="page-item {% if num == categories.number %}active{% endif %}">
                         <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
                     </li>
                     {% endfor %}
-
+                
                     {% if categories.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ categories.next_page_number }}&rows={{ rows_per_page }}">Next</a>
@@ -79,7 +79,7 @@
                         <a class="page-link" href="#" tabindex="-1">Next</a>
                     </li>
                     {% endif %}
-                </ul>
+                </ul>                
             </nav>
 
             <div class="d-flex justify-content-between mt-3">
@@ -92,7 +92,7 @@
                             <option value="20" {% if rows_per_page == 20 %}selected{% endif %}>20</option>
                             <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
                         </select>
-                        <input type="hidden" name="page" value="{{ categories.number }}">
+                        <input type="hidden" name="page" value="1">
                     </form>
                 </div>
             </div>
@@ -146,7 +146,11 @@
 
     // Submit rows-per-page form on change
     document.getElementById('rows-per-page').addEventListener('change', function () {
-        document.getElementById('rows-per-page-form').submit();
-    });
+    const rowsForm = document.getElementById('rows-per-page-form');
+    const pageInput = rowsForm.querySelector('input[name="page"]');
+    pageInput.value = 1; // Reset to page 1 when rows are changed
+    rowsForm.submit();
+});
+
 </script>
 {% endblock %}

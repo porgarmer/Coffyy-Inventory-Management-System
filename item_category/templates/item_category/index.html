@@ -4,6 +4,7 @@
 {% block title %}ITEM CATEGORIES{% endblock %}
 {% block content %}
 <h1>ITEM CATEGORIES</h1>
+{% if categories %}
 <div class="container mt-5">
     <div class="d-flex justify-content-start mb-4">
         <form method="GET" action="{% url 'item_categories_index' %}">
@@ -35,22 +36,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for category in categories %}
-                    <tr onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
-                        <td>
-                            <input type="checkbox" name="selected_categories" value="{{ category.id }}" class="item-checkbox" onclick="event.stopPropagation();">
-                        </td>
-                        <td style="text-align: center;">
-                            <div style="width: 30px; height: 30px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
-                        </td>
-                        <td>{{ category.name }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center">No categories found</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>                
+                        {% for category in categories %}
+                        <tr onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
+                            <td>
+                                <input type="checkbox" name="selected_categories" value="{{ category.id }}" class="item-checkbox" onclick="event.stopPropagation();">
+                            </td>
+                            <td style="text-align: center;">
+                                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
+                            </td>
+                            <td>{{ category.name }}</td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
             </table>
 
             <div class="d-flex justify-content-between mt-3">
@@ -99,6 +96,18 @@
         </div>
     </div>
 </div>
+
+{% else %}
+    <tr>
+        <td colspan="3" class="text-center">
+            <div class="empty-state">
+                <p>No categories yet</p>
+                <p>Click the button below to create your first category and start managing your items!</p>
+                <a href="{% url 'add_category' %}" class="btn btn-primary">+ Add Category</a>
+            </div>
+        </td>
+    </tr>
+{% endif %}
 
 <!-- Modal Popup for Deletion Confirmation -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

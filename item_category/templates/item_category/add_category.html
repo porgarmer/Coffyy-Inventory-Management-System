@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}ADD CATEGORY{% endblock %}
+{% block content %}
+<h1>ADD CATEGORY</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Category</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .color-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .color-box {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s ease;
+        }
+        .color-box.selected {
+            border: 2px solid black;
+        }
+        #color-wheel {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{% url 'add_category' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="category-name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="category-name" name="name" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Choose a Color</label>
+                        <div class="color-options">
+                            <div class="color-box bg-danger" data-color="#ff0000"></div>
+                            <div class="color-box bg-warning" data-color="#ffa500"></div>
+                            <div class="color-box bg-success" data-color="#008000"></div>
+                            <div class="color-box bg-info" data-color="#00ffff"></div>
+                            <div class="color-box bg-primary" data-color="#0000ff"></div>
+                            <div class="color-box bg-secondary" data-color="#800080"></div>
+                        </div>
+                        <input type="hidden" id="selected-color" name="color" value="#ff0000">
+                        <div id="color-wheel"></div>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5.5.2/dist/iro.min.js"></script>
+    <script>
+        // Predefined color selection
+        const colorBoxes = document.querySelectorAll(".color-box");
+        const selectedColorInput = document.getElementById("selected-color");
+        colorBoxes.forEach(box => {
+            box.addEventListener("click", () => {
+                colorBoxes.forEach(box => box.classList.remove("selected"));
+                box.classList.add("selected");
+                selectedColorInput.value = box.getAttribute("data-color");
+            });
+        });
+
+        // Color wheel for custom colors
+        const colorWheel = new iro.ColorPicker("#color-wheel", {
+            width: 200,
+            color: "#ff0000", // Default color
+        });
+
+        colorWheel.on("color:change", function(color) {
+            selectedColorInput.value = color.hexString;
+            colorBoxes.forEach(box => box.classList.remove("selected"));
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

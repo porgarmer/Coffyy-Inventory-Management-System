@@ -36,12 +36,12 @@
                 </thead>
                 <tbody>
                     {% for category in categories %}
-                    <tr onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
+                    <tr onclick="window.location='{% url edit_category category.id %}'" style="cursor: pointer;">
                         <td>
                             <input type="checkbox" name="selected_categories" value="{{ category.id }}" class="item-checkbox" onclick="event.stopPropagation();">
                         </td>
                         <td style="text-align: center;">
-                            <div style="width: 30px; height: 30px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
+                            <div style="width: 30px; height: 30px; border-radius: 50%; background-color: '{{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
                         </td>
                         <td>{{ category.name }}</td>
                     </tr>
@@ -122,5 +122,4 @@
 <!-- Link to CSS and JS -->
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 <script src="{% static 'js/index.js' %}"></script>
-
 {% endblock %}

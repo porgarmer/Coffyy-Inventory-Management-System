@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}ADD CATEGORY{% endblock %}
+{% block title %}EDIT CATEGORY{% endblock %}
 {% block content %}
-<h1>ADD CATEGORY</h1>
+<h1>EDIT CATEGORY</h1>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Category</title>
+    <title>Edit Category</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* CSS styles remain the same */
         .color-options {
             display: flex;
             gap: 10px;
@@ -81,7 +82,6 @@
             width: 40px;
             height: 40px;
             border: 2px solid black;
-            background-color: #ff0000;
         }
     </style>
 </head>
@@ -89,41 +89,31 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{% url 'add_category' %}">
+                <form method="POST" action="{% url 'edit_category' category.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="category-name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="category-name" name="name" required>
+                        <input type="text" class="form-control" id="category-name" name="name" value="{{ category.name }}" required>
                     </div>
                     <div class="position-relative">
                         <div class="d-flex align-items-center">
                             <div class="color-options">
-                                <div class="color-box" data-color="#FF0000" style="background-color: #FF0000;">
+                                {% for color in predefined_colors %}
+                                <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};">
                                     <span class="check">✔</span>
                                 </div>
-                                <div class="color-box" data-color="#FFA500" style="background-color: #FFA500;">
-                                    <span class="check">✔</span>
-                                </div>
-                                <div class="color-box" data-color="#FFFF00" style="background-color: #FFFF00;">
-                                    <span class="check">✔</span>
-                                </div>
-                                <div class="color-box" data-color="#008000" style="background-color: #008000;">
-                                    <span class="check">✔</span>
-                                </div>
-                                <div class="color-box" data-color="#0000FF" style="background-color: #0000FF;">
-                                    <span class="check">✔</span>
-                                </div>
+                                {% endfor %}
                                 <div class="color-picker">
                                     <div class="wheel"></div>
-                                    <input type="color" id="custom-color" value="#FF0000">
+                                    <input type="color" id="custom-color" value="{{ category.color }}">
                                 </div>
                             </div>
                             <div class="selected-color-container">
                                 Selected Color
-                                <div class="selected-color-box" id="selected-color-box"></div>
+                                <div class="selected-color-box" id="selected-color-box" style="background-color: {{ category.color }}"></div>
                             </div>
                         </div>
-                        <input type="hidden" id="selected-color" name="color" value="#FF0000">
+                        <input type="hidden" id="selected-color" name="color" value="{{ category.color }}">
                     </div>
                     <div class="mt-4 d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">Cancel</button>

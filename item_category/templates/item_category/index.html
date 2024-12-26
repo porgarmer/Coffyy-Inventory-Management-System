@@ -1,20 +1,24 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}ITEM CATEGORIES{% endblock %}
 {% block content %}
-<h1>CATEGORY</h1>
+<h1>ITEM CATEGORIES</h1>
 <div class="container mt-5">
-    <div class="d-flex justify-content-center mb-4">
-        <a href="{% url 'add_category' %}" class="btn btn-success me-2" id="add-category">+ Add Category</a>
+    <div class="d-flex justify-content-start mb-4">
+        <form method="GET" action="{% url 'item_categories_index' %}">
+            {% csrf_token %}
+            <input type="hidden" name="page" value="{{ categories.number }}">
+            <input type="hidden" name="rows" value="{{ rows_per_page }}">
+            <a href="{% url 'add_category' %}" class="btn btn-success me-2" id="add-category">+ Add Category</a>
+        </form>
 
-        <!-- Delete form: keeps pagination parameters in hidden fields -->
         <form method="POST" action="{% url 'delete_categories' %}" id="delete-form">
             {% csrf_token %}
             <input type="hidden" name="page" value="{{ categories.number }}">
             <input type="hidden" name="rows" value="{{ rows_per_page }}">
-            <!-- Dynamically add selected categories to this form when submitting -->
             <div id="selected-categories-container" style="display:none;"></div>
-            <button type="submit" class="btn btn-danger d-none" id="delete-button">Delete Selected</button>
+            <button type="submit" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
         </form>
     </div>
     
@@ -23,23 +27,21 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">
-                            <!-- Select all checkboxes -->
+                        <th scope="col" style="width: 50px;"> <!-- Fixed width for checkbox column -->
                             <input type="checkbox" id="select-all">
                         </th>
-                        <th scope="col">Color</th>
-                        <th scope="col">Name</th>
+                        <th scope="col" style="width: 80px; text-align: center;"></th> <!-- Fixed width for color column -->
+                        <th scope="col">Name</th> <!-- Flexible width for name column -->
                     </tr>
                 </thead>
                 <tbody>
                     {% for category in categories %}
                     <tr onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
                         <td>
-                            <!-- Individual checkbox for each category -->
                             <input type="checkbox" name="selected_categories" value="{{ category.id }}" class="item-checkbox" onclick="event.stopPropagation();">
                         </td>
-                        <td>
-                            <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
+                        <td style="text-align: center;">
+                            <div style="width: 30px; height: 30px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
                         </td>
                         <td>{{ category.name }}</td>
                     </tr>
@@ -48,42 +50,40 @@
                         <td colspan="3" class="text-center">No categories found</td>
                     </tr>
                     {% endfor %}
-                </tbody>
+                </tbody>                
             </table>
-
-            <!-- Paginator -->
-            <nav>
-                <ul class="pagination justify-content-center">
-                    {% if categories.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ categories.previous_page_number }}&rows={{ rows_per_page }}">Previous</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    {% endif %}
-                
-                    {% for num in categories.paginator.page_range %}
-                    <li class="page-item {% if num == categories.number %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
-                    </li>
-                    {% endfor %}
-                
-                    {% if categories.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ categories.next_page_number }}&rows={{ rows_per_page }}">Next</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Next</a>
-                    </li>
-                    {% endif %}
-                </ul>                
-            </nav>
 
             <div class="d-flex justify-content-between mt-3">
                 <div>Page {{ categories.number }} of {{ categories.paginator.num_pages }}</div>
+                <div>
+                    <ul class="pagination justify-content-center">
+                        {% if categories.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ categories.previous_page_number }}&rows={{ rows_per_page }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link">Previous</a>
+                        </li>
+                        {% endif %}
+    
+                        {% for num in categories.paginator.page_range %}
+                        <li class="page-item {% if num == categories.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+    
+                        {% if categories.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ categories.next_page_number }}&rows={{ rows_per_page }}" class="btn btn-primary">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
                 <div>
                     Rows per page:
                     <form method="GET" id="rows-per-page-form" class="d-inline-block">
@@ -100,57 +100,27 @@
     </div>
 </div>
 
-<script>
-    // Select/Unselect all checkboxes
-    document.getElementById('select-all').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-        toggleDeleteButton();
-    });
+<!-- Modal Popup for Deletion Confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete <span id="delete-count"></span> category(ies)?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Toggle delete button visibility based on selection
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', toggleDeleteButton);
-    });
+<!-- Link to CSS and JS -->
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<script src="{% static 'js/index.js' %}"></script>
 
-    function toggleDeleteButton() {
-        const deleteButton = document.getElementById('delete-button');
-        const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-        deleteButton.classList.toggle('d-none', !anyChecked);
-    }
-
-    // Handle delete form submission: ensure categories are selected
-    document.getElementById('delete-form').addEventListener('submit', function(e) {
-        const selectedCategories = document.querySelectorAll('.item-checkbox:checked');
-        
-        if (selectedCategories.length === 0) {
-            e.preventDefault();  // Prevent form submission if no categories are selected
-            alert("Please select categories to delete.");
-            return;
-        }
-        
-        // Clear previous selected categories
-        const selectedContainer = document.getElementById('selected-categories-container');
-        selectedContainer.innerHTML = '';
-
-        // Add selected categories to the form
-        selectedCategories.forEach(checkbox => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'selected_categories';
-            input.value = checkbox.value;
-            selectedContainer.appendChild(input);
-        });
-    });
-
-    // Submit rows-per-page form on change
-    document.getElementById('rows-per-page').addEventListener('change', function () {
-    const rowsForm = document.getElementById('rows-per-page-form');
-    const pageInput = rowsForm.querySelector('input[name="page"]');
-    pageInput.value = 1; // Reset to page 1 when rows are changed
-    rowsForm.submit();
-});
-
-</script>
 {% endblock %}

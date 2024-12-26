@@ -54,7 +54,7 @@
                                     <a href="#" class="sidebar-link">Item List</a>
                                 </li>
                                 <li class="sidebar-item">
-                                    <a href="{% url 'item_categories_index' %}" class="sidebar-link">Item Categories</a>
+                                    <a href="{% url 'item_categories_index' %}?page={{ page }}&rows={{ rows_per_page }}" class="sidebar-link">Item Categories</a>
                                 </li>
                             </ul>
                         </li>

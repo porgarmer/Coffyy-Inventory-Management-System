@@ -1,0 +1,111 @@
+/* Right-side popup styles */
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px; /* Initially hidden off-screen */
+    width: 250px;
+    background-color: #fff3cd; /* Yellow background for warning */
+    color: #856404; /* Dark yellow text */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px; /* Slide in from the right */
+}
+
+.popup-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#popup-message {
+    font-size: 16px;
+}
+
+.color-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-box {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: border 0.3s ease;
+}
+
+.color-box.selected {
+    border: 2px solid black;
+}
+
+.color-box .check {
+    display: none;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.color-box.selected .check {
+    display: block;
+}
+
+.color-picker {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.color-picker input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.color-picker .wheel {
+    background: conic-gradient(
+        red, yellow, lime, cyan, blue, magenta, red
+    );
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.selected-color-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    right: 0;
+}
+
+.selected-color-label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.selected-color-box {
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    background-color: #ff0000;
+}

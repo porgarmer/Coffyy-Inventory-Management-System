@@ -1,0 +1,44 @@
+/* Search bar styling */
+form.d-flex.ms-auto {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+form.d-flex.ms-auto input.form-control {
+    max-width: 250px; /* Optional: restrict search bar width */
+    margin-left: 10px; /* Optional: space from the buttons */
+}
+
+/* Table styling */
+table.table-hover {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.table-hover th, table.table-hover td {
+    text-align: left;
+    padding: 8px;
+}
+
+/* Button styling */
+#delete-button {
+    transition: background-color 0.3s;
+}
+
+#delete-button:hover {
+    background-color: #ffcccc;
+}
+
+/* Category color circle */
+.category-color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 10px;
+}

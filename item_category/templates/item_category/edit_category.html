@@ -1,154 +1,62 @@
-{% extends "base.html" %}
 
+{% extends "base.html" %}
+{% load static %}
 {% block title %}EDIT CATEGORY{% endblock %}
 {% block content %}
 <h1>EDIT CATEGORY</h1>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Category</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* CSS styles remain the same */
-        .color-options {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .color-box {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transition: border 0.3s ease;
-        }
-        .color-box.selected {
-            border: 2px solid black;
-        }
-        .color-box .check {
-            display: none;
-            font-size: 20px;
-            color: white;
-            font-weight: bold;
-        }
-        .color-box.selected .check {
-            display: block;
-        }
-        .color-picker {
-            width: 40px;
-            height: 40px;
-            position: relative;
-            border: 2px solid transparent;
-            border-radius: 4px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .color-picker input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        .color-picker .wheel {
-            background: conic-gradient(
-                red, yellow, lime, cyan, blue, magenta, red
-            );
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
-        .selected-color-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-            right: 0;
-        }
-        .selected-color-label {
-            font-size: 14px;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-        .selected-color-box {
-            width: 40px;
-            height: 40px;
-            border: 2px solid black;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="card">
-            <div class="card-body">
-                <form method="POST" action="{% url 'edit_category' category.id %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="category-name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="category-name" name="name" value="{{ category.name }}" required>
-                    </div>
-                    <div class="position-relative">
-                        <div class="d-flex align-items-center">
-                            <div class="color-options">
-                                {% for color in predefined_colors %}
-                                <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};">
-                                    <span class="check">✔</span>
-                                </div>
-                                {% endfor %}
-                                <div class="color-picker">
-                                    <div class="wheel"></div>
-                                    <input type="color" id="custom-color" value="{{ category.color }}">
-                                </div>
+
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+    <div style="display:none;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{% url 'edit_category' category.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="category-name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="category-name" name="name" value="{{ category.name }}" required>
+                </div>
+                <div class="position-relative">
+                    <div class="d-flex align-items-center">
+                        <div class="color-options">
+                            {% for color in predefined_colors %}
+                            <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};">
+                                <span class="check">✔</span>
                             </div>
-                            <div class="selected-color-container">
-                                Selected Color
-                                <div class="selected-color-box" id="selected-color-box" style="background-color: {{ category.color }}"></div>
+                            {% endfor %}
+                            <div class="color-picker">
+                                <div class="wheel"></div>
+                                <input type="color" id="custom-color" value="{{ category.color }}">
                             </div>
                         </div>
-                        <input type="hidden" id="selected-color" name="color" value="{{ category.color }}">
+                        <div class="selected-color-container">
+                            Selected Color
+                            <div class="selected-color-box" id="selected-color-box" style="background-color: {{ category.color }}"></div>
+                        </div>
                     </div>
-                    <div class="mt-4 d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </div>
-                </form>
-            </div>
+                    <input type="hidden" id="selected-color" name="color" value="{{ category.color }}">
+                </div>
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-        // Predefined color selection
-        const colorBoxes = document.querySelectorAll(".color-box");
-        const customColorInput = document.getElementById("custom-color");
-        const selectedColorInput = document.getElementById("selected-color");
-        const selectedColorBox = document.getElementById("selected-color-box");
-
-        colorBoxes.forEach(box => {
-            box.addEventListener("click", () => {
-                colorBoxes.forEach(box => box.classList.remove("selected"));
-                box.classList.add("selected");
-                const color = box.getAttribute("data-color");
-                selectedColorInput.value = color;
-                selectedColorBox.style.backgroundColor = color;
-            });
-        });
-
-        // Custom color selection
-        customColorInput.addEventListener("input", () => {
-            colorBoxes.forEach(box => box.classList.remove("selected"));
-            const color = customColorInput.value;
-            selectedColorInput.value = color;
-            selectedColorBox.style.backgroundColor = color;
-        });
-    </script>
-</body>
-</html>
+<script src="{% static 'js/edit_category.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/edit_category.css' %}">
 {% endblock %}

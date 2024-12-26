@@ -32,7 +32,7 @@
                     <div class="d-flex align-items-center">
                         <div class="color-options">
                             {% for color in predefined_colors %}
-                            <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};">
+                            <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: '{{ color }};'">
                                 <span class="check">✔</span>
                             </div>
                             {% endfor %}
@@ -43,7 +43,7 @@
                         </div>
                         <div class="selected-color-container">
                             Selected Color
-                            <div class="selected-color-box" id="selected-color-box" style="background-color: {{ category.color }}"></div>
+                            <div class="selected-color-box" id="selected-color-box" style="background-color: '{{ category.color }}'"></div>
                         </div>
                     </div>
                     <input type="hidden" id="selected-color" name="color" value="{{ category.color }}">

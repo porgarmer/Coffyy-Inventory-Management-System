@@ -51,7 +51,7 @@
                             </a>
                             <ul id="items" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                                 <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Item List</a>
+                                    <a href="{% url 'item_list:item_list_index' %}?page={{ page }}&rows={{ rows_per_page }}" class="sidebar-link">Item List</a>
                                 </li>
                                 <li class="sidebar-item">
                                     <a href="#" class="sidebar-link">Item Categories</a>

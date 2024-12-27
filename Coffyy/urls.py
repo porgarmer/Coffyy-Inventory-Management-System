@@ -20,5 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dashboard.urls')), #ge test ra nakong sidebar ani abi. ilisi lang niya ni sa imoha
+    path('item_list/', include('item_list.urls')),  # Include item_list URLs
     # path('', include('purchase_order.urls'))
 ]

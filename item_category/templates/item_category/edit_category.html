@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% block title %}EDIT CATEGORY{% endblock %}
@@ -25,14 +24,14 @@
             <form method="POST" action="{% url 'edit_category' category.id %}">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="category-name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="category-name" name="name" value="{{ category.name }}" required>
+                    <label for="category-name">Name</label>
+                    <input type="text" class="form-control underline-input" id="category-name" name="name" value="{{ category.name }}" required>
                 </div>
                 <div class="position-relative">
                     <div class="d-flex align-items-center">
                         <div class="color-options">
                             {% for color in predefined_colors %}
-                            <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};'">
+                            <div class="color-box {% if category.color == color %}selected{% endif %}" data-color="{{ color }}" style="background-color: {{ color }};">
                                 <span class="check">✔</span>
                             </div>
                             {% endfor %}
@@ -42,7 +41,7 @@
                             </div>
                         </div>
                         <div class="selected-color-container">
-                            Selected Color
+                            <label for="category-name">Selected Color</label>
                             <div class="selected-color-box" id="selected-color-box" style="background-color: {{ category.color }}"></div>
                         </div>
                     </div>
@@ -57,6 +56,7 @@
     </div>
 </div>
 
-<script src="{% static 'js/edit_category.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/edit_category.css' %}">
+<script src="{% static 'js/edit_category.js' %}"></script>
+
 {% endblock %}

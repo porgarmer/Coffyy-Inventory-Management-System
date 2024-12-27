@@ -109,3 +109,46 @@
     border: 2px solid black;
     background-color: #ff0000;
 }
+
+/* Make sure labels are aligned left */
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;  /* Ensure left-aligned */
+    font-size: 14px;
+}
+
+/* Underline input style */
+.underline-input {
+    border: none;
+    border-bottom: 2px solid #ccc;  /* Underline effect */
+    width: 100%;  /* Ensure input takes up full width */
+    padding: 8px 0;  /* Adjust padding for better alignment */
+    border-radius: 0;
+}
+
+.underline-input:focus {
+    border-color: #007bff;  /* Blue border on focus */
+    outline: none;  /* Remove default outline */
+}
+
+/* Styles for form controls */
+.mb-3 {
+    margin-bottom: 20px;  /* Add spacing between form fields */
+}
+
+.position-relative {
+    position: relative;
+}
+
+/* Ensure the color picker input takes full width */
+input[type="color"] {
+    width: 100%; /* Ensure color input is responsive */
+    border: none;
+}
+
+/* Make sure the form looks clean */
+.form {
+    padding: 20px;
+}

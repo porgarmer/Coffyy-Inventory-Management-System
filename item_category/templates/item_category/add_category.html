@@ -25,10 +25,12 @@
                 {% csrf_token %}
                 <input type="hidden" name="page" value="{{ page }}">
                 <input type="hidden" name="rows" value="{{ rows }}">
+                
                 <div class="mb-3">
-                    <label for="category-name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="category-name" name="name" required>
+                    <label for="category-name">Name</label>
+                    <input type="text" class="form-control underline-input" id="category-name" name="name" required>
                 </div>
+
                 <div class="position-relative">
                     <div class="d-flex align-items-center">
                         <div class="color-options">
@@ -53,13 +55,13 @@
                             </div>
                         </div>
                         <div class="selected-color-container">
-                            Selected Color
+                            <label for="category-name">Selected Color</label>
                             <div class="selected-color-box" id="selected-color-box"></div>
                         </div>
                     </div>
                     <input type="hidden" id="selected-color" name="color" value="#FF0000">
-
                 </div>
+                
                 <div class="mt-4 d-flex justify-content-end">
                     <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
                     <button type="submit" class="btn btn-success">Save</button>

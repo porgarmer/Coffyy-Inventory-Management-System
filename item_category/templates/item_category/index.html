@@ -4,25 +4,58 @@
 {% block title %}ITEM CATEGORIES{% endblock %}
 {% block content %}
 <h1>ITEM CATEGORIES</h1>
+
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+    <div style="display:none;"> <!-- Hide messages but include them for the script -->
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+    
 {% if categories %}
 <div class="container mt-5">
-    <div class="d-flex justify-content-start mb-4">
-        <form method="GET" action="{% url 'item_categories_index' %}">
-            {% csrf_token %}
-            <input type="hidden" name="page" value="{{ categories.number }}">
-            <input type="hidden" name="rows" value="{{ rows_per_page }}">
-            <a href="{% url 'add_category' %}" class="btn btn-success me-2" id="add-category">+ Add Category</a>
-        </form>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex">
+            <form method="GET" action="{% url 'item_categories_index' %}">
+                {% csrf_token %}
+                <input type="hidden" name="page" value="{{ categories.number }}">
+                <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                <a href="{% url 'add_category' %}" class="btn btn-success me-2" id="add-category">+ Add Category</a>
+            </form>
 
-        <form method="POST" action="{% url 'delete_categories' %}" id="delete-form">
-            {% csrf_token %}
-            <input type="hidden" name="page" value="{{ categories.number }}">
-            <input type="hidden" name="rows" value="{{ rows_per_page }}">
-            <div id="selected-categories-container" style="display:none;"></div>
-            <button type="submit" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
-        </form>
+            <form method="POST" action="{% url 'delete_categories' %}" id="delete-form">
+                {% csrf_token %}
+                <input type="hidden" name="page" value="{{ categories.number }}">
+                <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                <div id="selected-categories-container" style="display:none;"></div>
+                <button type="submit" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
+            </form>
+        </div>
+
+        <div>
+            <form method="GET" action="{% url 'item_categories_index' %}" id="search-form" class="d-flex ms-auto">
+                <input
+                    type="text"
+                    id="category-search-bar"
+                    name="search"
+                    value="{{ search_query|default:'' }}"
+                    class="form-control"
+                    placeholder="Search categories..."
+                    aria-label="Search Categories"
+                >
+                <input type="hidden" name="page" value="1">
+                <input type="hidden" name="rows" value="{{ rows_per_page }}">
+            </form>
+        </div>
     </div>
-    
+
     <div class="card">
         <div class="card-body">
             <table class="table table-hover">
@@ -35,20 +68,25 @@
                         <th scope="col">Name</th> <!-- Flexible width for name column -->
                     </tr>
                 </thead>
-                <tbody>
-                        {% for category in categories %}
-                        <tr onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
+                <tbody id="category-table-body">
+                    {% for category in categories %}
+                        <tr class="category-row" onclick="window.location='{% url 'edit_category' category.id %}'" style="cursor: pointer;">
                             <td>
                                 <input type="checkbox" name="selected_categories" value="{{ category.id }}" class="item-checkbox" onclick="event.stopPropagation();">
                             </td>
                             <td style="text-align: center;">
                                 <div style="width: 30px; height: 30px; border-radius: 50%; background-color: {{ category.color }}; border: 1px solid #ccc; display: inline-block;"></div>
                             </td>
-                            <td>{{ category.name }}</td>
+                            <td class="category-name">{{ category.name }}</td>
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
+
+            <!-- No results found message -->
+            <div id="no-results-message" style="display:none;" class="alert alert-warning text-center">
+                No categories found.
+            </div>
 
             <div class="d-flex justify-content-between mt-3">
                 <div>Page {{ categories.number }} of {{ categories.paginator.num_pages }}</div>
@@ -63,13 +101,13 @@
                             <a href="#" class="page-link">Previous</a>
                         </li>
                         {% endif %}
-    
+
                         {% for num in categories.paginator.page_range %}
                         <li class="page-item {% if num == categories.number %}active{% endif %}">
                             <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
                         </li>
                         {% endfor %}
-    
+
                         {% if categories.has_next %}
                         <li class="page-item">
                             <a href="?page={{ categories.next_page_number }}&rows={{ rows_per_page }}" class="btn btn-primary">Next</a>
@@ -98,6 +136,13 @@
 </div>
 
 {% else %}
+{% if messages %}
+<div style="display:none;"> <!-- Hide messages but include them for the script -->
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
     <tr>
         <td colspan="3" class="text-center">
             <div class="empty-state">

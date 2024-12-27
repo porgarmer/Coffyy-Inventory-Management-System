@@ -2,10 +2,10 @@
 .right-popup {
     position: fixed;
     top: 20px;
-    right: -300px;
+    right: -300px; /* Initially hidden off-screen */
     width: 250px;
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #141414; /* Yellow background for warning */
+    color: #FFFFFF; /* Dark yellow text */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

@@ -8,6 +8,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.vertical-spacer {
+    height: 20px;  /* Adjust the height as needed */
+}
+
 /* Top Section: Name, Category, Description */
 .top-section {
     margin-bottom: 30px;
@@ -39,6 +43,7 @@ label {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 
 /* Small Label Styling (for parenthetical descriptions) */
 .small-label {
@@ -106,3 +111,84 @@ button.btn-primary {
 button.btn-primary:hover {
     background: #0056b3;
 }
+
+#inventory-item-label {
+    font-size: 1.50rem;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+
+.composite-item-label-container {
+    display: flex;
+    justify-content: space-between;  /* This will space the elements apart */
+    width: 100%;  /* Ensures the container stretches across its parent */
+}
+
+.inventory-item-label, .toggle-switch {
+    display: inline-flex;
+    align-items: center;  /* Vertically center-aligns the label and toggle */
+}
+
+/* Increase the size of the toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;  /* Increased width of the switch */
+    height: 40px; /* Increased height of the switch */
+}
+
+/* Update the label (the background of the switch) */
+.switch-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;  /* Light grey for the off state */
+    border-radius: 40px;  /* Make it fully rounded */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Update the color of the toggle when it's checked */
+input:checked + .switch-label {
+    background-color: #000;  /* Black when checked */
+}
+
+/* Update the position and style of the toggle button */
+.switch-label::before {
+    content: "";
+    position: absolute;
+    height: 30px;  /* Larger height of the circle */
+    width: 30px;   /* Larger width of the circle */
+    background-color: white;
+    border-radius: 50%;
+    top: 5px;  /* Adjusted to center the circle vertically */
+    left: 5px;  /* Adjusted to center the circle horizontally */
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Move the toggle to the right when checked */
+input:checked + .switch-label::before {
+    transform: translateX(40px);  /* Increased distance to move the larger circle */
+}
+
+/* Button Container */
+.button-container {
+    margin-top: 20px;
+    padding: 0;
+    background: none;         /* No background color */
+    background-color: transparent; /* Explicitly make background transparent */
+    border: none;             /* Remove any borders */
+    box-shadow: none;         /* Remove any box-shadow */
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 20px; /* Space between the buttons */
+}
+

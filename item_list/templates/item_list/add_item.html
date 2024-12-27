@@ -18,7 +18,7 @@
             <!-- Name Field -->
             <div class="form-group">
                 <label for="item-name">Name</label>
-                <input type="text" id="item-name" name="name" class="form-control underline-input" value="Hello" required>
+                <input type="text" id="item-name" name="name" class="form-control underline-input" value="" required>
             </div>
 
             <!-- Category Field -->
@@ -33,7 +33,7 @@
             <!-- Description Field -->
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" class="form-control"></textarea>
+                <textarea id="description" name="description" class="form-control underline-input"></textarea>
             </div>
         </div>
 
@@ -84,8 +84,91 @@
             </div>
         </div>
     </div>
-
 </form>
 
+<!-- Inventory Section (Second Frame) -->
+<div class="form-container inventory-container">
+    <h1 class="form-title">Inventory</h1>
+
+    <!-- Composite Item Section -->
+    <div class="form-group">
+        <div class="composite-item-label-container">
+            <label for="composite-item" id="inventory-item-label">Composite Item</label>
+            <div class="toggle-switch">
+                <input type="checkbox" id="composite-item" name="composite_item">
+                <label for="composite-item" class="switch-label"></label>
+            </div>
+        </div>
+        <div class="vertical-spacer"></div>
+        <div id="composite-item-table" style="display:none;">
+            <table class="composite-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Quantity</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="composite-item-body">
+                    <!-- Dynamic Rows will be added here -->
+                </tbody>
+            </table>
+            <input type="text" id="component-search" name="component_search" placeholder="Search for items" class="form-control underline-input">
+            <p>Total Cost: <span id="total-cost">0.00</span></p>
+        </div>
+    </div>
+    
+    <!-- Spacer between Composite Item and Track Stock -->
+    <div class="vertical-spacer"></div>
+
+    <!-- Track Stock Section -->
+    <div class="form-group">
+        <label for="composite-item" id="inventory-item-label">Track Stock</label>
+        <div class="vertical-spacer"></div>
+        <div class="bottom-section">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="form-group">
+                    <label for="in-stock">In Stock</label>
+                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="reorder-level">Reorder Level</label>
+                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="default-purchase-cost">Default Purchase Cost</label>
+                    <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" step="0.01">
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="right-column">
+                <div class="form-group">
+                    <label for="optimal-stock">Optimal Stock</label>
+                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="primary-supplier">Primary Supplier</label>
+                    <select id="primary-supplier" name="primary_supplier" class="form-control underline-input">
+                        <!-- Add supplier options dynamically -->
+                    </select>
+                </div>
+                <div id="remaining-volume-group" class="form-group" style="display:none;">
+                    <label for="remaining-volume">Remaining Volume</label>
+                    <input type="number" id="remaining-volume" name="remaining_volume" class="form-control underline-input" min="0" step="0.01">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-container button-container">
+    <div class="button-group">
+        <button type="button" class="btn btn-secondary me-2">Cancel</button>
+        <button type="submit" class="btn btn-success">Save</button>
+    </div>
+</div>
+
 <script src="/static/js/add_item.js"></script>
+
 {% endblock %}

@@ -1,0 +1,43 @@
+/* Popup */
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+
+/* Table styling */
+.table-hover th, .table-hover td {
+    padding: 8px;
+}
+
+.table-hover th {
+    text-align: left;
+}
+
+.table-hover td:nth-child(4), 
+.table-hover td:nth-child(5), 
+.table-hover td:nth-child(6), 
+.table-hover td:nth-child(7) {
+    text-align: right;
+}
+
+/* Button hover effect */
+#delete-button {
+    transition: background-color 0.3s;
+}
+
+#delete-button:hover {
+    background-color: #ffcccc;
+}

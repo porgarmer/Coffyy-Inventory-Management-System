@@ -1,9 +1,133 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Item List{% endblock %}
-
+{% block title %}ITEM LIST{% endblock %}
 {% block content %}
-<h1>Item List</h1>
-<p>Page: {{ page }}</p>
-<p>Rows per page: {{ rows_per_page }}</p>
+<h1>ITEM LIST</h1>
+
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message">This is a sample popup message.</span>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex">
+            <form id="delete-form">
+                <a href="#" class="btn btn-success me-2" id="add-item">+ Add Item</a>
+                <button type="button" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
+            </form>
+        </div>
+
+        <!-- Search Bar with Combo Boxes for Category and Stock Alert -->
+        <div class="d-flex ms-auto">
+            <!-- Category Combo Box -->
+            <select id="category-filter" class="form-select form-select-sm me-2" aria-label="Select Category">
+                <option value="">Select Category</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Stock Alert Combo Box -->
+            <select id="stock-alert-filter" class="form-select form-select-sm me-2" aria-label="Select Stock Alert">
+                <option value="">Stock Alert</option>
+                <option value="low">Low Stock</option>
+                <option value="medium">Medium Stock</option>
+                <option value="high">High Stock</option>
+            </select>
+
+            <!-- Search Input -->
+            <input
+                type="text"
+                id="item-search-bar"
+                class="form-control me-2"
+                placeholder="Search items..."
+                aria-label="Search Items"
+            >
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 50px;">
+                            <input type="checkbox" id="select-all">
+                        </th>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" style="text-align: right;">Price</th>
+                        <th scope="col" style="text-align: right;">Cost</th>
+                        <th scope="col" style="text-align: right;">In Stock</th>
+                        <th scope="col" style="text-align: right;">Volume</th>
+                    </tr>
+                </thead>
+                <tbody id="item-table-body">
+                    {% for item in items %}
+                        <tr class="item-row">
+                            <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.category }}</td>
+                            <td style="text-align: right;">{{ item.price }}</td>
+                            <td style="text-align: right;">{{ item.cost }}</td>
+                            <td style="text-align: right;">{{ item.stock }}</td>
+                            <td style="text-align: right;">{{ item.volume }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Updated Pagination -->
+            <div class="d-flex justify-content-between mt-3">
+                <div>Page {{ items.number }} of {{ items.paginator.num_pages }}</div>
+                <div>
+                    <ul class="pagination justify-content-center">
+                        {% if items.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in items.paginator.page_range %}
+                        <li class="page-item {% if num == items.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if items.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ items.next_page_number }}&rows={{ rows_per_page }}" class="page-link">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div>
+                    Rows per page:
+                    <form method="GET" id="rows-per-page-form" class="d-inline-block">
+                        <select name="rows" id="rows-per-page" class="form-select form-select-sm d-inline-block w-auto">
+                            <option value="10" {% if rows_per_page == 10 %}selected{% endif %}>10</option>
+                            <option value="20" {% if rows_per_page == 20 %}selected{% endif %}>20</option>
+                            <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
+                        </select>
+                        <input type="hidden" name="page" value="1">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

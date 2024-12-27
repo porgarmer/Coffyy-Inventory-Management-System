@@ -4,8 +4,8 @@
     top: 20px;
     right: -300px; /* Initially hidden off-screen */
     width: 250px;
-    background-color: #141414;
-    color: #FFFFFF;
+    background-color: #141414; /* Yellow background for warning */
+    color: #FFFFFF; /* Dark yellow text */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -14,7 +14,7 @@
 }
 
 .right-popup.show {
-    right: 20px;
+    right: 20px; /* Slide in from the right */
 }
 
 .popup-content {
@@ -81,7 +81,9 @@
 }
 
 .color-picker .wheel {
-    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    background: conic-gradient(
+        red, yellow, lime, cyan, blue, magenta, red
+    );
     width: 100%;
     height: 100%;
     border-radius: 50%;
@@ -105,47 +107,48 @@
     width: 40px;
     height: 40px;
     border: 2px solid black;
+    background-color: #ff0000;
 }
 
-/* Label styling */
+/* Make sure labels are aligned left */
 label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    text-align: left;
+    text-align: left;  /* Ensure left-aligned */
     font-size: 14px;
 }
 
-/* Underline input style - No border-radius */
+/* Underline input style */
 .underline-input {
     border: none;
-    border-bottom: 2px solid #ccc; /* Underline effect */
-    width: 100%;
-    padding: 8px 0;
-    border-radius: 0; /* Remove border-radius */
+    border-bottom: 2px solid #ccc;  /* Underline effect */
+    width: 100%;  /* Ensure input takes up full width */
+    padding: 8px 0;  /* Adjust padding for better alignment */
+    border-radius: 0;
 }
 
 .underline-input:focus {
-    border-color: #007bff; /* Focused state */
-    outline: none;
+    border-color: #007bff;  /* Blue border on focus */
+    outline: none;  /* Remove default outline */
 }
 
-/* Form and container styles */
+/* Styles for form controls */
 .mb-3 {
-    margin-bottom: 20px; /* Add spacing between fields */
+    margin-bottom: 20px;  /* Add spacing between form fields */
 }
 
 .position-relative {
     position: relative;
 }
 
-/* Color picker input styles */
+/* Ensure the color picker input takes full width */
 input[type="color"] {
-    width: 100%;
+    width: 100%; /* Ensure color input is responsive */
     border: none;
 }
 
-/* Ensure form has padding */
+/* Make sure the form looks clean */
 .form {
     padding: 20px;
 }

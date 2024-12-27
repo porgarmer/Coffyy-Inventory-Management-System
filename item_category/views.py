@@ -26,8 +26,14 @@ def index(request):
     request.session['item_category_page'] = page
     request.session['item_category_row'] = rows
 
-    # Fetch categories from the database
-    categories = Category.objects.all()
+    # Fetch the search query from the GET parameters
+    search_query = request.GET.get('search', '').strip()
+
+    # Filter categories based on the search query (case-insensitive)
+    if search_query:
+        categories = Category.objects.filter(name__icontains=search_query)
+    else:
+        categories = Category.objects.all()
 
     # Create the paginator object
     paginator = Paginator(categories, rows)
@@ -39,11 +45,12 @@ def index(request):
     except EmptyPage:
         categories_page = paginator.page(paginator.num_pages)
 
-    # Pass categories and pagination parameters to the template
+    # Pass categories, pagination parameters, and the search query to the template
     return render(request, 'item_category/index.html', {
         'categories': categories_page,
         'page': page,
         'rows_per_page': rows,
+        'search_query': search_query,  # Include this for pre-filling the search bar
     })
 
 def add_category(request):
@@ -62,7 +69,7 @@ def add_category(request):
 
         # Save new category
         Category.objects.create(name=name, color=color)
-
+        messages.success(request,"Category added!")
         # Redirect with pagination parameters
         return redirect(f"{reverse('item_categories_index')}?page={page}&rows={rows}")
 
@@ -91,7 +98,7 @@ def edit_category(request, category_id):
 
         # Check for duplicate names
         if Category.objects.filter(name=name).exclude(id=category.id).exists():
-            messages.error(request, "A category with this name already exists.")
+            messages.error(request, "Category already exists.")
             return render(request, 'item_category/edit_category.html', {
                 'category': category,
                 'predefined_colors': predefined_colors,
@@ -103,7 +110,7 @@ def edit_category(request, category_id):
         category.name = name
         category.color = color
         category.save()
-
+        messages.success(request, "Category edited!")
         # Redirect with pagination parameters
         return redirect(f"{reverse('item_categories_index')}?page={page}&rows={rows}")
 
@@ -122,7 +129,6 @@ def delete_categories(request):
         # Delete the selected categories
         if categories.exists():
             categories.delete()
-        else:
-            messages.error(request, 'No categories were selected for deletion.')
+            messages.success(request, 'Category/ies deleted!')
 
     return redirect('item_categories_index')  # Redirect after deletion

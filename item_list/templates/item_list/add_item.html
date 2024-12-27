@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Add Item{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/add_item.css' %}">
+
+<h1 class="form-title">Add New Item</h1>
+
+<form method="post" class="add-item-form">
+    {% csrf_token %}
+
+    <div class="form-container">
+        <!-- Top Section: Name, Category, Description -->
+        <div class="top-section">
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="item-name">Name</label>
+                <input type="text" id="item-name" name="name" class="form-control underline-input" value="Hello" required>
+            </div>
+
+            <!-- Category Field -->
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="form-control underline-input">
+                    <option value="">No category</option>
+                    <!-- Add categories dynamically -->
+                </select>
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Two Columns -->
+        <div class="bottom-section">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Checkbox -->
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="is-for-sale" name="is_for_sale">
+                    <label for="is-for-sale">This item is for sale</label>
+                </div>
+
+                <!-- Sold by Options -->
+                <div class="form-group">
+                    <label>Sold by</label>
+                    <div class="radio-group">
+                        <input type="radio" id="sold-by-each" name="sold_by" value="each">
+                        <label for="sold-by-each">Each</label>
+
+                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight">
+                        <label for="sold-by-volume-weight">Volume/Weight</label>
+                    </div>
+                </div>
+
+                <!-- Price Field -->
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" id="price" name="price" class="form-control underline-input" min="0" step="0.01">
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Volume/Weight per Unit (hidden by default) -->
+                <div id="volume-weight-group" class="form-group" style="display:none;">
+                    <label for="volume-weight-per-unit">Volume/Weight per unit</label>
+                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" step="0.01" value="0.00">
+                    <span class="small-label">(milliliters for volume, milligrams for weight)</span>
+                </div>
+
+                <!-- Cost Field -->
+                <div class="form-group">
+                    <label for="cost">Cost</label>
+                    <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" step="0.01" value="Php 0.00">
+                    <span class="small-label">(per item including shipping fee, etc.)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script src="/static/js/add_item.js"></script>
+{% endblock %}

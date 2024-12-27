@@ -9,3 +9,7 @@ def index(request):
         'rows_per_page': rows_per_page,
     }
     return render(request, 'item_list/index.html', context)
+
+def add_item(request):
+    # Placeholder view for the add item page (just rendering a template)
+    return render(request, 'item_list/add_item.html')

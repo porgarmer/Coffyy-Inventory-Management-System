@@ -1,0 +1,108 @@
+/* General Form Container */
+.form-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Top Section: Name, Category, Description */
+.top-section {
+    margin-bottom: 30px;
+}
+
+.top-section .form-group {
+    margin-bottom: 20px;
+}
+
+/* Bottom Section: Two Columns */
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Left and Right Columns */
+.left-column, .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Align labels to the left */
+label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Small Label Styling (for parenthetical descriptions) */
+.small-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group label {
+    margin: 0;
+}
+
+/* Sold by Group */
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Input Fields */
+.form-control {
+    width: 100%;
+    padding: 8px;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+/* Underlined Inputs */
+.underline-input {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0px;
+}
+
+.underline-input:focus {
+    border-color: #007bff;
+}
+
+/* Description Field Styling (Boxed) */
+textarea.form-control {
+    resize: none;
+    height: 100px;
+    border: 1px solid #ccc;
+    border-radius:0px;
+}
+
+/* Button Styling */
+button.btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius:0px;
+}
+
+button.btn-primary:hover {
+    background: #0056b3;
+}

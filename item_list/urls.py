@@ -5,4 +5,5 @@ app_name = 'item_list'  # Namespace for the app
 
 urlpatterns = [
     path('', views.index, name='item_list_index'),  # URL pattern for item_list_index
+    path('add/', views.add_item, name='add_item'),  # New URL pattern for add_item
 ]

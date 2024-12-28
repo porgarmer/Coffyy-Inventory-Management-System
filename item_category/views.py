@@ -53,6 +53,7 @@ def index(request):
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
 
+
 def add_category(request):
     # Get pagination parameters
     page = request.session.get('item_category_page', 1)

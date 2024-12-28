@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const compositeItemCheckbox = document.getElementById("composite-item");
     const compositeItemTable = document.getElementById("composite-item-table");
 
+    // Remaining Volume Field
+    const inStockInput = document.getElementById("in-stock"); // "In Stock" input
+    const volumeWeightInput = document.getElementById("volume-weight-per-unit"); // Volume/Weight per Unit input
+    const remainingVolumeOutput = document.getElementById("remaining-volume"); // Remaining Volume (output)
+
     // Function to toggle visibility for Volume/Weight groups
     const toggleVolumeWeightGroup = () => {
         console.log("Toggling visibility based on 'Sold By' selection..."); // Debug log
@@ -35,27 +40,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Check if all elements for Sold By exist
-    if (!soldByEach || !soldByVolumeWeight || !volumeWeightGroup || !remainingVolumeGroup) {
-        console.error("One or more elements not found for 'Sold By':", {
-            soldByEach,
-            soldByVolumeWeight,
-            volumeWeightGroup,
-            remainingVolumeGroup,
-        });
-        return;
-    }
+    // Function to calculate Remaining Volume dynamically
+    const calculateRemainingVolume = () => {
+        if (inStockInput && volumeWeightInput && remainingVolumeOutput) {
+            const inStock = parseFloat(inStockInput.value) || 0; // Get "In Stock" value or 0
+            const volumeWeight = parseFloat(volumeWeightInput.value) || 0; // Get Volume/Weight value or 0
+            const remainingVolume = Math.max(inStock * volumeWeight, 0); // Ensure no negative values
+            remainingVolumeOutput.value = remainingVolume.toFixed(2); // Update the output field
+            console.log(
+                `Calculated Remaining Volume: ${remainingVolume} (In Stock: ${inStock}, Volume/Weight: ${volumeWeight})`
+            ); // Debug log
+        }
+    };
 
-    // Check if all elements for Composite Item exist
-    if (!compositeItemCheckbox || !compositeItemTable) {
-        console.error("Composite item checkbox or table not found:", {
-            compositeItemCheckbox,
-            compositeItemTable,
-        });
-        return;
-    }
+    // Add input listeners to trigger dynamic calculation
+    inStockInput.addEventListener("input", calculateRemainingVolume);
+    volumeWeightInput.addEventListener("input", calculateRemainingVolume);
 
-    // Add event listeners for 'Sold By' radio buttons
+    // Add event listeners for Sold By radio buttons
     soldByEach.addEventListener("change", toggleVolumeWeightGroup);
     soldByVolumeWeight.addEventListener("change", toggleVolumeWeightGroup);
 
@@ -65,10 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial visibility setup
     toggleVolumeWeightGroup();
     toggleCompositeItemTable();
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Select all input fields with a Peso prefix
+    // Monetary Fields Logic
     const monetaryFields = document.querySelectorAll(".form-group .input-group input");
 
     // Ensure monetary fields have valid input
@@ -77,33 +77,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (field.value < 0) field.value = 0; // Prevent negative values
         });
     });
-});
 
-document.getElementById("cancel-button").addEventListener("click", function () {
-    // Retrieve the values of data-page and data-rows attributes, falling back to defaults if missing
-    const page = this.getAttribute('data-page') || 1;  // Default to 1 if not found
-    const rows = this.getAttribute('data-rows') || 10;  // Default to 10 if not found
+    // Cancel Button Logic
+    document.getElementById("cancel-button").addEventListener("click", function () {
+        const page = this.getAttribute('data-page') || 1; // Default to 1 if not found
+        const rows = this.getAttribute('data-rows') || 10; // Default to 10 if not found
 
-    // Construct the redirect URL using these values
-    const redirectUrl = `/item-list/?page=${page}&rows=${rows}`;
-    
-    // Redirect with a slight delay (to match item_category behavior)
-    setTimeout(() => {
-        window.location.href = redirectUrl;
-    }, 0);  // Delay of 500ms (adjust as necessary)
-});
+        const redirectUrl = `/item-list/?page=${page}&rows=${rows}`;
 
-document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 0);
+    });
+
+    // Popup Message Logic
     const popup = document.getElementById("right-popup");
     const popupMessage = document.getElementById("popup-message");
 
-    // Check if there are messages passed from the backend
     const messages = document.querySelectorAll(".messages p");
     if (messages.length > 0) {
         popupMessage.textContent = messages[0].textContent; // Display the first message
         popup.style.display = "block";
 
-        // Automatically hide the popup after 3 seconds
         setTimeout(() => {
             popup.style.display = "none";
         }, 3000);

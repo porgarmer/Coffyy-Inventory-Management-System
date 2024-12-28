@@ -1,14 +1,19 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.urls import reverse
-from .models import Item  # Assuming your Item model is defined in `item_list.models`
+from .models import Item
 from item_category.models import Category
-#from supplier.models import Supplier  # Import Supplier model if it exists
 
 def index(request):
-    page = request.GET.get('page', 1)
-    rows = request.GET.get('rows', 10)
+    # Use independent session variables for item_list
+    page = request.session.get('item_list_page', 1)  # Default to 1
+    rows = request.session.get('item_list_row', 10)  # Default to 10
+
+    # Override session variables with GET parameters if provided
+    page = request.GET.get('page', page)
+    rows = request.GET.get('rows', rows)
 
     try:
         page = int(page)
@@ -17,8 +22,12 @@ def index(request):
         page = 1
         rows = 10
 
-    search_query = request.GET.get('search', '').strip()
+    # Update session variables
+    request.session['item_list_page'] = page
+    request.session['item_list_row'] = rows
 
+    # Handle search query
+    search_query = request.GET.get('search', '').strip()
     if search_query:
         items = Item.objects.filter(
             name__icontains=search_query
@@ -26,8 +35,8 @@ def index(request):
     else:
         items = Item.objects.select_related('category').all()
 
+    # Paginate items
     paginator = Paginator(items, rows)
-
     try:
         items_page = paginator.page(page)
     except PageNotAnInteger:
@@ -37,8 +46,8 @@ def index(request):
 
     return render(request, 'item_list/index.html', {
         'items': items_page,
-        'page': page,
-        'rows_per_page': rows,
+        'page': 1,
+        'rows_per_page': 10,
         'search_query': search_query,
     })
 
@@ -47,8 +56,11 @@ def add_item(request):
     categories = Category.objects.all()
 
     if request.method == "POST":
-        # Required fields
         name = request.POST.get("name")
+        if Item.objects.filter(name=name).exists():
+            messages.error(request, f"The item name '{name}' already exists.")
+            return redirect(reverse("item_list:add_item"))
+
         price = request.POST.get("price")
         cost = request.POST.get("cost")
 
@@ -57,12 +69,14 @@ def add_item(request):
         in_stock = request.POST.get("in_stock", None)
         optimal_stock = request.POST.get("optimal_stock", None)
         reorder_level = request.POST.get("reorder_level", None)
-        volume_per_unit = request.POST.get("volume_weight_per_unit", None) if request.POST.get("sold_by") == "volume_weight" else None
+        volume_per_unit = (
+            request.POST.get("volume_weight_per_unit", None)
+            if request.POST.get("sold_by") == "volume_weight" else None
+        )
         remaining_volume = (
             float(volume_per_unit) * int(in_stock) if volume_per_unit and in_stock else None
         )
 
-        # Validation and conversion
         try:
             price = float(price) if price else 0.00
             cost = float(cost) if cost else 0.00
@@ -74,8 +88,8 @@ def add_item(request):
         category_id = request.POST.get("category")
         category = Category.objects.filter(id=category_id).first() if category_id else None
 
-        # Create the item
-        item = Item.objects.create(
+        # Create item
+        Item.objects.create(
             name=name,
             category=category,
             price=price,
@@ -90,20 +104,20 @@ def add_item(request):
             sold_by=request.POST.get("sold_by"),
         )
 
-        rows = request.session.get('item_list_rows', 10)
+        # Redirect back to the current item list page
         page = request.session.get('item_list_page', 1)
-
+        rows = request.session.get('item_list_row', 10)
         redirect_url = f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}"
+        messages.success(request, 'Item added successfully!')
         return redirect(redirect_url)
 
     return render(request, "item_list/add_item.html", {"categories": categories})
 
 
 def cancel_redirect(request):
-    if request.method == 'POST':
-        # Retrieve `page` and `rows` from the session (if needed)
-        page = request.session.get('item_list_page', 1)
-        rows = request.session.get('item_list_rows', 10)
-        
-        # Redirect to the index page with pagination parameters
-        return redirect(f"{reverse('item_list_index')}?page={page}&rows={rows}")
+    # Retrieve `page` and `rows` from session variables for item_list
+    page = request.session.get('item_list_page', 1)
+    rows = request.session.get('item_list_row', 10)
+
+    # Redirect to the index page with item_list pagination parameters
+    return redirect(f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}")

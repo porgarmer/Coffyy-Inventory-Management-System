@@ -9,6 +9,20 @@
 
 <h1 class="form-title">Add New Item</h1>
 
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+<div style="display: none;" class="messages">
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 <form method="post" class="add-item-form">
     {% csrf_token %}
 

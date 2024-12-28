@@ -209,3 +209,16 @@ input:checked + .switch-label::before {
     gap: 20px; /* Space between the buttons */
 }
 
+#right-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* Initially hidden */
+}
+

@@ -92,3 +92,20 @@ document.getElementById("cancel-button").addEventListener("click", function () {
         window.location.href = redirectUrl;
     }, 0);  // Delay of 500ms (adjust as necessary)
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("right-popup");
+    const popupMessage = document.getElementById("popup-message");
+
+    // Check if there are messages passed from the backend
+    const messages = document.querySelectorAll(".messages p");
+    if (messages.length > 0) {
+        popupMessage.textContent = messages[0].textContent; // Display the first message
+        popup.style.display = "block";
+
+        // Automatically hide the popup after 3 seconds
+        setTimeout(() => {
+            popup.style.display = "none";
+        }, 3000);
+    }
+});

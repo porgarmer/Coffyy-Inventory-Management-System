@@ -8,60 +8,66 @@ document.addEventListener('DOMContentLoaded', function () {
     const rowsPerPageSelector = document.getElementById('rows-per-page');
 
     // Search functionality
-    searchBar.addEventListener('input', function (event) {
-        const searchTerm = searchBar.value.toLowerCase();
+    searchBar.addEventListener('input', function () {
+        const searchTerm = searchBar.value.toLowerCase().trim(); // Normalize input
         let resultsFound = false;
 
         tableRows.forEach(row => {
-            const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            const categoryName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const itemName = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase().trim() || '';
+            const categoryName = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase().trim() || '';
+
             if (itemName.includes(searchTerm) || categoryName.includes(searchTerm)) {
-                row.style.display = ''; // Show row
+                row.style.display = ''; // Show matching rows
                 resultsFound = true;
             } else {
-                row.style.display = 'none'; // Hide row
+                row.style.display = 'none'; // Hide non-matching rows
             }
         });
 
-        if (resultsFound) {
-            noResultsMessage.style.display = 'none'; // Hide "No results found" if results are found
-        } else {
-            noResultsMessage.style.display = 'block'; // Show "No results found" if no results match
-        }
+        noResultsMessage.style.display = resultsFound ? 'none' : 'block';
 
-        // Reset page number to 1 when a new search is made
         const url = new URL(window.location);
         url.searchParams.set('page', 1);
-        window.history.pushState({}, '', url); // Update the URL with the new page number
+        window.history.pushState({}, '', url);
     });
 
     // Handle rows per page change
-    rowsPerPageSelector.addEventListener('change', function () {
-        const rowsPerPage = rowsPerPageSelector.value;
-        const url = new URL(window.location);
-        url.searchParams.set('rows', rowsPerPage);
-        url.searchParams.set('page', 1);  // Reset to the first page when rows per page is changed
-        window.history.pushState({}, '', url); // Update the URL
-        location.reload(); // Reload the page to reflect the new rows per page
-    });
+    if (rowsPerPageSelector) {
+        rowsPerPageSelector.addEventListener('change', function () {
+            const rowsPerPage = rowsPerPageSelector.value;
+            const url = new URL(window.location);
+            url.searchParams.set('rows', rowsPerPage);
+            url.searchParams.set('page', 1);
+            window.history.pushState({}, '', url);
+            location.reload();
+        });
+    }
 
-    // Ensure the page number and rows per page are passed correctly when clicking a pagination link
+    // Update pagination links (Page numbers, Previous, Next)
     paginationLinks.forEach(link => {
         link.addEventListener('click', function (event) {
-            const currentPage = new URL(link.href).searchParams.get('page');
-            const rowsPerPage = new URL(link.href).searchParams.get('rows');
-            const url = new URL(window.location);
-            url.searchParams.set('page', currentPage); // Get current page from the link
-            url.searchParams.set('rows', rowsPerPage); // Get rows from the link
-            window.history.pushState({}, '', url); // Update the URL
+            event.preventDefault(); // Prevent default navigation
+            const url = new URL(link.href);
+            const currentSearch = searchBar.value.trim();
+            const rowsPerPage = rowsPerPageSelector?.value;
+
+            if (currentSearch) {
+                url.searchParams.set('search', currentSearch);
+            }
+            if (rowsPerPage) {
+                url.searchParams.set('rows', rowsPerPage);
+            }
+
+            window.location.href = url.toString();
         });
     });
 
-    // Show popup if a success message is present
+    // Display popup messages if hidden success messages are present
     const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
     hiddenMessages.forEach(message => {
-        if (message.textContent.trim()) {
-            popupMessage.textContent = message.textContent.trim();
+        const trimmedMessage = message.textContent.trim();
+        if (trimmedMessage) {
+            popupMessage.textContent = trimmedMessage;
             popup.classList.add('show');
 
             setTimeout(() => {

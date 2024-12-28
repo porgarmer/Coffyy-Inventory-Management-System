@@ -48,8 +48,8 @@ def index(request):
     # Pass categories, pagination parameters, and the search query to the template
     return render(request, 'item_category/index.html', {
         'categories': categories_page,
-        'page': 1,
-        'rows_per_page': 10,
+        'page': page,
+        'rows_per_page': rows,
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
 

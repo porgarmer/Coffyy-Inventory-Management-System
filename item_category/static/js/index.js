@@ -53,8 +53,28 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('rows-per-page').addEventListener('change', function () {
         const rowsForm = document.getElementById('rows-per-page-form');
         const pageInput = rowsForm.querySelector('input[name="page"]');
-        pageInput.value = 1;
+        pageInput.value = 1; // Reset to first page
         rowsForm.submit();
+    });
+
+    // Ensure rows-per-page dropdown retains its selected value
+    const rowsPerPage = document.getElementById('rows-per-page');
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('rows')) {
+        rowsPerPage.value = urlParams.get('rows');
+    }
+
+    // Update pagination links to retain rows and search parameters
+    const paginationLinks = document.querySelectorAll('.pagination .page-link');
+    paginationLinks.forEach(link => {
+        const url = new URL(link.href, window.location.origin);
+        if (urlParams.has('rows')) {
+            url.searchParams.set('rows', urlParams.get('rows'));
+        }
+        if (urlParams.has('search')) {
+            url.searchParams.set('search', urlParams.get('search'));
+        }
+        link.href = url.toString();
     });
 
     // Popup message handling
@@ -88,6 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!searchTerm) {
             event.preventDefault();
             alert('Please enter a search term.');
+        } else {
+            // Add the rows parameter dynamically to the search form
+            const rowsInput = document.createElement('input');
+            rowsInput.type = 'hidden';
+            rowsInput.name = 'rows';
+            rowsInput.value = rowsPerPage.value;
+            searchForm.appendChild(rowsInput);
         }
     });
 });

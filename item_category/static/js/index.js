@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Auto-close after 5 seconds
         setTimeout(() => {
             popup.classList.remove('show');
-        }, 5000);
+        }, 3000);
     }
 
     // Search form handling

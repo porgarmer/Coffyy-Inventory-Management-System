@@ -24,6 +24,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
             <form id="delete-form">
+                {% csrf_token %}
                 <a href="{% url 'item_list:add_item' %}" class="btn btn-success me-2" id="add-item">+ Add Item</a>
                 <button type="button" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
             </form>
@@ -90,6 +91,9 @@
                         <th scope="col" style="text-align: right;">Cost</th>
                         <th scope="col" style="text-align: right;">In Stock</th>
                         <th scope="col" style="text-align: right;">Volume</th>
+                        <!-- <th scope="col" style="text-align: right;">
+                            <span style="white-space: nowrap; display: inline-block; line-height: 1;">Remaining<br>Volume</span>
+                        </th> -->
                     </tr>
                 </thead>
                 {% if items %}

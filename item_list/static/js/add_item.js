@@ -66,3 +66,29 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleVolumeWeightGroup();
     toggleCompositeItemTable();
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Select all input fields with a Peso prefix
+    const monetaryFields = document.querySelectorAll(".form-group .input-group input");
+
+    // Ensure monetary fields have valid input
+    monetaryFields.forEach((field) => {
+        field.addEventListener("input", () => {
+            if (field.value < 0) field.value = 0; // Prevent negative values
+        });
+    });
+});
+
+document.getElementById("cancel-button").addEventListener("click", function () {
+    // Retrieve the values of data-page and data-rows attributes, falling back to defaults if missing
+    const page = this.getAttribute('data-page') || 1;  // Default to 1 if not found
+    const rows = this.getAttribute('data-rows') || 10;  // Default to 10 if not found
+
+    // Construct the redirect URL using these values
+    const redirectUrl = `/item-list/?page=${page}&rows=${rows}`;
+    
+    // Redirect with a slight delay (to match item_category behavior)
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, 0);  // Delay of 500ms (adjust as necessary)
+});

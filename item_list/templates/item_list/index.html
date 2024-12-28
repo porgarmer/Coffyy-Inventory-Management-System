@@ -11,6 +11,15 @@
     </div>
 </div>
 
+{% if messages %}
+    <div style="display:none;"> <!-- Hide messages but include them for the script -->
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if items or search_query == "" or search_query %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
@@ -26,26 +35,44 @@
             <select id="category-filter" class="form-select form-select-sm me-2" aria-label="Select Category">
                 <option value="">Select Category</option>
                 {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
+                        <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
 
             <!-- Stock Alert Combo Box -->
-            <select id="stock-alert-filter" class="form-select form-select-sm me-2" aria-label="Select Stock Alert">
+            <select 
+                id="stock-alert-filter" 
+                class="form-select form-select-sm me-2" 
+                aria-label="Select Stock Alert" 
+                style="width: 150px !important;"
+            >
                 <option value="">Stock Alert</option>
-                <option value="low">Low Stock</option>
-                <option value="medium">Medium Stock</option>
-                <option value="high">High Stock</option>
+                <option value="low">Low stock</option>
+                <option value="out-of-stock">Out of stock</option>
             </select>
 
+
             <!-- Search Input -->
-            <input
-                type="text"
-                id="item-search-bar"
-                class="form-control me-2"
-                placeholder="Search items..."
-                aria-label="Search Items"
-            >
+            <form method="GET" action="{% url 'item_list:item_list_index' %}" id="search-form" class="d-flex w-100 align-items-center">
+                <input
+                    type="text"
+                    id="item-search-bar"
+                    name="search"
+                    value="{{ search_query|default:'' }}"
+                    class="form-control me-2"
+                    placeholder="Search items..."
+                    aria-label="Search Items"
+                >
+                <button type="submit" class="btn p-0" style="border: none; background: none;">
+                    <img 
+                        src="{% static 'images/ICON_SEARCH.png' %}" 
+                        alt="Search Icon" 
+                        style="height: 24px; width: 24px;"
+                    >
+                </button>
+                <input type="hidden" name="page" value="1">
+                <input type="hidden" name="rows" value="{{ rows_per_page }}">
+            </form>            
         </div>
     </div>
 
@@ -65,21 +92,34 @@
                         <th scope="col" style="text-align: right;">Volume</th>
                     </tr>
                 </thead>
+                {% if items %}
                 <tbody id="item-table-body">
                     {% for item in items %}
                         <tr class="item-row">
                             <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.category }}</td>
-                            <td style="text-align: right;">{{ item.price }}</td>
-                            <td style="text-align: right;">{{ item.cost }}</td>
-                            <td style="text-align: right;">{{ item.stock }}</td>
-                            <td style="text-align: right;">{{ item.volume }}</td>
+                            <td>
+                                {% if item.category %}
+                                    {{ item.category }}
+                                {% else %}
+                                    No category
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">₱{{ item.price }}</td>
+                            <td style="text-align: right;">₱{{ item.cost }}</td>
+                            <td style="text-align: right;">{{ item.in_stock }}</td>
+                            <td style="text-align: right;">{{ item.remaining_volume }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
+                {% else %}
+            </table>
+            <div class="alert alert-warning text-center">
+                No items found.
+            </div>
+            {% endif %}
+                    
             <!-- Updated Pagination -->
             <div class="d-flex justify-content-between mt-3">
                 <div>Page {{ items.number }} of {{ items.paginator.num_pages }}</div>
@@ -113,20 +153,34 @@
                     </ul>
                 </div>
                 <div>
-                    Rows per page:
-                    <form method="GET" id="rows-per-page-form" class="d-inline-block">
-                        <select name="rows" id="rows-per-page" class="form-select form-select-sm d-inline-block w-auto">
+                    <form id="rows-per-page-form" method="get">
+                        Rows per page:
+                        <select
+                            name="rows"
+                            id="rows-per-page"
+                            class="form-select form-select-sm d-inline-block w-auto"
+                        >
                             <option value="10" {% if rows_per_page == 10 %}selected{% endif %}>10</option>
                             <option value="20" {% if rows_per_page == 20 %}selected{% endif %}>20</option>
                             <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
                         </select>
-                        <input type="hidden" name="page" value="1">
+                        <!-- Preserve the current search query and page -->
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        <input type="hidden" name="page" value="{{ items.number }}">
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{% else %}
+<div class="empty-state text-center mt-5">
+    <h2>No Items Yet</h2>
+    <p>Click the button below to add your first item and start managing your inventory!</p>
+    <a href="{% url 'item_list:add_item' %}" class="btn btn-primary">+ Add Item</a>
+</div>
+{% endif %}
 
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 <script src="{% static 'js/index.js' %}"></script>

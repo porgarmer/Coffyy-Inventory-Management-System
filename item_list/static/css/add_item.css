@@ -48,6 +48,7 @@ label {
 /* Small Label Styling (for parenthetical descriptions) */
 .small-label {
     display: block;
+    font-weight: bold;
     font-size: 0.85rem;
     color: #666;
     margin-top: 5px;
@@ -79,11 +80,27 @@ label {
     transition: border-color 0.2s ease-in-out;
 }
 
-/* Underlined Inputs */
+.underline-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.peso-sign {
+    position: absolute;
+    left: 0; /* Align Peso sign to the left of the input */
+    font-size: 1rem; /* Adjust size to match input text */
+    color: #555; /* Match color with your input styling */
+    padding-left: 5px; /* Add slight spacing from the edge */
+}
+
+/* Add padding to the input to accommodate the Peso sign */
 .underline-input {
+    padding-left: 20px; /* Adjust padding to fit Peso sign width */
     border: none;
     border-bottom: 2px solid #ccc;
-    border-radius: 0px;
+    border-radius: 0;
+    width: 100%; /* Ensure consistent width */
 }
 
 .underline-input:focus {

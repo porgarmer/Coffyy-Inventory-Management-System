@@ -40,19 +40,26 @@
         </div>
 
         <div>
-            <form method="GET" action="{% url 'item_categories_index' %}" id="search-form" class="d-flex ms-auto">
+            <form method="GET" action="{% url 'item_categories_index' %}" id="search-form" class="d-flex align-items-center">
                 <input
                     type="text"
                     id="category-search-bar"
                     name="search"
                     value="{{ search_query|default:'' }}"
-                    class="form-control"
+                    class="form-control me-2"
                     placeholder="Search categories..."
                     aria-label="Search Categories"
                 >
+                <button type="submit" class="btn p-0" style="border: none; background: none;">
+                    <img 
+                        src="{% static 'images/ICON_SEARCH.png' %}" 
+                        alt="Search Icon" 
+                        style="height: 24px; width: 24px;"
+                    >
+                </button>
                 <input type="hidden" name="page" value="1">
                 <input type="hidden" name="rows" value="{{ rows_per_page }}">
-            </form>
+            </form>      
         </div>
     </div>
 

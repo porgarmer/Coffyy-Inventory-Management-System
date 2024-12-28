@@ -18,7 +18,7 @@ function toggleDeleteButton() {
 }
 
 // Handle delete form submission with modal confirmation
-document.getElementById('delete-form').addEventListener('submit', function(e) {
+document.getElementById('delete-form').addEventListener('submit', function (e) {
     const selectedCategories = document.querySelectorAll('.item-checkbox:checked');
     if (selectedCategories.length === 0) {
         e.preventDefault();
@@ -31,7 +31,7 @@ document.getElementById('delete-form').addEventListener('submit', function(e) {
     new bootstrap.Modal(document.getElementById('deleteModal')).show();
     e.preventDefault();
 
-    document.getElementById('confirm-delete').addEventListener('click', function() {
+    document.getElementById('confirm-delete').addEventListener('click', function () {
         const selectedContainer = document.getElementById('selected-categories-container');
         selectedContainer.innerHTML = '';
         selectedCategories.forEach(checkbox => {
@@ -80,30 +80,23 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.getElementById('search-form');
     const searchBar = document.getElementById('category-search-bar');
-    const tableRows = document.querySelectorAll('#category-table-body tr');
-    const noResultsMessage = document.getElementById('no-results-message');
 
-    searchBar.addEventListener('input', function (event) {
-        const searchTerm = event.target.value.toLowerCase();
-        let resultsFound = false;
+    // Prevent filtering while typing
+    searchBar.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Stop default form submission
+            searchForm.submit(); // Manually submit the form
+        }
+    });
 
-        tableRows.forEach(row => {
-            const categoryName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-            if (categoryName.includes(searchTerm)) {
-                row.style.display = ''; // Show row
-                resultsFound = true;
-            } else {
-                row.style.display = 'none'; // Hide row
-            }
-        });
-
-        if (resultsFound) {
-            noResultsMessage.style.display = 'none'; // Hide "No results found" if results are found
-        } else {
-            noResultsMessage.style.display = 'block'; // Show "No results found" if no results match
+    // Optional: Handle the search button click explicitly
+    searchForm.addEventListener('submit', function (event) {
+        const searchTerm = searchBar.value.trim();
+        if (!searchTerm) {
+            event.preventDefault();
+            alert('Please enter a search term.');
         }
     });
 });
-
-

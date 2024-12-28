@@ -7,14 +7,15 @@ from .models import Item
 from item_category.models import Category
 
 def index(request):
-    # Use independent session variables for item_list
-    page = request.session.get('item_list_page', 1)  # Default to 1
-    rows = request.session.get('item_list_row', 10)  # Default to 10
+    # Retrieve session variables for pagination and rows-per-page
+    page = request.session.get('item_list_page', 1)
+    rows = request.session.get('item_list_row', 10)
 
     # Override session variables with GET parameters if provided
     page = request.GET.get('page', page)
     rows = request.GET.get('rows', rows)
 
+    # Validate and update session variables
     try:
         page = int(page)
         rows = int(rows)
@@ -22,7 +23,6 @@ def index(request):
         page = 1
         rows = 10
 
-    # Update session variables
     request.session['item_list_page'] = page
     request.session['item_list_row'] = rows
 
@@ -44,10 +44,10 @@ def index(request):
     except EmptyPage:
         items_page = paginator.page(paginator.num_pages)
 
+    # Context for rendering the template
     return render(request, 'item_list/index.html', {
         'items': items_page,
-        'page': 1,
-        'rows_per_page': 10,
+        'rows_per_page': rows,
         'search_query': search_query,
     })
 

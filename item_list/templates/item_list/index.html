@@ -127,27 +127,27 @@
                     <ul class="pagination justify-content-center">
                         {% if items.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}">Previous</a>
+                            <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Previous</a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
-                            <a href="#" class="page-link">Previous</a>
+                            <a class="page-link" href="#">Previous</a>
                         </li>
                         {% endif %}
 
                         {% for num in items.paginator.page_range %}
                         <li class="page-item {% if num == items.number %}active{% endif %}">
-                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
                         </li>
                         {% endfor %}
 
                         {% if items.has_next %}
                         <li class="page-item">
-                            <a href="?page={{ items.next_page_number }}&rows={{ rows_per_page }}" class="page-link">Next</a>
+                            <a class="page-link" href="?page={{ items.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Next</a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
-                            <a href="#" class="page-link">Next</a>
+                            <a class="page-link" href="#">Next</a>
                         </li>
                         {% endif %}
                     </ul>

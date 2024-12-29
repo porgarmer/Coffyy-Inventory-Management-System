@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 import json
 from django.http import JsonResponse
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import Paginator
 from django.urls import reverse
 from .models import Item
 from item_category.models import Category
@@ -143,7 +143,7 @@ def delete_items(request):
                 # Show success message to the user
                 messages.success(request, "Items deleted successfully!")
 
-                return redirect(f"{reverse('item_list:item_list_index')}?page={request.session.get('item_list_page', 1)}&rows={rows}")
+                return redirect(f"{reverse('item_list:item_list_index')}?page={total_pages}&rows={rows}")
 
             except Exception as e:
                 # Handle any errors that occur during deletion

@@ -1,7 +1,9 @@
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
+import json
 from django.http import JsonResponse
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
 from .models import Item
 from item_category.models import Category
@@ -121,3 +123,34 @@ def cancel_redirect(request):
 
     # Redirect to the index page with item_list pagination parameters
     return redirect(f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}")
+
+@csrf_exempt
+def delete_items(request):
+    if request.method == "POST":
+        # Retrieve the list of selected item IDs from the form
+        selected_ids = request.POST.getlist('selected_ids')
+
+        if selected_ids:
+            try:
+                # Delete the selected items
+                Item.objects.filter(id__in=selected_ids).delete()
+
+                # Calculate updated pagination
+                rows = request.session.get('item_list_row', 10)
+                items_count = Item.objects.count()
+                total_pages = (items_count + rows - 1) // rows  # Calculate total pages
+
+                # Show success message to the user
+                messages.success(request, "Items deleted successfully!")
+
+                return redirect(f"{reverse('item_list:item_list_index')}?page={request.session.get('item_list_page', 1)}&rows={rows}")
+
+            except Exception as e:
+                # Handle any errors that occur during deletion
+                messages.error(request, f"Error deleting items: {str(e)}")
+
+        else:
+            # Handle case where no items were selected
+            messages.error(request, "No items selected for deletion.")
+
+        return redirect(f"{reverse('item_list:item_list_index')}?page={request.session.get('item_list_page', 1)}&rows={request.session.get('item_list_row', 10)}")

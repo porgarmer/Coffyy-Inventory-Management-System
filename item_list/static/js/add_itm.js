@@ -79,21 +79,49 @@ document.addEventListener("DOMContentLoaded", () => {
         const requiredFields = document.querySelectorAll("input[required], textarea[required], select[required]");
         let isValid = true;
     
+        // Flag to track if non-composite required fields are valid
+        let nonCompositeValid = true;
+    
         requiredFields.forEach((field) => {
             if (!field.value.trim()) {
                 isValid = false;
                 field.classList.add("error"); // Add error class for visual indication
+                if (!field.closest("#composite-item-table")) {
+                    nonCompositeValid = false; // Track if non-composite fields are invalid
+                }
             } else {
                 field.classList.remove("error"); // Remove error class if field is valid
             }
         });
     
-        if (!isValid) {
-            alert("Please fill out all required fields before saving."); // Alert the user
+        // Validate composite item table only if the checkbox is checked
+        if (compositeItemCheckbox.checked) {
+            const compositeItemRows = compositeItemTable.querySelectorAll("tbody tr");
+            const hasData = Array.from(compositeItemRows).some(row => {
+                const quantityInput = row.querySelector(".quantity-input");
+                return quantityInput && parseInt(quantityInput.value, 10) > 0;
+            });
+    
+            if (!hasData) {
+                isValid = false;
+                // Add error styling for the composite item table (highlight in red)
+                compositeItemTable.classList.add("error");
+            } else {
+                compositeItemTable.classList.remove("error");
+            }
+        }
+    
+        // Separate alerts based on the validation results
+        if (!nonCompositeValid) {
+            alert("Please fill out all required fields.");
+        }
+    
+        if (compositeItemCheckbox.checked && !isValid) {
+            alert("Please add composite items to the table.");
         }
     
         return isValid;
-    };
+    };    
     
     const isNameValid = () => {
         return nameErrorLabel.style.display === "none";

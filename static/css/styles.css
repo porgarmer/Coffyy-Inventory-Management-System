@@ -2,8 +2,26 @@
 
 *,
 ::after,
-::before {
+::before 
+
+{
     box-sizing: border-box;
+}
+header {
+    background-color: #50260E;
+    color: #fff;
+    padding: 10px 20px; 
+    text-align: left; 
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start; 
+}
+
+.header .logo {
+    height: 60px;
 }
 
 body {
@@ -150,4 +168,13 @@ a.sidebar-link{
 #sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after{
     transform: rotate(45deg);
     transition: all .2s ease-out;
+}
+.footer {
+    background-color: #50260E;
+    color: white;
+    text-align: center;
+    padding: 20px 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }

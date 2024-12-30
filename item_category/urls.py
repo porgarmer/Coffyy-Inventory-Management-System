@@ -7,4 +7,6 @@ urlpatterns = [
     path('delete/', views.delete_categories, name='delete_categories'),  # View for deleting categories
     path('edit/<int:category_id>/', views.edit_category, name='edit_category'),  # Edit category page
     path('cancel-redirect/', views.cancel_redirect, name='cancel_redirect'),
+    path('validate-category-name/', views.validate_category_name, name='validate_category_name'),
+    path('validate-category-name-edit/', views.validate_category_name, name='validate_category_name_edit'),
 ]

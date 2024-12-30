@@ -14,6 +14,67 @@ document.addEventListener('DOMContentLoaded', function () {
         message.style.display = 'none';
     });
 
+    const categoryNameInput = document.getElementById("category-name");
+    const categoryNameErrorLabel = document.getElementById("category-name-error");
+
+    categoryNameInput.addEventListener("blur", function () {
+        const name = categoryNameInput.value.trim();
+
+        if (name) {
+            fetch(`/item-category/validate-category-name/?name=${encodeURIComponent(name)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        categoryNameErrorLabel.textContent = "Category name already exists.";
+                        categoryNameErrorLabel.style.display = "inline";
+                        categoryNameInput.classList.add("input-error");
+                    } else {
+                        categoryNameErrorLabel.textContent = "";
+                        categoryNameErrorLabel.style.display = "none";
+                        categoryNameInput.classList.remove("input-error");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking category name:", error);
+                });
+        }
+    });
+
+    const saveButton = document.querySelector("button[type='submit']");
+    const categoryForm = document.querySelector("form");
+
+    if (!categoryNameInput || !saveButton || !categoryForm) {
+        console.error("Required DOM elements are missing!");
+        return;
+    }
+
+    saveButton.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent the default form submission
+
+        const name = categoryNameInput.value.trim();
+
+        if (name) {
+            fetch(`/item-category/validate-category-name/?name=${encodeURIComponent(name)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Show alert if name already exists
+                        alert("The category name already exists. Please use a different name.");
+                    } else {
+                        // Name is valid, submit the form
+                        categoryForm.submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking category name:", error);
+                    alert("An error occurred while validating the category name. Please try again.");
+                });
+        } else {
+            // Show alert if the name field is empty
+            alert("Please enter a category name before saving.");
+        }
+    });
+
     // If there's a hidden message, show the popup
     const popupTrigger = document.querySelector('div[style="display:none;"]');
     if (popupTrigger && popupTrigger.textContent.trim() !== '') {

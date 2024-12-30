@@ -58,10 +58,21 @@ def validate_category_name(request):
     if request.method == 'GET':
         category_name = request.GET.get('name', '').strip()
         if not category_name:
-            return JsonResponse({'exists': False})  # No name to validate
+            return JsonResponse({'exists': False})
         exists = Category.objects.filter(name__iexact=category_name).exists()
         return JsonResponse({'exists': exists})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def validate_category_name_edit(request):
+    name = request.GET.get('name', '').strip()
+    exclude_id = request.GET.get('exclude')
+    
+    if exclude_id:
+        exists = Category.objects.filter(name=name).exclude(id=exclude_id).exists()
+    else:
+        exists = Category.objects.filter(name=name).exists()
+    
+    return JsonResponse({'exists': exists})
 
 def add_category(request):
     # Get pagination parameters

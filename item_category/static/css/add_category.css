@@ -152,3 +152,15 @@ input[type="color"] {
 .form {
     padding: 20px;
 }
+
+.input-error {
+    border-color: red;
+    outline: none;
+}
+
+/* Style for error message */
+#error-label {
+    font-size: 0.9em;
+    color: red;
+    display: none;
+}

@@ -1,24 +1,4 @@
 /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f7f7;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px 20px;
-    background-color: #50260E;
-    color: white;
-}
-
-.header .logo {
-    height: 60px; 
-    margin-right: 10px;
-}
 
 .container {
     display: flex;
@@ -138,16 +118,6 @@ body {
 .buttons .btn-save {
     background-color: #ffeb3b;
     color: black;
-}
-
-.footer {
-    background-color: #50260E;
-    color: white;
-    text-align: center;
-    padding: 20px 20px;
-    position: relative;
-    bottom: 0;
-    width: 100%;
 }
 
 

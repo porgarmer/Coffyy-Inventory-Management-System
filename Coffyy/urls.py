@@ -23,5 +23,4 @@ urlpatterns = [
     path('item-list/', include('item_list.urls')),  # Include item_list URLs
     path('item-category/', include('item_category.urls')),  # Include the app's URLs
     path('purchase-order/', include('purchase_order.urls')),  #purchase-order URLs
-    path('account-profile/',include('account_profile.urls'))
 ]

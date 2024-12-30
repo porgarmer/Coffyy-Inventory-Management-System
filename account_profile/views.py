@@ -1,5 +1,5 @@
-# account_profile/views.py
 from django.shortcuts import render
 
-def edit_account(request):
-    return render(request, 'account_profile/profile_admin.html')
+# Create your views here.
+def index(request):
+    return render(request, "account_profile/index.html")

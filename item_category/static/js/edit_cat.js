@@ -10,11 +10,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const categoryNameInput = document.getElementById("category-name");
     const categoryNameErrorLabel = document.getElementById("category-name-error");
-    const categoryId = categoryNameInput.dataset.categoryId; // Assume category ID is stored as a data attribute
+    const initialName = categoryNameInput.getAttribute("data-initial-name");
+    const categoryId = categoryNameInput.getAttribute("data-category-id");
 
+    // Hide any center messages if the popup is triggered
+    const centerMessages = document.querySelectorAll('.messages');
+    centerMessages.forEach(function (message) {
+        message.style.display = 'none';
+    });
+
+    // Real-time validation on blur
     categoryNameInput.addEventListener("blur", function () {
         const name = categoryNameInput.value.trim();
 
+        // Skip validation if the name is the same as the initial name
+        if (name === initialName) {
+            categoryNameErrorLabel.textContent = "";
+            categoryNameErrorLabel.style.display = "none";
+            categoryNameInput.classList.remove("input-error");
+            return;
+        }
+
+        // Validate name with server
         if (name) {
             fetch(`/item-category/validate-category-name-edit/?name=${encodeURIComponent(name)}&exclude=${categoryId}`)
                 .then(response => response.json())
@@ -35,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Save button click handler
     const saveButton = document.querySelector("button[type='submit']");
     const categoryForm = document.querySelector("form");
 
@@ -44,9 +62,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     saveButton.addEventListener("click", (e) => {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault(); // Prevent default form submission
 
         const name = categoryNameInput.value.trim();
+
+        // Skip validation if the name is the same as the initial name
+        if (name === initialName) {
+            categoryForm.submit(); // Submit the form directly
+            return;
+        }
 
         if (name) {
             fetch(`/item-category/validate-category-name-edit/?name=${encodeURIComponent(name)}&exclude=${categoryId}`)
@@ -69,6 +93,18 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Please enter a category name before saving.");
         }
     });
+
+    // If there's a hidden message, show the popup
+    const popupTrigger = document.querySelector('div[style="display:none;"]');
+    if (popupTrigger && popupTrigger.textContent.trim() !== '') {
+        popupMessage.textContent = popupTrigger.textContent;
+        popup.classList.add('show');
+
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            popup.classList.remove('show');
+        }, 5000);
+    }
 
     // Handle Cancel Button Redirect with Popup Close
     cancelButton.addEventListener('click', function () {

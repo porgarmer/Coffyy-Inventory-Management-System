@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Purchase Odrders{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/create_purchase_order.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+{% endblock stylesheet %}
+
+{% block content %}
+<h1> Purchase Order</h1>
+<br>
+<form action="{% url 'purchase-order' %}" method="post">
+    {% csrf_token %}
+    <div class="container my-4">
+        <!-- Supplier Section -->
+        <div class="form-section">
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <select id="supplier" name="supplier" class="form-control select2">
+                            <option value="">Select a supplier</option>
+                            {% comment %} {% for supplier in suppliers %} {% endcomment %}
+                            {% comment %} <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                        {% endfor %} {% endcomment %}
+                            <option value="oten" >Test 1</option>
+                            <option value="2" >Test 2</option>
+                        </select>
+                    </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="purchaseOrderDate" class="form-label d-flex ">Purchase Order Date</label>
+                    <input type="date" id="purchaseOrderDate" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="expectedDate" class="form-label d-flex">Expected On</label>
+                    <input type="date" id="expectedDate" class="form-control">
+                </div>
+            </div>
+            <div class="mb-3 d">
+                <label for="notes" class="form-label d-flex">Notes</label>
+                <textarea id="notes" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+
+    </div>
+
+
+
+        <!-- Items Section -->
+        <div class="form-section">
+            <div class="row">
+                <div class="d-flex justify-content-between">
+                    <h4>Items</h4>
+                    <div>
+                        <select name="autofill" id="autofill" class="form-control autofill">
+                            <option value="" disabled selected>Autofill</option>
+                            <option value="" >All items from supplier</option>
+                            <option value="" >Low stock items from suppler</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>In Stock</th>
+                                <th>Incoming</th>
+                                <th>Quantity</th>
+                                <th>Purchase Cost</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" placeholder="Search item">
+                                </td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>
+                                    <input type="number" class="form-control" min="0" value="0">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" step="0.01" value="0.00">
+                                </td>
+                                <td>0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>Total:</strong> <span>0.00</span>
+                    </div>
+                </div>  
+        </div>
+    </div>
+
+        <!-- Action Buttons -->
+    <div class="btn-group d-flex flex-wrap justify-content-end gap-4">
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="#">
+                    CANCEL
+                </a>
+            </div>    
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-custom btn-custom-draft fw-bold px">
+                    SAVE AS DRAFT
+                </button>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-custom btn-custom-save fw-bold px">
+                    SAVE
+                </button>
+            </div>       
+    </div>
+</form>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/create_purchase_order.js' %}"></script>
+{% endblock scripts %}

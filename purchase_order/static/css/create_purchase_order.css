@@ -1,0 +1,66 @@
+.select2-container--default .select2-selection--single {
+    background-color: #f9f9f9; /* Light background */
+    border: none;
+    border-bottom: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    height: 2em; /* Height of the dropdown */
+    display: flex;
+    align-items: center; /* Center text vertically */
+    font-size: 2em; /* Font size */
+}
+
+.form-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.autofill{
+    margin-bottom: 1em;
+}
+
+.btn-custom {
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 10em;
+    
+}
+
+.btn-custom:active {
+    transform: scale(0.98); /* Optional: Add a slight scale effect */
+    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
+    border: none !important
+}
+
+.btn-custom-save{
+    background-color: #FDF21D;
+    color: #50260E;
+}
+
+.btn-custom-save:hover{
+    background-color: #f7ec2a;
+    color: #50260E;
+}
+
+.btn-custom-save:active{
+    background-color: #e2d92d !important; /* Custom active background color */
+    color: #50260E !important; /* Custom active text color */
+}
+
+.btn-custom-cancel{
+    background-color: #B20727;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:hover{
+    background-color: #9e0722;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:active{
+    background-color: #8f061f !important; 
+    color: #FFFFFF !important;
+}
+

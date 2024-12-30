@@ -1,0 +1,95 @@
+/* General Styles */
+body {
+    background-color: #D5BF4D;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    background-color: #50260E;
+    height: 150px; /* Increased height for better spacing */
+    position: relative;
+}
+
+/* Logo Overlay */
+.logo-container {
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 5px solid #50260E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+    width: 100%;
+    height: auto;
+}
+
+/* Footer */
+.footer {
+    background-color: #50260E;
+    height: 50px;
+    width: 100%;
+}
+
+/* Registration Box */
+.register-password-box {
+    background-color: #B20727;
+    width: 400px; /* Increased width for better spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 150px; /* Ensure no overlap with logo */
+    margin-bottom: 50px; /* Adds space below the container */
+}
+
+
+/* Forgot Password Box Title */
+.register-password-box h2 {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+/* Label Styling */
+.register-password-box label {
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Buttons Container */
+.d-flex.justify-content-center {
+    gap: 15px; /* Adds space between Submit and Cancel */
+}
+
+/* Submit Button */
+.btn-warning {
+    font-weight: bold;
+    padding: 10px 20px;
+    background-color: #FDF21D;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-warning:hover {
+    background-color: #FCD307;
+    cursor: pointer;
+}
+
+/* Cancel Link */
+.cancel-link {
+    font-weight: bold;
+    color: #fff;
+    text-decoration: underline;
+    padding-top: 10px;
+}
+
+.cancel-link:hover {
+    text-decoration: underline;
+}

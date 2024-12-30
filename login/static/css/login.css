@@ -1,0 +1,79 @@
+/* General Styles */
+body {
+    background-color: #D5BF4D;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    background-color: #50260E;
+    height: 120px;
+    position: relative;
+}
+
+/* Logo Overlay */
+.logo-container {
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 5px solid #50260E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+    width: 95%;
+    height: auto;
+}
+
+/* Footer */
+.footer {
+    background-color: #50260E;
+    height: 50px;
+    width: 100%;
+}
+
+/* Login Box */
+.login-box {
+    background-color: #B20727;
+    width: 350px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-box label {
+    font-weight: bold;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.btn-warning {
+    font-weight: bold;
+    width: 48%; 
+    background-color: #FDF21D
+}
+
+/* Adjust Register Link Position */
+.register-link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    margin-top: 30px; 
+}
+
+.register-link {
+    font-weight: bold;
+    text-decoration: underline;
+    color: #fff; 
+}
+
+.no-account {
+    font-size: 0.9rem;
+    margin-top: 5px;
+    color: #fff; 
+}

@@ -1,0 +1,94 @@
+/* Card Styles */
+.custom-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    margin-bottom: 20px;
+}
+
+.card {
+    text-align: center;
+    border: none;
+    border-radius: 12px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    width: 180px; 
+    height: 140px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; 
+}
+
+.card:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Background images for each card */
+.card-1 { background-image: url('c1.jpg'); }
+.card-2 { background-image: url('c2.jpg'); }
+.card-3 { background-image: url('c3.jpg'); }
+.card-4 { background-image: url('c4.jpg'); }
+.card-5 { background-image: url('c5.jpg'); }
+.card-6 { background-image: url('c6.jpg'); }
+.card-7 { background-image: url('c7.jpg'); }
+
+/* Text styling inside cards */
+.card h4, .card h5 {
+    position: absolute;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); 
+    text-align: center;
+}
+
+.card h4 {
+    top: 30%; 
+    font-size: 1.2rem; 
+    font-weight: bold;
+    margin: 0;
+}
+
+.card h5 {
+    bottom: 15%; 
+    font-size: 0.9rem; 
+    margin: 0;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .card {
+        width: 140px; 
+        height: 110px;
+    }
+
+    .card h4 {
+        font-size: 1rem;
+    }
+
+    .card h5 {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-row {
+        gap: 10px; 
+    }
+
+    .card {
+        width: 120px;
+        height: 100px;
+    }
+
+    .card h4 {
+        font-size: 0.9rem;
+    }
+
+    .card h5 {
+        font-size: 0.7rem;
+    }
+}

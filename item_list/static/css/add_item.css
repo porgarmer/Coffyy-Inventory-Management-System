@@ -8,6 +8,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.vertical-spacer {
+    height: 20px;  /* Adjust the height as needed */
+}
+
 /* Top Section: Name, Category, Description */
 .top-section {
     margin-bottom: 30px;
@@ -21,7 +25,7 @@
 .bottom-section {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 30px;  /* Increased gap between left and right columns */
 }
 
 /* Left and Right Columns */
@@ -43,6 +47,7 @@ label {
 /* Small Label Styling (for parenthetical descriptions) */
 .small-label {
     display: block;
+    font-weight: bold;
     font-size: 0.85rem;
     color: #666;
     margin-top: 5px;
@@ -74,11 +79,28 @@ label {
     transition: border-color 0.2s ease-in-out;
 }
 
-/* Underlined Inputs */
+/* Underline input for quantity and cost fields */
+.underline-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.peso-sign {
+    position: absolute;
+    left: 0; /* Align Peso sign to the left of the input */
+    font-size: 1rem; /* Adjust size to match input text */
+    color: #555; /* Match color with your input styling */
+    padding-left: 5px; /* Add slight spacing from the edge */
+}
+
+/* Add padding to the input to accommodate the Peso sign */
 .underline-input {
+    padding-left: 20px; /* Adjust padding to fit Peso sign width */
     border: none;
-    border-bottom: 2px solid #ccc;
-    border-radius: 0px;
+    border-bottom: 2px solid #ccc; /* Underline only */
+    border-radius: 0;
+    width: 100%; /* Ensure consistent width */
 }
 
 .underline-input:focus {
@@ -93,6 +115,33 @@ textarea.form-control {
     border-radius:0px;
 }
 
+/* Layout for left column (Quantity and Cost) */
+.left-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Layout for right column (Name) */
+.right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Align name to the right */
+#item-name {
+    text-align: left; /* Align the name input to the right */
+}
+
+/* Align labels inside input fields */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
 /* Button Styling */
 button.btn-primary {
     background: #007bff;
@@ -105,4 +154,181 @@ button.btn-primary {
 
 button.btn-primary:hover {
     background: #0056b3;
+}
+
+#inventory-item-label {
+    font-size: 1.50rem;
+    font-weight: bold;
+    margin-right: 10px;
+}
+#total-cost-label {
+    font-size: 1rem;
+    font-weight: bold;
+    align-items:center;
+    margin-right: 10px;
+}
+
+.total-cost-wrapper {
+    display: flex;
+    justify-content: flex-end;  /* Aligns the content to the right */
+    align-items: center;        /* Ensures vertical alignment */
+    width: 100%;                /* Ensures it takes up full width */
+    margin-top: 10px;           /* Adds some space above */
+}
+
+.composite-item-label-container {
+    display: flex;
+    justify-content: space-between;  /* This will space the elements apart */
+    width: 100%;  /* Ensures the container stretches across its parent */
+}
+
+.inventory-item-label, .toggle-switch {
+    display: inline-flex;
+    align-items: center;  /* Vertically center-aligns the label and toggle */
+}
+
+/* Increase the size of the toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;  /* Increased width of the switch */
+    height: 40px; /* Increased height of the switch */
+}
+
+/* Update the label (the background of the switch) */
+.switch-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;  /* Light grey for the off state */
+    border-radius: 40px;  /* Make it fully rounded */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Update the color of the toggle when it's checked */
+input:checked + .switch-label {
+    background-color: #000;  /* Black when checked */
+}
+
+/* Update the position and style of the toggle button */
+.switch-label::before {
+    content: "";
+    position: absolute;
+    height: 30px;  /* Larger height of the circle */
+    width: 30px;   /* Larger width of the circle */
+    background-color: white;
+    border-radius: 50%;
+    top: 5px;  /* Adjusted to center the circle vertically */
+    left: 5px;  /* Adjusted to center the circle horizontally */
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Move the toggle to the right when checked */
+input:checked + .switch-label::before {
+    transform: translateX(40px);  /* Increased distance to move the larger circle */
+}
+
+/* Button Container */
+.button-container {
+    margin-top: 20px;
+    padding: 0;
+    background: none;         /* No background color */
+    background-color: transparent; /* Explicitly make background transparent */
+    border: none;             /* Remove any borders */
+    box-shadow: none;         /* Remove any box-shadow */
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 20px; /* Space between the buttons */
+}
+
+#right-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+    display: none; /* Initially hidden */
+    transition: right 0.5s ease; /* Smooth slide-in/out */
+}
+
+#right-popup.show {
+    right: 20px; /* Slide into view */
+}
+
+#search-results {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Remove the default button styling */
+.btn.remove-item {
+    background-color: transparent;  /* No background */
+    border: none;                    /* No border */
+    padding: 0;                       /* Remove padding */
+    cursor: pointer;                 /* Ensure it's clickable */
+}
+
+/* Style the image inside the button */
+.btn.remove-item img {
+    width: 20px;                     /* Adjust the size of the icon */
+    height: 20px;                    /* Adjust the size of the icon */
+    display: block;                  /* Make sure it's not inline */
+    margin: 0 auto;                  /* Center the icon within the button */
+}
+
+/* Add circular border on hover */
+.btn.remove-item:hover {
+    border: 2px solid #ccc;          /* Light gray border */
+    border-radius: 50%;               /* Make the border circular */
+    padding: 5px;                     /* Add some space around the icon */
+    background-color: rgba(0, 0, 0, 0.1); /* Light background on hover */
+}
+
+.quantity-input {
+    padding-left: 20px; /* Adjust padding to fit the number input */
+    border: none;
+    border-bottom: 2px solid #ccc; /* Underline the input */
+    border-radius: 0;
+    text-align: center;
+    width: 100px; /* Adjust width to make the underline smaller */
+    font-size: 1rem; /* Adjust font size to match the form */
+}
+
+.quantity-input:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+}
+
+/* Optional: Adjust the styling for the 'data-cost' attribute, if needed */
+.quantity-input[data-cost] {
+    /* Additional styling for elements with data-cost */
+    background-color: #f9f9f9; /* Slightly different background color for number inputs */
+}
+
+.input-error {
+    border-color: red;
+}
+
+span {
+    font-size: 0.9em;
+}
+
+.quantity-input.quantity-zero {
+    background-color: #ffcccc; /* Light red background */
+    border: 1px solid red; /* Optional red border */
 }

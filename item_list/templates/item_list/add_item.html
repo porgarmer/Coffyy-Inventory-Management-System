@@ -9,8 +9,23 @@
 
 <h1 class="form-title">Add New Item</h1>
 
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+<div style="display: none;" class="messages">
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 <form method="post" class="add-item-form">
     {% csrf_token %}
+
 
     <div class="form-container">
         <!-- Top Section: Name, Category, Description -->
@@ -18,7 +33,7 @@
             <!-- Name Field -->
             <div class="form-group">
                 <label for="item-name">Name</label>
-                <input type="text" id="item-name" name="name" class="form-control underline-input" value="Hello" required>
+                <input type="text" id="item-name" name="name" class="form-control underline-input" value="{{ form_data.name|default:'' }}" required>
             </div>
 
             <!-- Category Field -->
@@ -26,14 +41,16 @@
                 <label for="category">Category</label>
                 <select id="category" name="category" class="form-control underline-input">
                     <option value="">No category</option>
-                    <!-- Add categories dynamically -->
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == form_data.category %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <!-- Description Field -->
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" class="form-control"></textarea>
+                <textarea id="description" name="description" class="form-control underline-input" value="{{ form_data.description|default:'' }}"></textarea>
             </div>
         </div>
 
@@ -43,7 +60,7 @@
             <div class="left-column">
                 <!-- Checkbox -->
                 <div class="form-group checkbox-group">
-                    <input type="checkbox" id="is-for-sale" name="is_for_sale">
+                    <input type="checkbox" id="is-for-sale" name="is_for_sale" {% if form_data.is_for_sale == "on" %}checked{% endif %}>
                     <label for="is-for-sale">This item is for sale</label>
                 </div>
 
@@ -51,18 +68,20 @@
                 <div class="form-group">
                     <label>Sold by</label>
                     <div class="radio-group">
-                        <input type="radio" id="sold-by-each" name="sold_by" value="each">
+                        <input type="radio" id="sold-by-each" name="sold_by" value="each" {% if form_data.sold_by == "each" %}checked{% endif %} required>
                         <label for="sold-by-each">Each</label>
-
-                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight">
+                
+                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight" {% if form_data.sold_by == "volume_weight" %}checked{% endif %} required>
                         <label for="sold-by-volume-weight">Volume/Weight</label>
                     </div>
                 </div>
-
                 <!-- Price Field -->
                 <div class="form-group">
                     <label for="price">Price</label>
-                    <input type="number" id="price" name="price" class="form-control underline-input" min="0" step="0.01">
+                    <div class="underline-input-wrapper">
+                        <span class="peso-sign">₱</span>
+                        <input type="number" id="price" name="price" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.price|default:'' }}" required>
+                    </div>
                 </div>
             </div>
 
@@ -71,21 +90,125 @@
                 <!-- Volume/Weight per Unit (hidden by default) -->
                 <div id="volume-weight-group" class="form-group" style="display:none;">
                     <label for="volume-weight-per-unit">Volume/Weight per unit</label>
-                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" step="0.01" value="0.00">
+                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.volume_weight_per_unit|default:'0.00' }}">
                     <span class="small-label">(milliliters for volume, milligrams for weight)</span>
                 </div>
 
                 <!-- Cost Field -->
                 <div class="form-group">
                     <label for="cost">Cost</label>
-                    <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" step="0.01" value="Php 0.00">
+                    <div class="underline-input-wrapper">
+                        <span class="peso-sign">₱</span>
+                        <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" step="0.01" value="0.00" required>
+                    </div>
                     <span class="small-label">(per item including shipping fee, etc.)</span>
                 </div>
             </div>
         </div>
     </div>
+    
+<!-- Inventory Section (Second Frame) -->
+<div class="form-container inventory-container">
+    <h1 class="form-title">Inventory</h1>
 
+    <!-- Composite Item Section -->
+    <div class="form-group">
+        <div class="composite-item-label-container">
+            <label for="composite-item" id="inventory-item-label">Composite Item</label>
+            <div class="toggle-switch">
+                <input type="checkbox" id="composite-item" name="composite_item" value="on">
+                <label for="composite-item" class="switch-label"></label>
+            </div>
+        </div>
+        <div class="vertical-spacer"></div>
+        <div id="composite-item-table" style="display:none;">
+            <table id="composite-items-table" class="table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Composite items will be dynamically added here -->
+                </tbody>
+            </table>
+            <input
+                type="text"
+                id="composite-item-search"
+                class="form-control"
+                placeholder="Search for items..."
+                autocomplete="off"
+            >
+            <div id="search-results" class="dropdown-menu"></div>
+             <div class="total-cost-wrapper">
+                <label for="composite-item" id="total-cost-label">Total Cost: ₱ <span id="total-cost">0.00</span></label>
+            </div>
+        </div>        
+    </div>
+    
+    <!-- Spacer between Composite Item and Track Stock -->
+    <div class="vertical-spacer"></div>
+
+    <!-- Track Stock Section -->
+    <div class="form-group">
+        <label for="composite-item" id="inventory-item-label">Track Stock</label>
+        <div class="vertical-spacer"></div>
+        <div class="bottom-section">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="form-group">
+                    <label for="in-stock">In Stock</label>
+                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0" value="{{ form_data.in_stock|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="reorder-level">Reorder Level</label>
+                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0" value="{{ form_data.reorder_level|default:'' }}" required>
+                    <span class="small-label">(Item quantity for low stock notification)</span>
+                </div>
+                <div class="form-group">
+                    <label for="default-purchase-cost">Default Purchase Cost</label>
+                    <div class="underline-input-wrapper">
+                        <span class="peso-sign">₱</span>
+                        <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.default_purchase_cost|default:'0.00' }}" required>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="right-column">
+                <div class="form-group">
+                    <label for="primary-supplier">Primary Supplier</label>
+                    <select id="primary-supplier" name="primary_supplier" class="form-control underline-input">
+                        <option value="">No supplier</option>
+                            <!-- {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %} -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="optimal-stock">Optimal Stock</label>
+                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0" value="{{ form_data.optimal_stock|default:'' }}" required>
+                    <span class="small-label">(The amount of inventory needed to meet demand)</span>
+                </div>
+                <div id="remaining-volume-group" class="form-group" style="display:none;">
+                    <label for="remaining-volume">Remaining Volume</label>
+                    <input type="text" id="remaining-volume" class="form-control underline-input" readonly/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-container button-container">
+    <div class="button-group">
+        <!-- Cancel Button -->
+        <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
+        <!-- Save Button -->
+        <button type="submit" class="btn btn-success" id="saveButton" data-url="{% url 'item_list:add_item' %}">Save</button>
+    </div>
+</div>
 </form>
+<script src="/static/js/add_itm.js"></script>
 
-<script src="/static/js/add_item.js"></script>
 {% endblock %}

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const redirectUrl = `/item-category/?page=${page}&rows=${rows}`;
         setTimeout(() => {
             window.location.href = redirectUrl;
-        }, 500);
+        }, 0);
     });
 
     // Predefined color selection

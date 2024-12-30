@@ -29,11 +29,11 @@ def index(request):
     # Fetch the search query from the GET parameters
     search_query = request.GET.get('search', '').strip()
 
-    # Filter categories based on the search query (case-insensitive)
+    # Filter categories based on the search query (case-insensitive) and sort alphabetically
     if search_query:
-        categories = Category.objects.filter(name__icontains=search_query)
+        categories = Category.objects.filter(name__icontains=search_query).order_by('name')
     else:
-        categories = Category.objects.all()
+        categories = Category.objects.all().order_by('name')  # Sort by name
 
     # Create the paginator object
     paginator = Paginator(categories, rows)
@@ -52,6 +52,8 @@ def index(request):
         'rows_per_page': rows,
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
+
+
 
 def add_category(request):
     # Get pagination parameters

@@ -153,13 +153,14 @@ input[type="color"] {
     padding: 20px;
 }
 
-/* Red border for invalid input */
-.is-invalid {
-    border: 2px solid red;
+.input-error {
+    border-color: red;
+    outline: none;
 }
 
-/* Styling for the error message */
-#name-error-message {
-    font-size: 0.875rem;
+/* Style for error message */
+#error-label {
+    font-size: 0.9em;
     color: red;
+    display: none;
 }

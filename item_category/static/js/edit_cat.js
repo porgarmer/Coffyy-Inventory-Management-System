@@ -1,58 +1,77 @@
-// Predefined color selection
-const colorBoxes = document.querySelectorAll(".color-box");
-const customColorInput = document.getElementById("custom-color");
-const selectedColorInput = document.getElementById("selected-color");
-const selectedColorBox = document.getElementById("selected-color-box");
-
 document.addEventListener('DOMContentLoaded', function () {
     const popup = document.getElementById('right-popup');
     const popupMessage = document.getElementById('popup-message');
     const cancelButton = document.getElementById('cancel-button');
 
-    // Hide any center messages if the popup is triggered
-    const centerMessages = document.querySelectorAll('.messages');
-    centerMessages.forEach(function (message) {
-        message.style.display = 'none';
-    });
-
-    // If there's a hidden message, show the popup
-    const popupTrigger = document.querySelector('div[style="display:none;"]');
-    if (popupTrigger && popupTrigger.textContent.trim() !== '') {
-        popupMessage.textContent = popupTrigger.textContent;
-        popup.classList.add('show');
-
-        // Auto-close after 5 seconds
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 5000);
-    }
+    const colorBoxes = document.querySelectorAll(".color-box");
+    const customColorInput = document.getElementById("custom-color");
+    const selectedColorInput = document.getElementById("selected-color");
+    const selectedColorBox = document.getElementById("selected-color-box");
 
     const categoryNameInput = document.getElementById("category-name");
-    const categoryForm = document.querySelector("form");
-    const currentCategoryId = categoryForm.action.split("/").pop(); // Extract category ID from form action
+    const categoryNameErrorLabel = document.getElementById("category-name-error");
+    const categoryId = categoryNameInput.dataset.categoryId; // Assume category ID is stored as a data attribute
 
-    if (!categoryNameInput || !categoryForm) {
+    categoryNameInput.addEventListener("blur", function () {
+        const name = categoryNameInput.value.trim();
+
+        if (name) {
+            fetch(`/item-category/validate-category-name-edit/?name=${encodeURIComponent(name)}&exclude=${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        categoryNameErrorLabel.textContent = "Category name already exists.";
+                        categoryNameErrorLabel.style.display = "inline";
+                        categoryNameInput.classList.add("input-error");
+                    } else {
+                        categoryNameErrorLabel.textContent = "";
+                        categoryNameErrorLabel.style.display = "none";
+                        categoryNameInput.classList.remove("input-error");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking category name:", error);
+                });
+        }
+    });
+
+    const saveButton = document.querySelector("button[type='submit']");
+    const categoryForm = document.querySelector("form");
+
+    if (!categoryNameInput || !saveButton || !categoryForm) {
         console.error("Required DOM elements are missing!");
         return;
     }
 
-    // Event listener for input field
-    categoryNameInput.addEventListener("input", () => {
-        const name = categoryNameInput.value.trim();
-        validateCategoryNameEdit(name, currentCategoryId);
-    });
+    saveButton.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent the default form submission
 
-    // Event listener for input field blur (focus lost)
-    categoryNameInput.addEventListener("blur", () => {
         const name = categoryNameInput.value.trim();
-        validateCategoryNameEdit(name, currentCategoryId);
+
+        if (name) {
+            fetch(`/item-category/validate-category-name-edit/?name=${encodeURIComponent(name)}&exclude=${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Show alert if name already exists
+                        alert("The category name already exists. Please use a different name.");
+                    } else {
+                        // Name is valid, submit the form
+                        categoryForm.submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking category name:", error);
+                    alert("An error occurred while validating the category name. Please try again.");
+                });
+        } else {
+            // Show alert if the name field is empty
+            alert("Please enter a category name before saving.");
+        }
     });
 
     // Handle Cancel Button Redirect with Popup Close
     cancelButton.addEventListener('click', function () {
-        if (popup.classList.contains('show')) {
-            popup.classList.remove('show');
-        }
         // Redirect using the data attributes
         const page = cancelButton.getAttribute('data-page') || 1;
         const rows = cancelButton.getAttribute('data-rows') || 10;
@@ -62,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 0);
     });
 
-    // Custom color selection
+    // Predefined color selection
     colorBoxes.forEach(box => {
         box.addEventListener("click", () => {
             colorBoxes.forEach(box => box.classList.remove("selected"));
@@ -73,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Custom color selection
     customColorInput.addEventListener("input", () => {
         colorBoxes.forEach(box => box.classList.remove("selected"));
         const color = customColorInput.value;
@@ -80,40 +100,3 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedColorBox.style.backgroundColor = color;
     });
 });
-
-// Function to validate category name edit
-function validateCategoryNameEdit(categoryName, categoryId) {
-    if (!categoryName) {
-        return; // Skip if no name is entered
-    }
-
-    fetch(`/item-category/validate-category-name-edit/?name=${categoryName}&id=${categoryId}`)
-        .then(response => response.json())
-        .then(data => {
-            const nameInput = document.getElementById('category-name');
-            const errorText = document.getElementById('name-error-message');
-
-            if (data.exists) {
-                // If name exists, apply red underline style only
-                nameInput.classList.add("is-invalid");
-
-                // Show the error message below the input field
-                if (errorText) {
-                    errorText.textContent = "This category name is already taken.";
-                    errorText.style.display = 'block';
-                }
-            } else {
-                // If name is valid, remove the red underline
-                nameInput.classList.remove("is-invalid");
-
-                // Hide the error message
-                if (errorText) {
-                    errorText.textContent = '';
-                    errorText.style.display = 'none';
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error validating category name:", error);
-        });
-}

@@ -5,39 +5,39 @@ from django.urls import reverse
 from .models import Category  # Ensure this matches your actual model
 
 def index(request):
-    # Retrieve session variables for pagination and rows-per-page
-    page = request.session.get('item_category_page', 1)
-    rows = request.session.get('item_category_row', 10)
+    # Check if page and rows are set in session
+    page = request.session.get('item_category_page', 1)  # Default to 1 if not in session
+    rows = request.session.get('item_category_row', 10)  # Default to 10 if not in session
 
-    # Override session variables with GET parameters if provided
-    page = request.GET.get('page', page)
-    rows = request.GET.get('rows', rows)
+    # If page or rows are passed in the query parameters, update session
+    page = request.GET.get('page', page)  # Override with query param if present
+    rows = request.GET.get('rows', rows)  # Override with query param if present
 
-    # Validate and update session variables
     try:
+        # Convert to integers
         page = int(page)
         rows = int(rows)
     except ValueError:
+        # Fallback to defaults if invalid values are provided
         page = 1
         rows = 10
 
+    # Store page and rows in session for next request
     request.session['item_category_page'] = page
     request.session['item_category_row'] = rows
 
-    # Handle search query
+    # Fetch the search query from the GET parameters
     search_query = request.GET.get('search', '').strip()
+
+    # Filter categories based on the search query (case-insensitive) and sort alphabetically
     if search_query:
-        categories = Category.objects.filter(
-            name__icontains=search_query
-        )
+        categories = Category.objects.filter(name__icontains=search_query).order_by('name')
     else:
-        categories = Category.objects.all()
+        categories = Category.objects.all().order_by('name')  # Sort by name
 
-    # Order categories alphabetically by name
-    categories = categories.order_by('name')
-
-    # Paginate categories
+    # Create the paginator object
     paginator = Paginator(categories, rows)
+
     try:
         categories_page = paginator.page(page)
     except PageNotAnInteger:
@@ -45,20 +45,14 @@ def index(request):
     except EmptyPage:
         categories_page = paginator.page(paginator.num_pages)
 
-    # Get page range for pagination (limit to 10 pages)
-    page_range = categories_page.paginator.page_range
-    current_page = categories_page.number
-    start_page = max(current_page - 5, 1)
-    end_page = min(current_page + 4, paginator.num_pages)
-    page_range = page_range[start_page - 1:end_page]
-
     # Pass categories, pagination parameters, and the search query to the template
     return render(request, 'item_category/index.html', {
         'categories': categories_page,
+        'page': page,
         'rows_per_page': rows,
-        'search_query': search_query,
-        'page_range': page_range,
+        'search_query': search_query,  # Include this for pre-filling the search bar
     })
+
 
 
 def add_category(request):

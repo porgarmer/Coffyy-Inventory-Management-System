@@ -3,16 +3,20 @@
 {% block title %}Accounts Profile{% endblock %}
 
 {% block content %}
+<!-- Link to external CSS -->
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
    <!-- Header -->
    <header class="header">
-    <img src="logo.png" alt="Logo" class="logo">
+    <img src="{% static 'images/logo.png'%}" alt="Logo" class="logo">
 </header>
 
 <!-- Profile Container -->
 <div class="container">
     <!-- User Icon -->
     <div class="profile-icon">
-        <img src="user.png" alt="User Icon">
+        <img src="{% static 'images/user.png'%}" alt="User Icon">
     </div>
 
     <!-- Profile Card -->
@@ -27,21 +31,21 @@
             <label for="first-name">First Name</label>
             <div class="input-group">
                 <input type="text" id="first-name" readonly>
-                <img src="edit.png" alt="Edit Icon" onclick="enableEdit('first-name')">
+                <img src="{% static 'images/edit.png'%}" alt="Edit Icon" onclick="enableEdit('first-name')">
             </div>
         </div>
         <div class="mb-4">
             <label for="last-name">Last Name</label>
             <div class="input-group">
                 <input type="text" id="last-name" readonly>
-                <img src="edit.png" alt="Edit Icon" onclick="enableEdit('last-name')">
+                <img src="{% static 'images/edit.png'%}" alt="Edit Icon" onclick="enableEdit('last-name')">
             </div>
         </div>
         <div class="mb-4">
             <label for="email">Email Address</label>
             <div class="input-group">
                 <input type="email" id="email" readonly>
-                <img src="edit.png" alt="Edit Icon" onclick="enableEdit('email')">
+                <img src="{% static 'images/edit.png'%}" alt="Edit Icon" onclick="enableEdit('email')">
             </div>
         </div>
         <div class="mb-4">
@@ -52,7 +56,7 @@
         </div>
         <div class="delete-account">
             <p>Delete account</p>
-            <img src="delete.png" alt="Delete Icon" onclick="confirmDeletion()">
+            <img src="{% static 'images/delete.png'%}" alt="Delete Icon" onclick="confirmDeletion()">
         </div>
         <p class="delete-info">You can permanently delete your account and all its data.</p>
     </div>
@@ -64,4 +68,8 @@
 
 <!-- Footer -->
 <footer class="footer">
+
+<!-- Link to external JS -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/profile.js' %}"></script>
 {% endblock %}

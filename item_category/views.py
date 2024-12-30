@@ -2,6 +2,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.http import JsonResponse
 from .models import Category  # Ensure this matches your actual model
 
 def index(request):
@@ -53,7 +54,14 @@ def index(request):
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
 
-
+def validate_category_name(request):
+    if request.method == 'GET':
+        category_name = request.GET.get('name', '').strip()
+        if not category_name:
+            return JsonResponse({'exists': False})  # No name to validate
+        exists = Category.objects.filter(name__iexact=category_name).exists()
+        return JsonResponse({'exists': exists})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def add_category(request):
     # Get pagination parameters

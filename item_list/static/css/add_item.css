@@ -25,7 +25,7 @@
 .bottom-section {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 30px;  /* Increased gap between left and right columns */
 }
 
 /* Left and Right Columns */
@@ -43,7 +43,6 @@ label {
     font-weight: bold;
     margin-bottom: 5px;
 }
-
 
 /* Small Label Styling (for parenthetical descriptions) */
 .small-label {
@@ -80,6 +79,7 @@ label {
     transition: border-color 0.2s ease-in-out;
 }
 
+/* Underline input for quantity and cost fields */
 .underline-input-wrapper {
     position: relative;
     display: flex;
@@ -98,7 +98,7 @@ label {
 .underline-input {
     padding-left: 20px; /* Adjust padding to fit Peso sign width */
     border: none;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 2px solid #ccc; /* Underline only */
     border-radius: 0;
     width: 100%; /* Ensure consistent width */
 }
@@ -113,6 +113,33 @@ textarea.form-control {
     height: 100px;
     border: 1px solid #ccc;
     border-radius:0px;
+}
+
+/* Layout for left column (Quantity and Cost) */
+.left-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Layout for right column (Name) */
+.right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Align name to the right */
+#item-name {
+    text-align: left; /* Align the name input to the right */
+}
+
+/* Align labels inside input fields */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 /* Button Styling */
@@ -134,7 +161,20 @@ button.btn-primary:hover {
     font-weight: bold;
     margin-right: 10px;
 }
+#total-cost-label {
+    font-size: 1rem;
+    font-weight: bold;
+    align-items:center;
+    margin-right: 10px;
+}
 
+.total-cost-wrapper {
+    display: flex;
+    justify-content: flex-end;  /* Aligns the content to the right */
+    align-items: center;        /* Ensures vertical alignment */
+    width: 100%;                /* Ensures it takes up full width */
+    margin-top: 10px;           /* Adds some space above */
+}
 
 .composite-item-label-container {
     display: flex;
@@ -213,12 +253,82 @@ input:checked + .switch-label::before {
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
     display: none; /* Initially hidden */
+    transition: right 0.5s ease; /* Smooth slide-in/out */
 }
 
+#right-popup.show {
+    right: 20px; /* Slide into view */
+}
+
+#search-results {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Remove the default button styling */
+.btn.remove-item {
+    background-color: transparent;  /* No background */
+    border: none;                    /* No border */
+    padding: 0;                       /* Remove padding */
+    cursor: pointer;                 /* Ensure it's clickable */
+}
+
+/* Style the image inside the button */
+.btn.remove-item img {
+    width: 20px;                     /* Adjust the size of the icon */
+    height: 20px;                    /* Adjust the size of the icon */
+    display: block;                  /* Make sure it's not inline */
+    margin: 0 auto;                  /* Center the icon within the button */
+}
+
+/* Add circular border on hover */
+.btn.remove-item:hover {
+    border: 2px solid #ccc;          /* Light gray border */
+    border-radius: 50%;               /* Make the border circular */
+    padding: 5px;                     /* Add some space around the icon */
+    background-color: rgba(0, 0, 0, 0.1); /* Light background on hover */
+}
+
+.quantity-input {
+    padding-left: 20px; /* Adjust padding to fit the number input */
+    border: none;
+    border-bottom: 2px solid #ccc; /* Underline the input */
+    border-radius: 0;
+    text-align: center;
+    width: 100px; /* Adjust width to make the underline smaller */
+    font-size: 1rem; /* Adjust font size to match the form */
+}
+
+.quantity-input:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+}
+
+/* Optional: Adjust the styling for the 'data-cost' attribute, if needed */
+.quantity-input[data-cost] {
+    /* Additional styling for elements with data-cost */
+    background-color: #f9f9f9; /* Slightly different background color for number inputs */
+}
+
+.input-error {
+    border-color: red;
+}
+
+span {
+    font-size: 0.9em;
+}
+
+.quantity-input.quantity-zero {
+    background-color: #ffcccc; /* Light red background */
+    border: 1px solid red; /* Optional red border */
+}

@@ -17,3 +17,15 @@ class Item(models.Model):
     volume_per_unit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     remaining_volume = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     #supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.SET_NULL)
+    is_composite = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+class CompositeItem(models.Model):
+    parent_item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="composite_items")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="component_of")
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.item.name} x {self.quantity} for {self.parent_item.name}"

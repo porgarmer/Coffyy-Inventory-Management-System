@@ -140,9 +140,11 @@
                         {% endif %}
 
                         {% for num in items.paginator.page_range %}
-                        <li class="page-item {% if num == items.number %}active{% endif %}">
-                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
-                        </li>
+                            {% if num >= items.number|add:-5 and num <= items.number|add:5 %}
+                            <li class="page-item {% if num == items.number %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
                         {% endfor %}
 
                         {% if items.has_next %}

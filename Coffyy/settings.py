@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'dashboard',
     'item_category',
     'item_list',
-    'purchase_order.apps.PurchaseOrderConfig'
+    'account_profile',
+    'purchase_order.apps.PurchaseOrderConfig',
 ] 
 
 MIDDLEWARE = [

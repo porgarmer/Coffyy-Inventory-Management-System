@@ -114,9 +114,9 @@
                         </li>
                         {% endif %}
 
-                        {% for num in categories.paginator.page_range %}
+                        {% for num in page_range %}
                         <li class="page-item {% if num == categories.number %}active{% endif %}">
-                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}">{{ num }}</a>
+                            <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
                         </li>
                         {% endfor %}
 

@@ -3,7 +3,6 @@
 
 {% block title %}ITEM CATEGORIES{% endblock %}
 {% block content %}
-<h1>Item Categories</h1>
 
 <div id="right-popup" class="right-popup">
     <div class="popup-content">
@@ -20,6 +19,7 @@
 {% endif %}
 
 {% if categories and search_query == "" or search_query %}
+<h1>Item Categories</h1>
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
@@ -155,15 +155,17 @@
     {% endfor %}
 </div>
 {% endif %}
-    <tr>
-        <td colspan="3" class="text-center">
-            <div class="empty-state">
-                <p>No categories yet</p>
-                <p>Click the button below to create your first category and start managing your items!</p>
-                <a href="{% url 'add_category' %}" class="btn btn-primary">+ Add Category</a>
-            </div>
-        </td>
-    </tr>
+    <div class="empty-state text-center mt-5">
+        <!-- Icon Frame -->
+            <img 
+                src="{% static 'images/ICON_CATEGORY_ADD.png' %}" 
+                alt="Add Category Icon" 
+                style="width: 135px; height: 135px; margin-bottom: 20px;"
+            >
+        <h2>No Categories Yet</h2>
+        <p>Click the button below to add your first category and start managing your inventory!</p>
+        <a href="{% url 'add_category' %}" class="btn btn-primary">+ Add Category</a>
+    </div>
 {% endif %}
 
 <!-- Modal Popup for Deletion Confirmation -->
@@ -186,7 +188,7 @@
 </div>
 
 <!-- Link to CSS and JS -->
-<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/indexx.css' %}">
 <script src="{% static 'js/index.js' %}"></script>
 
 {% endblock %}

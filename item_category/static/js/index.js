@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Select/Unselect all checkboxes
     document.getElementById('select-all').addEventListener('change', function () {
         const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+            checkbox.disabled = this.checked; // Disable checkboxes when 'Select All' is checked
+        });
         toggleDeleteButton();
     });
 

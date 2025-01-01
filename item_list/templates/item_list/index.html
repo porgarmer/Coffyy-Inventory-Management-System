@@ -19,7 +19,7 @@
     </div>
 {% endif %}
 
-{% if items or search_query == "" or search_query %}
+{% if items and search_query == "" or search_query %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
@@ -33,23 +33,21 @@
         <!-- Search Bar with Combo Boxes for Category and Stock Alert -->
         <div class="d-flex ms-auto">
             <!-- Category Combo Box -->
-            <select id="category-filter" class="form-select form-select-sm me-2" aria-label="Select Category">
-                <option value="">Select Category</option>
+            <select id="category-filter" class="form-select form-select-sm me-2" name="category" aria-label="Select Category">
+                <option value="">All Categories</option> <!-- All data -->
+                <option value="no-category" {% if selected_category == "no-category" %}selected{% endif %}>No Category</option> <!-- No category -->
                 {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
                 {% endfor %}
             </select>
 
             <!-- Stock Alert Combo Box -->
-            <select 
-                id="stock-alert-filter" 
-                class="form-select form-select-sm me-2" 
-                aria-label="Select Stock Alert" 
-                style="width: 150px !important;"
-            >
-                <option value="">Stock Alert</option>
-                <option value="low">Low stock</option>
-                <option value="out-of-stock">Out of stock</option>
+            <select id="stock-alert-filter" class="form-select form-select-sm me-2" name="stock_alert" aria-label="Select Stock Alert" style="width: 150px !important;">
+                <option value="">Stock Alert</option> <!-- All data -->
+                <option value="low" {% if selected_stock_alert == "low" %}selected{% endif %}>Low Stock</option>
+                <option value="out-of-stock" {% if selected_stock_alert == "out-of-stock" %}selected{% endif %}>Out of Stock</option>
             </select>
 
 
@@ -71,6 +69,8 @@
                         style="height: 24px; width: 24px;"
                     >
                 </button>
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                <input type="hidden" name="stock_alert" value="{{ selected_stock_alert }}">
                 <input type="hidden" name="page" value="1">
                 <input type="hidden" name="rows" value="{{ rows_per_page }}">
             </form>            
@@ -99,7 +99,7 @@
                 {% if items %}
                 <tbody id="item-table-body">
                     {% for item in items %}
-                        <tr class="item-row">
+                        <tr class="item-row" style="cursor: pointer;" data-href="{% url 'item_list:edit_item' item.id %}">
                             <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
                             <td>{{ item.name }}</td>
                             <td>
@@ -112,7 +112,13 @@
                             <td style="text-align: right;">₱{{ item.price }}</td>
                             <td style="text-align: right;">₱{{ item.cost }}</td>
                             <td style="text-align: right;">{{ item.in_stock }}</td>
-                            <td style="text-align: right;">{{ item.remaining_volume }}</td>
+                            <td style="text-align: right;">
+                                {% if item.sold_by == "volume_weight" %}
+                                    {{ item.remaining_volume|default:"0.00" }}
+                                {% else %}
+                                    {{ item.remaining_volume|default:"None" }}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -209,5 +215,5 @@
 
 
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
-<script src="{% static 'js/index_x.js' %}"></script>
+<script src="{% static 'js/indexs.js' %}"></script>
 {% endblock %}

@@ -97,20 +97,34 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const itemNameInput = document.getElementById("item-name");
     const nameErrorLabel = document.createElement("span");
+    const initialName = itemNameInput.getAttribute("data-initial-name");
+    const itemId = itemNameInput.getAttribute("data-item-id");
     nameErrorLabel.style.color = "red";
     nameErrorLabel.style.display = "none";
     itemNameInput.parentNode.appendChild(nameErrorLabel);
 
     itemNameInput.addEventListener("blur", function () {
         const name = itemNameInput.value.trim();
+        console.log(initialName);
+        console.log(itemId);
+
+        // Skip validation if the name is the same as the initial name
+        if (name === initialName) {
+            nameErrorLabel.textContent = "";
+            nameErrorLabel.style.display = "none";
+            itemNameInput.classList.remove("input-error");
+            return;
+        }
+
+        // Validate name with server
         if (name) {
-            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}`)
+            fetch(`/item-list/check-item-name-edit/?name=${encodeURIComponent(name)}&exclude=${itemId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {
-                        nameErrorLabel.textContent = "This name already exists.";
+                        nameErrorLabel.textContent = "Item name already exists.";
                         nameErrorLabel.style.display = "inline";
-                        itemNameInput.classList.add("input-error"); // Optional: Add error styling
+                        itemNameInput.classList.add("input-error");
                     } else {
                         nameErrorLabel.textContent = "";
                         nameErrorLabel.style.display = "none";

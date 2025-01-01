@@ -19,6 +19,7 @@
 {% endif %}
 
 {% if items and search_query == "" or search_query or selected_category or selected_stock_alert %}
+<h1>Item List</h1>
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
@@ -81,7 +82,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col" style="width: 50px;">
+                        <th scope="col" style="width: 50px; text-align: center;">
                             <input type="checkbox" id="select-all">
                         </th>
                         <th scope="col">Item Name</th>
@@ -90,9 +91,6 @@
                         <th scope="col" style="text-align: right;">Cost</th>
                         <th scope="col" style="text-align: right;">In Stock</th>
                         <th scope="col" style="text-align: right;">Volume</th>
-                        <!-- <th scope="col" style="text-align: right;">
-                            <span style="white-space: nowrap; display: inline-block; line-height: 1;">Remaining<br>Volume</span>
-                        </th> -->
                     </tr>
                 </thead>
                 {% if items %}

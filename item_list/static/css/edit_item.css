@@ -332,3 +332,7 @@ span {
     background-color: #ffcccc; /* Light red background */
     border: 1px solid red; /* Optional red border */
 }
+
+h1{
+    font-weight: bold;
+}

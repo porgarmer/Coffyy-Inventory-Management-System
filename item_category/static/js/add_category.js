@@ -25,10 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {
+                        // Display the error if the category name exists
                         categoryNameErrorLabel.textContent = "Category name already exists.";
                         categoryNameErrorLabel.style.display = "inline";
                         categoryNameInput.classList.add("input-error");
                     } else {
+                        // Clear the error if the category name is unique
                         categoryNameErrorLabel.textContent = "";
                         categoryNameErrorLabel.style.display = "none";
                         categoryNameInput.classList.remove("input-error");
@@ -37,8 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(error => {
                     console.error("Error checking category name:", error);
                 });
+        } else {
+            // Clear the error if the input is empty
+            categoryNameErrorLabel.textContent = "";
+            categoryNameErrorLabel.style.display = "none";
+            categoryNameInput.classList.remove("input-error");
         }
     });
+
 
     const saveButton = document.querySelector("button[type='submit']");
     const categoryForm = document.querySelector("form");

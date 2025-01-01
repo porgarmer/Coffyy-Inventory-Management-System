@@ -53,6 +53,7 @@ def index(request):
         'rows_per_page': rows,
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
+    
 
 def validate_category_name(request):
     if request.method == 'GET':

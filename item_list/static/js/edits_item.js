@@ -97,12 +97,16 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const itemNameInput = document.getElementById("item-name");
     const nameErrorLabel = document.createElement("span");
+    const initialName = itemNameInput.getAttribute("data-initial-name");
+    const itemId = itemNameInput.getAttribute("data-item-id");
     nameErrorLabel.style.color = "red";
     nameErrorLabel.style.display = "none";
     itemNameInput.parentNode.appendChild(nameErrorLabel);
 
     itemNameInput.addEventListener("blur", function () {
         const name = itemNameInput.value.trim();
+        console.log(initialName);
+        console.log(itemId);
 
         // Skip validation if the name is the same as the initial name
         if (name === initialName) {
@@ -114,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Validate name with server
         if (name) {
-            fetch(`/item-list/check-item-name-edit/?name=${encodeURIComponent(name)}&exclude=${categoryId}`)
+            fetch(`/item-list/check-item-name-edit/?name=${encodeURIComponent(name)}&exclude=${itemId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {

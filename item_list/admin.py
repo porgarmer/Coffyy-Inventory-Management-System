@@ -17,7 +17,7 @@ class CompositeItemInline(admin.TabularInline):
 class ItemAdmin(admin.ModelAdmin):
     # Customize the list display
     list_display = (
-        "name", "category", "is_for_sale", "price", "sold_by",
+        "name", "description","category", "is_for_sale", "price", "sold_by",
         "cost", "in_stock", "optimal_stock", "reorder_level",
         "purchase_cost", "volume_per_unit", "remaining_volume", "is_composite"
     )

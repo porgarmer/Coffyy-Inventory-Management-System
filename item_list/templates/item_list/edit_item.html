@@ -7,7 +7,7 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/add_item.css' %}">
 
-<h1 class="form-title">Add New Item</h1>
+<h1 class="form-title">Edit Item</h1>
 
 <div id="right-popup" class="right-popup">
     <div class="popup-content">
@@ -26,7 +26,6 @@
 <form method="post" class="add-item-form">
     {% csrf_token %}
 
-
     <div class="form-container">
         <!-- Top Section: Name, Category, Description -->
         <div class="top-section">
@@ -42,7 +41,7 @@
                 <select id="category" name="category" class="form-control underline-input">
                     <option value="">No category</option>
                     {% for category in categories %}
-                        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == form_data.category %}selected{% endif %}>{{ category.name }}</option>
+                        <option value="{{ category.id }}" {% if category.id == form_data.category %}selected{% endif %}>{{ category.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -60,21 +59,20 @@
             <div class="left-column">
                 <!-- Checkbox -->
                 <div class="form-group checkbox-group">
-                    <input type="checkbox" id="is-for-sale" name="is_for_sale" {% if form_data.is_for_sale == "on" %}checked{% endif %}>
+                    <input type="checkbox" id="is-for-sale" name="is_for_sale" {% if form_data.is_for_sale %}checked{% endif %}>
                     <label for="is-for-sale">This item is for sale</label>
                 </div>
-
                 <!-- Sold by Options -->
                 <div class="form-group">
                     <label>Sold by</label>
                     <div class="radio-group">
-                        <input type="radio" id="sold-by-each" name="sold_by" value="each" {% if form_data.sold_by == "each" %}checked{% endif %}>
+                        <input type="radio" id="sold-by-each" name="sold_by" value="each" {% if form_data.sold_by == "each" %}checked{% endif %} >
                         <label for="sold-by-each">Each</label>
                 
-                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight" {% if form_data.sold_by == "volume_weight" %}checked{% endif %}>
+                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight" {% if form_data.sold_by == "volume_weight" %}checked{% endif %} >
                         <label for="sold-by-volume-weight">Volume/Weight</label>
                     </div>
-                </div>                  
+                </div>
                 <!-- Price Field -->
                 <div class="form-group">
                     <label for="price">Price</label>
@@ -193,7 +191,7 @@
                 </div>
                 <div id="remaining-volume-group" class="form-group" style="display:none;">
                     <label for="remaining-volume">Remaining Volume</label>
-                    <input type="text" id="remaining-volume" class="form-control underline-input" readonly/>
+                    <input type="text" id="remaining-volume" class="form-control underline-input" name="remaining_volume" value="{{ form_data.remaining_volume|default:'0.00' }}" readonly />
                 </div>
             </div>
         </div>
@@ -209,6 +207,11 @@
     </div>
 </div>
 </form>
-<script src="/static/js/add_items.js"></script>
+<script>
+    window.preloadedCompositeItems = {{ composite_data|safe }};
+    window.isComposite = {{ is_composite|yesno:"true,false" }};
+</script>
+<script src="/static/js/edit_items.js"></script>
+
 
 {% endblock %}

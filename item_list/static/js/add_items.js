@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const volumeWeightInput = document.getElementById("volume-weight-per-unit");
     const remainingVolumeOutput = document.getElementById("remaining-volume");
 
+    const reorderLevelInput = document.getElementById("reorder-level");
+    const optimalStockInput = document.getElementById("optimal-stock");
+
     // Search Bar and Dropdown Logic
     const searchInput = document.getElementById("composite-item-search");
     const searchResults = document.getElementById("search-results");
@@ -31,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nameErrorLabel = document.createElement("span");
     nameErrorLabel.style.color = "red";
     nameErrorLabel.style.display = "none";
+    
     itemNameInput.parentNode.appendChild(nameErrorLabel);
 
     itemNameInput.addEventListener("blur", function () {
@@ -97,27 +101,33 @@ document.addEventListener("DOMContentLoaded", () => {
         // Validate composite item table only if the checkbox is checked
         if (compositeItemCheckbox.checked) {
             const compositeItemRows = compositeItemTable.querySelectorAll("tbody tr");
-            const hasData = Array.from(compositeItemRows).some(row => {
-                const quantityInput = row.querySelector(".quantity-input");
-                return quantityInput && parseInt(quantityInput.value, 10) > 0;
-            });
-    
-            if (!hasData) {
+        
+            if (compositeItemRows.length === 0) {
+                // No rows added to the composite table
+                alert("Please add composite items to the table.");
                 isValid = false;
-                // Add error styling for the composite item table (highlight in red)
                 compositeItemTable.classList.add("error");
             } else {
-                compositeItemTable.classList.remove("error");
+                // Check if all rows have valid quantities
+                const invalidRows = Array.from(compositeItemRows).filter(row => {
+                    const quantityInput = row.querySelector(".quantity-input");
+                    return !quantityInput || parseInt(quantityInput.value, 10) <= 0;
+                });
+        
+                if (invalidRows.length > 0) {
+                    alert("All composite items must have a quantity greater than 0.");
+                    isValid = false;
+                    compositeItemTable.classList.add("error");
+                } else {
+                    compositeItemTable.classList.remove("error");
+                }
             }
         }
+        
     
         // Separate alerts based on the validation results
         if (!nonCompositeValid) {
             alert("Please fill out all required fields.");
-        }
-    
-        if (compositeItemCheckbox.checked && !isValid) {
-            alert("Please add composite items to the table.");
         }
     
         return isValid;
@@ -163,6 +173,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Step 4: Check Volume/Weight per Unit
+            if (soldByVolumeWeight.checked) {
+                const volumeWeightValue = parseFloat(volumeWeightInput.value) || 0;
+                if (volumeWeightValue <= 0) {
+                    e.preventDefault();
+                    alert("Volume/Weight per unit cannot be zero. Please provide a valid value.");
+                    return;
+                }
+            }
+
+            const form = document.querySelector("form");
+
+            // Set blank fields (in-stock, optimal-stock, reorder-level) to 0 if they are empty
+            if (!inStockInput.value.trim()) {
+                inStockInput.value = "0";
+            }
+            if (!optimalStockInput.value.trim()) {
+                optimalStockInput.value = "0";
+            }
+            if (!reorderLevelInput.value.trim()) {
+                reorderLevelInput.value = "0";
+            }
+
+            console.log(reorderLevelInput.value)
+            console.log(reorderLevelInput.value)
+            console.log(reorderLevelInput.value)
             // Step 2: If composite item toggle is checked, proceed with collecting composite item data
             if (compositeToggle.checked) {
                 e.preventDefault(); // Prevent default form submission
@@ -170,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const compositeItemsData = collectCompositeItemData(); // Collect composite item data
                 console.log("Composite Items Data:", compositeItemsData);
     
-                const form = document.querySelector("form");
+                
     
                 // Step 3: Append composite item data as a hidden input field
                 const hiddenInput = document.createElement("input");
@@ -207,20 +243,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    if (cancelButton) {
-        cancelButton.addEventListener("click", () => {
-            // Retrieve page and rows from button's data attributes
-            const page = cancelButton.getAttribute("data-page") || 1;
-            const rows = cancelButton.getAttribute("data-rows") || 10;
-
-            // Construct the URL for redirection
-            const redirectUrl = `/item-list/?page=${page}&rows=${rows}`;
-
-            // Perform the redirection
-            window.location.href = redirectUrl;
-        });
-    }
+    cancelButton.addEventListener("click", () => {
+        // Retrieve the session-stored page and rows values via data attributes
+        const currentPage = cancelButton.getAttribute('data-page') || 1;
+        const currentRows = cancelButton.getAttribute('data-rows') || 10;
     
+        console.log("Redirecting to page:", currentPage, "with rows:", currentRows);
+    
+        // Construct the redirection URL
+        const redirectUrl = `/item-list/?page=${currentPage}&rows=${currentRows}`;
+        window.location.href = redirectUrl;
+    });
+    
+    // Allow radio buttons to be deselected
+    document.querySelectorAll("input[type='radio']").forEach((radio) => {
+        radio.addEventListener("mousedown", (e) => {
+            if (radio.checked) {
+                // If already checked, add a custom attribute to track deselection
+                radio.dataset.wasChecked = "true";
+            } else {
+                delete radio.dataset.wasChecked;
+            }
+        });
+
+        radio.addEventListener("click", (e) => {
+            if (radio.dataset.wasChecked === "true") {
+                // If it was already checked, deselect it
+                radio.checked = false;
+                delete radio.dataset.wasChecked;
+                // Trigger the change event for consistency
+                radio.dispatchEvent(new Event("change"));
+            }
+        });
+    });
     // Function to toggle visibility for Volume/Weight groups
     const toggleVolumeWeightGroup = () => {
         if (soldByVolumeWeight.checked) {
@@ -244,7 +299,31 @@ document.addEventListener("DOMContentLoaded", () => {
             costInput.value = "0.00"; // Reset to default
         }
     };
-
+    
+    const toggleSoldByOptions = () => {
+        const isComposite = compositeItemCheckbox.checked;
+    
+        if (isComposite) {
+            // Disable and uncheck the radio buttons
+            soldByEach.disabled = true;
+            soldByVolumeWeight.disabled = true;
+            soldByEach.checked = false;
+            soldByVolumeWeight.checked = false;
+    
+            // Hide the associated elements for "Volume/Weight"
+            volumeWeightGroup.style.display = "none";
+            remainingVolumeGroup.style.display = "none";
+        } else {
+            // Enable the radio buttons
+            soldByEach.disabled = false;
+            soldByVolumeWeight.disabled = false;
+    
+            // Show or hide the elements based on the selected "Sold by" option
+            toggleVolumeWeightGroup();
+        }
+    };
+    
+    
     // Function to calculate Remaining Volume dynamically
     const calculateRemainingVolume = () => {
         if (inStockInput && volumeWeightInput && remainingVolumeOutput) {
@@ -264,7 +343,10 @@ document.addEventListener("DOMContentLoaded", () => {
     soldByVolumeWeight.addEventListener("change", toggleVolumeWeightGroup);
 
     // Add event listener for Composite Item checkbox
-    compositeItemCheckbox.addEventListener("change", toggleCompositeItemTable);
+    compositeItemCheckbox.addEventListener("change", () => {
+        toggleCompositeItemTable();
+        toggleSoldByOptions(); // Update radio button states when composite toggle changes
+    });
 
     // Function to update Total Cost based on Composite Items
     const updateTotalCost = () => {
@@ -305,7 +387,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial visibility setup
     toggleVolumeWeightGroup();
     toggleCompositeItemTable();
-
+    toggleSoldByOptions(); // Ensure radio buttons are updated on page load
+    
     const monitorZeroQuantities = () => {
         const quantityInputs = compositeItemTable.querySelectorAll(".quantity-input");
     

@@ -37,6 +37,8 @@ def index(request):
     # Start with all items
     items = Item.objects.select_related('category').all()
 
+    categories = Category.objects.filter(item__isnull=False).distinct()
+
     # Apply Category Filter
     if category_id == "no-category":
         items = items.filter(category__isnull=True)  # Items with no category

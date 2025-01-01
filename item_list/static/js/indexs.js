@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isChecked = selectAllCheckbox.checked;
         rowCheckboxes.forEach(checkbox => {
             checkbox.checked = isChecked;
+            checkbox.disabled = this.checked; // Disable checkboxes when 'Select All' is checked
         });
         toggleDeleteButton();
     });

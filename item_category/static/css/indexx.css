@@ -48,3 +48,39 @@ table.table-hover th, table.table-hover td {
 .modal-content {
     border-radius: 10px;
 }
+
+.empty-state {
+    background-color: white; /* White background for the entire empty-state section */
+    padding: 40px 50px 120px 50px; /* Top, right, bottom, left padding */
+    border-radius: 10px; /* Rounded corners for the section */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase the spread and blur to make the shadow more visible */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px; /* Limit the width of the empty state section */
+    margin: 0 auto; /* Center horizontally */
+}
+
+
+.empty-state h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.empty-state p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.empty-state .btn-primary {
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+h1{
+    font-weight: bold;
+}

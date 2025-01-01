@@ -10,6 +10,7 @@ from django.urls import reverse
 from .models import Item, CompositeItem
 from item_category.models import Category
 from django.core.serializers.json import DjangoJSONEncoder  # Import JSON encoder
+from django.views.decorators.cache import never_cache
 
 def index(request):
     page = request.GET.get('page', 1)
@@ -90,6 +91,33 @@ def check_item_name(request):
         return JsonResponse({'exists': False})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+def check_item_name_edit(request):
+    try:
+        name = request.GET.get('name', None)
+        current_item_id = request.GET.get('current_item_id', None)
+
+        if name:
+            try:
+                # Ensure current_item_id is cast to an integer if provided
+                current_item_id = int(current_item_id) if current_item_id else None
+            except ValueError:
+                return JsonResponse({'exists': False})  # Invalid ID should not pass validation
+
+            # Check if the name exists for other items
+            exists = Item.objects.filter(name=name).exclude(id=current_item_id).exists()
+
+            # Debug output
+            print(f"Checking Name: {name}, Current Item ID: {current_item_id}, Exists: {exists}")
+
+            return JsonResponse({'exists': exists})
+
+        return JsonResponse({'exists': False})
+    except Exception as e:
+        print(f"Error: {e}")
+        return JsonResponse({'error': str(e)}, status=400)
+
+
         
 def search_items(request):
     query = request.GET.get('q', '')

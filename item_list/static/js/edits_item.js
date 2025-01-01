@@ -103,15 +103,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     itemNameInput.addEventListener("blur", function () {
         const name = itemNameInput.value.trim();
+        const currentItemId = itemNameInput.dataset.currentItemId || ''; // Fetch the current item ID for editing
+
+        console.log("Current name:", name);
+        console.log("Current item ID:", currentItemId); // Debugging
+
         if (name) {
-            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}`)
+            const url = `/item-list/check-item-name-edit/?name=${encodeURIComponent(name)}&current_item_id=${encodeURIComponent(currentItemId)}`;
+            console.log("Request URL:", url);
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
+                    console.log("Validation response:", data); // Debugging
+
                     if (data.exists) {
+                        // Trigger error only if the name exists in another record
                         nameErrorLabel.textContent = "This name already exists.";
                         nameErrorLabel.style.display = "inline";
-                        itemNameInput.classList.add("input-error"); // Optional: Add error styling
+                        itemNameInput.classList.add("input-error");
                     } else {
+                        // No error if the name is unique or belongs to the current item
                         nameErrorLabel.textContent = "";
                         nameErrorLabel.style.display = "none";
                         itemNameInput.classList.remove("input-error");
@@ -122,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }
     });
+
 
     // Function to log composite item data
     const collectCompositeItemData = () => {

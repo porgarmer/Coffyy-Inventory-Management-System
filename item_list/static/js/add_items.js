@@ -39,14 +39,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     itemNameInput.addEventListener("blur", function () {
         const name = itemNameInput.value.trim();
+        const currentItemId = itemNameInput.dataset.currentItemId; // Assuming this is set on the input
         if (name) {
-            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}`)
+            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}&current_item_id=${encodeURIComponent(currentItemId)}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.exists) {
+                    if (data.exists && data.is_current !== true) {
                         nameErrorLabel.textContent = "This name already exists.";
                         nameErrorLabel.style.display = "inline";
-                        itemNameInput.classList.add("input-error"); // Optional: Add error styling
+                        itemNameInput.classList.add("input-error");
                     } else {
                         nameErrorLabel.textContent = "";
                         nameErrorLabel.style.display = "none";
@@ -199,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(reorderLevelInput.value)
             console.log(reorderLevelInput.value)
             console.log(reorderLevelInput.value)
+            
             // Step 2: If composite item toggle is checked, proceed with collecting composite item data
             if (compositeToggle.checked) {
                 e.preventDefault(); // Prevent default form submission

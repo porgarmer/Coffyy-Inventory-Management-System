@@ -50,6 +50,7 @@
 
 h1{
     font-weight: bold;
+    color: black;
 }
 
 .btn-custom {
@@ -70,13 +71,6 @@ h1{
     border: none !important
 }
 
-.btn-custom:active {
-    background-color: #E9E9E9 !important; /* Custom active background color */
-    color: #B20727 !important; /* Custom active text color */
-    transform: scale(0.98); /* Optional: Add a slight scale effect */
-    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
-    border: none !important
-}
 
 .btn-custom-save{
     background-color: #FDF21D;
@@ -107,7 +101,9 @@ h1{
     background-color: #8f061f !important; 
     color: #FFFFFF !important;
 }
-
+.card {
+    background-color: #EED659;
+}
 .custom-card {
     max-width: 70vh; /* Set a maximum width */
     min-height: 70vh;
@@ -115,9 +111,52 @@ h1{
     background-color: #EED659;
 }
 .card-icon {
-    width: 30%;
+    width: 50%;
     height: auto;
     margin: auto;
     margin-bottom: 2%;
     margin-top: 5vh;
+}
+p, h5, label, h4 {
+    color: black !important;
+}
+
+/* Style the search form container */
+.search-form {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Full width if needed */
+    border: 1px solid #ccc; /* Border around the search bar */
+    border-radius: 7px; /* Rounded edges for a smooth look */
+    overflow: hidden; /* Ensure no overflow */
+    background-color: #f9f9f9; /* Optional background color */
+}
+
+/* Style the search button */
+.search-button {
+    background-color: transparent; /* Transparent background */
+    border: none; /* Remove button border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px; /* Adjust padding */
+    cursor: pointer;
+    height: 100%; /* Make it stretch vertically */
+}
+
+
+/* Style the search input */
+.search-input {
+    border: none; /* Remove default border */
+    padding: 5px; /* Padding for text */
+    flex: 1; /* Take up remaining space */
+    outline: none; /* Remove outline */
+    font-size: 1rem;
+    background-color: transparent; /* Match form background */
+}
+
+/* Add focus styling for input */
+.search-input:focus {
+    outline: none; /* Remove default focus outline */
+    background-color: #fff; /* Optional background color on focus */
 }

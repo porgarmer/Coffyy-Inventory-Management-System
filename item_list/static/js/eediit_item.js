@@ -589,7 +589,12 @@ else {
 
                 searchResults.style.display = "block"; // Show the dropdown if results are available
             } else {
-                searchResults.style.display = "none"; // Hide the dropdown if no results
+                const noResultsItem = document.createElement("div");
+                noResultsItem.classList.add("dropdown-item", "text-muted");
+                noResultsItem.textContent = "No items found.";
+                searchResults.appendChild(noResultsItem);
+
+                searchResults.style.display = "block"; // Show the dropdown even if empty
             }
         } catch (error) {
             console.error("Error fetching search results:", error);

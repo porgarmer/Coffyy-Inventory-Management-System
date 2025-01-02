@@ -78,7 +78,7 @@
                     <label for="price">Price</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="price" name="price" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.price|default:'0.00' }}">
+                        <input type="number" id="price" name="price" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.price|default:'0.00' }}">
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 <!-- Volume/Weight per Unit (hidden by default) -->
                 <div id="volume-weight-group" class="form-group" style="display:none;">
                     <label for="volume-weight-per-unit">Volume/Weight per unit</label>
-                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.volume_weight_per_unit|default:'0.00' }}">
+                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.volume_weight_per_unit|default:'0.00' }}">
                     <span class="small-label">(milliliters for volume, milligrams for weight)</span>
                 </div>
 
@@ -97,7 +97,7 @@
                     <label for="cost">Cost</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" step="0.01" value="0.00">
+                        <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.cost|default:'0.00' }}">
                     </div>
                     <span class="small-label">(per item including shipping fee, etc.)</span>
                 </div>
@@ -158,18 +158,18 @@
             <div class="left-column">
                 <div class="form-group">
                     <label for="in-stock">In Stock</label>
-                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0" value="{{ form_data.in_stock|default:'0' }}">
+                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.in_stock|default:'0' }}">
                 </div>
                 <div class="form-group">
                     <label for="reorder-level">Reorder Level</label>
-                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0" value="{{ form_data.reorder_level|default:'0' }}">
+                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.reorder_level|default:'0' }}">
                     <span class="small-label">(Item quantity for low stock notification)</span>
                 </div>
                 <div class="form-group">
                     <label for="default-purchase-cost">Default Purchase Cost</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.default_purchase_cost|default:'0.00' }}">
+                        <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.default_purchase_cost|default:'0.00' }}">
                     </div>
                 </div>
             </div>
@@ -186,12 +186,12 @@
                 </div>
                 <div class="form-group">
                     <label for="optimal-stock">Optimal Stock</label>
-                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0" value="{{ form_data.optimal_stock|default:'0' }}">
+                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.optimal_stock|default:'0' }}">
                     <span class="small-label">(The amount of inventory needed to meet demand)</span>
                 </div>
                 <div id="remaining-volume-group" class="form-group" style="display:none;">
                     <label for="remaining-volume">Remaining Volume</label>
-                    <input type="text" id="remaining-volume" class="form-control underline-input" name="remaining_volume" value="{{ form_data.remaining_volume|default:'0.00' }}" readonly />
+                    <input type="text" id="remaining-volume" class="form-control underline-input" name="remaining_volume" max="99999999.99" value="{{ form_data.remaining_volume|default:'0.00' }}" readonly />
                 </div>
             </div>
         </div>
@@ -208,10 +208,11 @@
 </div>
 </form>
 <script>
+    const itemId = "{{ item.id }}"; // Current item's ID
     window.preloadedCompositeItems = {{ composite_data|safe }};
     window.isComposite = {{ is_composite|yesno:"true,false" }};
 </script>
-<script src="/static/js/edits_item.js"></script>
+<script src="/static/js/eediit_item.js"></script>
 
 
 {% endblock %}

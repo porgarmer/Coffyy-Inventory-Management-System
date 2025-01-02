@@ -34,13 +34,26 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         tableBody.appendChild(newRow);
-
+       
         // Add event listener for the remove button
         newRow.querySelector(".remove-item").addEventListener("click", () => {
-            newRow.remove();
-            addedItems = addedItems.filter((name) => name !== item.name); // Remove item from addedItems array
-            updateTotalCost(); // Update total cost on remove
+            const itemName = item.name;
+        
+            newRow.remove(); // Remove the row visually from the table
+        
+            // Move the item to `removedItems`
+            addedItems = addedItems.filter((name) => name !== itemName);
+            if (!removedItems.includes(itemName)) {
+                removedItems.push(itemName);
+            }
+            console.log(removedItems)
+        
+            // Refresh search results to include the removed item
+            fetchSearchResults(searchInput.value.trim());
+            updateTotalCost(); // Update total cost after removal
         });
+        
+
 
         monitorZeroQuantities();
 
@@ -175,7 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 field.classList.remove("error"); // Remove error class if field is valid
             }
         });
-    
+
+
         // Validate composite item table only if the checkbox is checked
         if (compositeItemCheckbox.checked) {
             const compositeItemRows = compositeItemTable.querySelectorAll("tbody tr");
@@ -227,10 +241,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return isValid;
     };
 
+    const validateMaxConstraints = () => {
+        let isValid = true; // Flag to track if all constraints are valid
+        const allInputs = document.querySelectorAll("input[type='number']");
+        allInputs.forEach((input) => {
+            const max = parseFloat(input.getAttribute("max"));
+            if (!isNaN(max) && parseFloat(input.value) > max) {
+                input.value = max; // Enforce max value
+                alert(`Value for ${input.name || "field"} cannot exceed ${max}.`);
+                isValid = false; // Mark as invalid
+            }
+        });
+        return isValid; // Return the validation status
+    };
     
+
     if (saveButton) {
         saveButton.addEventListener("click", (e) => {
             // Step 1: Validate required fields before proceeding
+            if (!validateMaxConstraints()) {
+                e.preventDefault(); // Stop form submission if validation fails
+                return;
+            }
+
             if (!validateRequiredFields()) {
                 e.preventDefault(); // Prevent form submission if validation fails
                 return;
@@ -242,12 +275,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("The item name is invalid or already exists. Please fix it before saving.");
                 return;
             }
-
-            // Step 3: Check quantity validation
-            if (!areQuantitiesValid()) {
-                e.preventDefault();
-                alert("Some quantities are zero. Please correct them before saving.");
-                return;
+            
+            if (compositeToggle.checked) {
+                // Step 3: Check quantity validation
+                if (!areQuantitiesValid()) {
+                    e.preventDefault();
+                    alert("Some quantities are zero. Please correct them before saving.");
+                    return;
+                }
             }
 
             // Step 4: Check Volume/Weight per Unit
@@ -308,6 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Track added composite items
     let addedItems = [];
+    let removedItems = []; // Tracks items removed from the table but not yet saved
 
     if (rightPopup && popupMessage) {
         const messages = document.querySelector(".messages");
@@ -475,31 +511,30 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleSoldByOptions(); // Ensure radio buttons are updated on page load
     
     // Preload composite items if available
-if (window.isComposite || !window.isComposite && window.preloadedCompositeItems && window.preloadedCompositeItems.length > 0) {
-    if(window.isComposite){
-        compositeItemCheckbox.checked = true; // Check the toggle
-        toggleCompositeItemTable(); // Ensure the table is visible
-        toggleSoldByOptions();       
-    }
-    console.log(window.preloadedCompositeItems);
-    
-    // Populate composite items table
-    window.preloadedCompositeItems.forEach((item) => {
-        addItemToTable({
-            name: item.name,
-            cost: item.cost,
-        });
-        const quantityInput = compositeItemTable.querySelector(
-            `tr:last-child .quantity-input`
-        );
-        if (quantityInput) {
-            quantityInput.value = item.quantity; // Set the quantity
-            quantityInput.dispatchEvent(new Event("input")); // Trigger dynamic updates
+    if ((window.isComposite || !window.isComposite) && window.preloadedCompositeItems && window.preloadedCompositeItems.length > 0) {
+        if (window.isComposite){
+            compositeItemCheckbox.checked = true; // Check the toggle
         }
-    });
-
-    updateTotalCost(); // Update the total cost after populating the table
-}
+        toggleCompositeItemTable(); // Ensure the table is visible
+        toggleSoldByOptions();
+    
+        // Populate composite items table and `addedItems`
+        window.preloadedCompositeItems.forEach((item) => {
+            addItemToTable({
+                name: item.name,
+                cost: item.cost,
+            });
+            addedItems.push(item.name); // Track the preloaded item
+            const quantityInput = compositeItemTable.querySelector(`tr:last-child .quantity-input`);
+            if (quantityInput) {
+                quantityInput.value = item.quantity; // Set the quantity
+                quantityInput.dispatchEvent(new Event("input")); // Trigger dynamic updates
+            }
+        });
+    
+        updateTotalCost(); // Update the total cost after populating the table
+    }
+    
 else {
     compositeItemCheckbox.checked = false; // Uncheck the toggle
     toggleCompositeItemTable(); // Ensure the table is hidden
@@ -509,20 +544,33 @@ else {
 
 
     // monitorZeroQuantities();
+// const isCurrentItem = item.name === initialName; // Use `initialName` for the current item's name
 
     // Fetch search results or all items
     const fetchSearchResults = async (query = "") => {
         try {
-            const url = `/item-list/search-items/?q=${encodeURIComponent(query)}`;
+            const url = new URL(`/item-list/search-items-edit/`, window.location.origin);
+            url.searchParams.append("q", query);
+            url.searchParams.append("exclude_item_id", itemId); // Exclude current item's ID
+            removedItems.forEach((item) => url.searchParams.append("removed_items[]", item)); // Add removed items
+
             const response = await fetch(url);
             const data = await response.json();
 
             searchResults.innerHTML = ""; // Clear previous results
 
+            console.debug("Search Results Data:", data); // Debug: Check fetched search results
+
             if (data.results.length > 0) {
                 data.results.forEach((item) => {
-                    // Only show items that are not already added to the composite table
-                    if (!addedItems.includes(item.name)) {
+                    const isAlreadyAdded = addedItems.includes(item.name);
+                    const isRemoved = removedItems.includes(item.name);
+                    const isCurrentItem = item.id && item.id.toString() === itemId;
+                    const hasRelationship = item.has_relationship;
+
+                    console.log(`Item: ${item.name}, Already Added: ${isAlreadyAdded}, Removed: ${isRemoved}, Current: ${isCurrentItem}, Has Relationship: ${hasRelationship}`); // Debug: Check item filtering with relationships
+
+                    if ((!isAlreadyAdded || isRemoved) && !isCurrentItem && !hasRelationship) {
                         const resultItem = document.createElement("div");
                         resultItem.classList.add("dropdown-item");
                         resultItem.innerHTML = `
@@ -530,20 +578,27 @@ else {
                         `;
                         resultItem.addEventListener("click", () => {
                             addItemToTable(item);
+                            removedItems = removedItems.filter((name) => name !== item.name);
                             searchInput.value = ""; // Clear the search bar
                             searchResults.style.display = "none"; // Hide the dropdown
+                            console.debug("Added item to table:", item); // Debug: Log added item
                         });
                         searchResults.appendChild(resultItem);
                     }
                 });
-                searchResults.style.display = "block"; // Show the dropdown
+
+                searchResults.style.display = "block"; // Show the dropdown if results are available
             } else {
-                searchResults.style.display = "none"; // Hide if no results
+                searchResults.style.display = "none"; // Hide the dropdown if no results
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
         }
     };
+
+    
+    
+    
 
     // Show dropdown when search bar gains focus
     searchInput.addEventListener("focus", () => {

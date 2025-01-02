@@ -9,6 +9,7 @@ urlpatterns = [
     path('cancel_redirect/', views.cancel_redirect, name='cancel_redirect'),  # Add this line
     path('delete/', views.delete_items, name='delete_items'),
     path('search-items/', views.search_items, name='search_items'),
+    path('search-items-edit/', views.search_items_edit, name='search_items_edit'),
     path('edit/<int:item_id>/', views.edit_item, name='edit_item'),
     path('check-item-name/', views.check_item_name, name='check_item_name'),
     path('check-item-name-edit/', views.check_item_name, name='check_item_name_edit'),

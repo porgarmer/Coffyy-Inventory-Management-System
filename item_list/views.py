@@ -261,7 +261,7 @@ def add_item(request):
                         quantity=quantity,
                     )
 
-            messages.success(request, "Item added successfully!")
+            messages.success(request, "Item added.")
         except Exception as e:
             messages.error(request, f"An error occurred while adding the item: {str(e)}")
             return redirect(reverse("item_list:add_item"))
@@ -377,7 +377,7 @@ def edit_item(request, item_id):
             update_composite_prices(item)
 
             
-        messages.success(request, "Item updated successfully!")
+        messages.success(request, "Item updated.")
         page = request.session.get("item_list_page", 1)
         rows = request.session.get("item_list_row", 10)
         redirect_url = f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}"
@@ -475,7 +475,7 @@ def delete_items(request):
                     current_page = max(total_pages, 1)  # Redirect to the last valid page (or first if no items remain)
 
                 # Show success message to the user
-                messages.success(request, "Items deleted successfully!")
+                messages.success(request, "Item/s deleted.")
                 return redirect(f"{reverse('item_list:item_list_index')}?page={current_page}&rows={rows}")
 
             except Exception as e:

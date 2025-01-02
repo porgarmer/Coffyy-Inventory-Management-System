@@ -98,8 +98,8 @@
                     {% for item in items %}
                         <tr class="item-row" style="cursor: pointer;" data-href="{% url 'item_list:edit_item' item.id %}">
                             <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
-                            <td>{{ item.name }}</td>
-                            <td>
+                            <td style="text-align: left;">{{ item.name }}</td>
+                            <td style="text-align: left;">
                                 {% if item.category %}
                                     {{ item.category }}
                                 {% else %}

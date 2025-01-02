@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ITEM CATEGORIES{% endblock %}
+{% block title %}Item Categories{% endblock %}
 {% block content %}
 
 <div id="right-popup" class="right-popup">
@@ -19,52 +19,56 @@
 {% endif %}
 
 {% if categories and search_query == "" or search_query %}
-<h1>Item Categories</h1>
+<h1>CATEGORIES</h1>
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex">
-            <form method="GET" action="{% url 'item_categories_index' %}">
-                {% csrf_token %}
-                <input type="hidden" name="page" value="{{ categories.number }}">
-                <input type="hidden" name="rows" value="{{ rows_per_page }}">
-                <a href="{% url 'add_category' %}" class="btn btn-success me-2" id="add-category">+ Add Category</a>
-            </form>
-
-            <form method="POST" action="{% url 'delete_categories' %}" id="delete-form">
-                {% csrf_token %}
-                <input type="hidden" name="page" value="{{ categories.number }}">
-                <input type="hidden" name="rows" value="{{ rows_per_page }}">
-                <div id="selected-categories-container" style="display:none;"></div>
-                <button type="submit" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
-            </form>
-        </div>
-
-        <div>
-            <form method="GET" action="{% url 'item_categories_index' %}" id="search-form" class="d-flex align-items-center">
-                <input
-                    type="text"
-                    id="category-search-bar"
-                    name="search"
-                    value="{{ search_query|default:'' }}"
-                    class="form-control me-2"
-                    placeholder="Search categories..."
-                    aria-label="Search Categories"
-                >
-                <button type="submit" class="btn p-0" style="border: none; background: none;">
-                    <img 
-                        src="{% static 'images/ICON_SEARCH.png' %}" 
-                        alt="Search Icon" 
-                        style="height: 24px; width: 24px;"
-                    >
-                </button>
-                <input type="hidden" name="page" value="1">
-                <input type="hidden" name="rows" value="{{ rows_per_page }}">
-            </form>      
-        </div>
-    </div>
 
     <div class="card">
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex">
+                    <form method="GET" action="{% url 'item_categories_index' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="page" value="{{ categories.number }}">
+                        <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                        <a href="{% url 'add_category' %}" class="btn btn-custom fw-bold px me-2" id="add-category">+ ADD CATEGORY</a>
+                    </form>
+        
+                    <form method="POST" action="{% url 'delete_categories' %}" id="delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="page" value="{{ categories.number }}">
+                        <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                        <div id="selected-categories-container" style="display:none;"></div>
+                        <button type="submit" class="btn btn-custom btn-custom-cancel d-none" id="delete-button"><img 
+                            src="{% static 'images/ICON_DELETE_WHITE.png' %}" 
+                            alt="Delete Icon" 
+                            style="width: 16px; height: 16px; margin-right: 5px;"
+                        >DELETE CATEGORY</button>
+                    </form>
+                </div>
+        
+                <div>
+                    <form method="GET" action="{% url 'item_categories_index' %}" id="search-form" class="search-form">
+                        <button type="submit" class="search-button">
+                            <img 
+                                src="{% static 'images/ICON_SEARCHBAR.png' %}" 
+                                alt="Search Icon"
+                                style="width: 20px; height: 20px;"
+                            >
+                        </button>
+                        <input
+                            type="text"
+                            id="item-search-bar"
+                            name="search"
+                            value="{{ search_query|default:'' }}"
+                            class="search-input"
+                            placeholder="Search Categories..."
+                            aria-label="Search Categories"
+                        >
+                        <input type="hidden" name="page" value="1">
+                        <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                    </form>
+                </div>
+            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -155,16 +159,21 @@
     {% endfor %}
 </div>
 {% endif %}
-    <div class="empty-state text-center mt-5">
-        <!-- Icon Frame -->
-            <img 
-                src="{% static 'images/ICON_CATEGORY_ADD.png' %}" 
-                alt="Add Category Icon" 
-                style="width: 135px; height: 135px; margin-bottom: 20px;"
-            >
-        <h2>No Categories Yet</h2>
-        <p>Click the button below to add your first category and start managing your inventory!</p>
-        <a href="{% url 'add_category' %}" class="btn btn-primary">+ Add Category</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-8 col-md-6 mx-auto">
+                <div class="custom-card p-4 shadow-sm">
+                    <img class="card-icon" src="{% static 'images/ICON_CATEGORY_ADD.png' %}"  alt="" srcset="">
+                    <h5 class="card-title">Item Categories </h5>
+                    <p class="card-text">No categories added yet.</p>
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-custom fw-bold px" href="{% url 'add_category' %}">
+                            + Add Category
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endif %}
 

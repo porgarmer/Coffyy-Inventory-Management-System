@@ -115,6 +115,65 @@ def search_items(request):
     return JsonResponse({'results': []})
 
 
+def search_items_edit(request):
+    query = request.GET.get('q', '')
+    exclude_item_id = request.GET.get('exclude_item_id', None)
+    removed_items = request.GET.getlist('removed_items[]', [])
+
+    if query:
+        exclude_ids = set()
+
+        # Find items with no composite items
+        items_without_composite = set(Item.objects.exclude(
+            id__in=CompositeItem.objects.values_list('parent_item_id', flat=True)
+        ).values_list('id', flat=True))
+
+        # Check if only one item has no composite and matches exclude_item_id
+        if len(items_without_composite) == 1:
+            remaining_item_id = list(items_without_composite)[0]
+            if int(exclude_item_id) == remaining_item_id:
+                return JsonResponse({'results': []})  # No results for the current item
+
+        # Recursive exclusion logic to prevent circular relationships
+        if exclude_item_id:
+            def get_recursive_ids(item_id, visited=set()):
+                if item_id in visited:
+                    return
+                visited.add(item_id)
+                related_items = CompositeItem.objects.filter(parent_item_id=item_id).values_list('item_id', flat=True)
+                exclude_ids.update(related_items)
+                for related_id in related_items:
+                    get_recursive_ids(related_id, visited)
+
+            get_recursive_ids(exclude_item_id)
+
+        # Exclude removed items from the exclusion list
+        removed_items_ids = Item.objects.filter(name__in=removed_items).values_list('id', flat=True)
+        exclude_ids -= set(removed_items_ids)
+
+        # Fetch valid results excluding items causing recursion or reserved as main items
+        results = []
+        for item in Item.objects.filter(name__icontains=query).exclude(id__in=exclude_ids):
+            # Include non-composite items unless it's the one being edited
+            if item.id in items_without_composite:
+                if int(exclude_item_id) == item.id:
+                    continue  # Exclude the current item being edited
+
+            # Check if the current item already has a parent-child relationship
+            has_relationship = CompositeItem.objects.filter(parent_item_id=item.id, item_id=exclude_item_id).exists()
+            results.append({
+                'id': item.id,
+                'name': item.name,
+                'cost': item.cost,
+                'has_relationship': has_relationship,  # Add relationship check
+            })
+
+        return JsonResponse({'results': results})
+
+    return JsonResponse({'results': []})
+
+
+
 def add_item(request):
     categories = Category.objects.all()
 
@@ -232,6 +291,35 @@ def cancel_redirect(request):
     redirect_url = f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}"
     return redirect(redirect_url)
 
+def update_composite_prices(item):
+    """
+    Recalculates the costs of composite items that include the given item
+    and propagates changes recursively.
+    """
+    # Find all composite items where the current item is part of the composite
+    parent_composites = CompositeItem.objects.filter(item=item).select_related('parent_item')
+
+    for composite in parent_composites:
+        parent_item = composite.parent_item
+
+        if not parent_item.is_composite:
+            continue  # Skip if the parent item is not composite
+        
+        # Recalculate the total cost for the parent composite item
+        total_cost = 0
+        composite_items = CompositeItem.objects.filter(parent_item=parent_item).select_related('item')
+        for ci in composite_items:
+            total_cost += ci.quantity * ci.item.cost
+
+        # Update the parent item's cost and price
+        parent_item.cost = total_cost
+        parent_item.save()
+
+        # Recursively update any composites containing this parent item
+        update_composite_prices(parent_item)
+
+
+
 def edit_item(request, item_id):
     # Get the item to be edited
     item = get_object_or_404(Item, id=item_id)
@@ -241,6 +329,9 @@ def edit_item(request, item_id):
 
     if request.method == "POST":
         # Update the item's fields with POST data
+
+        old_cost = item.cost
+
         item.name = request.POST.get('name')
         item.category = Category.objects.get(id=request.POST.get('category')) if request.POST.get('category') else None
         item.description = request.POST.get('description', '').strip()
@@ -282,6 +373,10 @@ def edit_item(request, item_id):
         # Save the updated item
         item.save()
 
+        if old_cost != item.cost:
+            update_composite_prices(item)
+
+            
         messages.success(request, "Item updated successfully!")
         page = request.session.get("item_list_page", 1)
         rows = request.session.get("item_list_row", 10)
@@ -326,13 +421,44 @@ def edit_item(request, item_id):
     
 @csrf_exempt
 def delete_items(request):
+    """
+    Deletes selected items, recalculates costs for affected composite items,
+    and updates the `is_composite` field when no components remain.
+    """
     if request.method == "POST":
         selected_ids = request.POST.getlist('selected_ids')
 
         if selected_ids:
             try:
+                # Convert selected_ids to integers
+                selected_ids = list(map(int, selected_ids))
+
+                # Find affected composite items
+                affected_composites = CompositeItem.objects.filter(item_id__in=selected_ids).select_related('parent_item')
+                affected_parent_items = set(composite.parent_item for composite in affected_composites)
+
                 # Delete the selected items
                 Item.objects.filter(id__in=selected_ids).delete()
+
+                # Recalculate costs and update `is_composite` for affected parent items
+                for parent_item in affected_parent_items:
+                    # Fetch remaining components of the composite item
+                    remaining_components = CompositeItem.objects.filter(parent_item=parent_item)
+
+                    if not remaining_components.exists():
+                        # If no components remain, set `is_composite` to False
+                        parent_item.is_composite = False
+                        parent_item.cost = 0  # Reset cost to 0
+                    else:
+                        # Recalculate the cost based on remaining components
+                        total_cost = 0
+                        for component in remaining_components:
+                            total_cost += component.quantity * component.item.cost
+
+                        parent_item.cost = total_cost
+
+                    # Save the updated parent item
+                    parent_item.save()
 
                 # Get current page and rows from session or default values
                 rows = request.session.get('item_list_row', 10)
@@ -362,4 +488,3 @@ def delete_items(request):
         current_page = request.session.get('item_list_page', 1)
         rows = request.session.get('item_list_row', 10)
         return redirect(f"{reverse('item_list:item_list_index')}?page={current_page}&rows={rows}")
-

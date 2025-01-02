@@ -151,10 +151,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return isValid;
     };
 
-    
+    const validateMaxConstraints = () => {
+        let isValid = true; // Flag to track if all constraints are valid
+        const allInputs = document.querySelectorAll("input[type='number']");
+        allInputs.forEach((input) => {
+            const max = parseFloat(input.getAttribute("max"));
+            if (!isNaN(max) && parseFloat(input.value) > max) {
+                input.value = max; // Enforce max value
+                alert(`Value for ${input.name || "field"} cannot exceed ${max}.`);
+                isValid = false; // Mark as invalid
+            }
+        });
+        return isValid; // Return the validation status
+    };
+
     if (saveButton) {
         saveButton.addEventListener("click", (e) => {
             // Step 1: Validate required fields before proceeding
+
+            if (!validateMaxConstraints()) {
+                e.preventDefault(); // Stop form submission if validation fails
+                return;
+            }
+            
             if (!validateRequiredFields()) {
                 e.preventDefault(); // Prevent form submission if validation fails
                 return;

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}EDIT CATEGORY{% endblock %}
+{% block title %}Edit Category{% endblock %}
 {% block content %}
-<h1>Edit Category</h1>
 
 <div id="right-popup" class="right-popup">
     <div class="popup-content">
@@ -24,7 +23,7 @@
             <form method="POST" action="{% url 'edit_category' category.id %}">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="category-name">Name</label>
+                    <h4 style="font-weight:bold; text-align:left;">Name</h4>
                     <input type="text" class="form-control underline-input" id="category-name" name="name" value="{{ category.name }}" data-initial-name="{{ category.name }}" data-category-id="{{ category.id }}" required>
                     <span id="category-name-error" style="color: red; display: none;">Category name already exists.</span>
                 </div>
@@ -49,15 +48,15 @@
                     <input type="hidden" id="selected-color" name="color" value="{{ category.color }}">
                 </div>
                 <div class="mt-4 d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-custom btn-custom-cancel me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
+                    <button type="submit" class="btn btn-custom btn-custom-save">Save</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<link rel="stylesheet" href="{% static 'css/edit_category.css' %}">
+<link rel="stylesheet" href="{% static 'css/edits_category.css' %}">
 
 <script src="{% static 'js/edit_cat.js' %}"></script>
 

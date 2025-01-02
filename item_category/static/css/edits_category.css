@@ -168,3 +168,53 @@ input[type="color"] {
 h1{
     font-weight:bold;
 }
+
+
+.btn-custom {
+    background-color: #FFFFFF;
+    color: #B20727;
+    border: none !important
+    
+}
+.btn-custom:hover {
+    background-color: #F4F4F4;
+    color: #B20727;
+}
+.btn-custom:active {
+    background-color: #E9E9E9 !important; /* Custom active background color */
+    color: #B20727 !important; /* Custom active text color */
+    transform: scale(0.98); /* Optional: Add a slight scale effect */
+    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
+    border: none !important
+}
+
+
+.btn-custom-save{
+    background-color: #FDF21D;
+    color: #50260E;
+}
+
+.btn-custom-save:hover{
+    background-color: #f7ec2a;
+    color: #50260E;
+}
+
+.btn-custom-save:active{
+    background-color: #e2d92d !important; /* Custom active background color */
+    color: #50260E !important; /* Custom active text color */
+}
+
+.btn-custom-cancel{
+    background-color: #B20727;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:hover{
+    background-color: #9e0722;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:active{
+    background-color: #8f061f !important; 
+    color: #FFFFFF !important;
+}

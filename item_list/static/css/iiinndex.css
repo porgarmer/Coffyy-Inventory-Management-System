@@ -110,6 +110,7 @@ h1{
     margin: auto; /* Center the card horizontally */
     background-color: #EED659;
     border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.125); /* Default border */
 }
 .card-icon {
     width: 50%;

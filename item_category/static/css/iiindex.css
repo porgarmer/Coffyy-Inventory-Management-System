@@ -142,6 +142,7 @@ h1{
     min-height: 70vh;
     margin: auto; /* Center the card horizontally */
     background-color: #EED659;
+    border-radius: 5px;
 }
 .card-icon {
     width: 50%;

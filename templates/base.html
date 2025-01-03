@@ -16,8 +16,9 @@
 </head>
 <body>
         {% comment %} <div class="square"></div> {% endcomment %} 
-        <div class="wrapper">
-            <aside id="sidebar">
+        <div class="wrapper" >
+            <div class="sidebar-container">
+                <aside id="sidebar">
                     <div class="d-flex">
                         <button id="toggle-btn" type="button">
                             <i class="lni lni-menu-hamburger-1"></i>
@@ -103,7 +104,9 @@
                             </a>
                         </li>
                     </ul>
-            </aside>
+                </aside>
+            </div>
+            
             <div class="main p-3">
                 <div class="text-center">
                     {% block content %}

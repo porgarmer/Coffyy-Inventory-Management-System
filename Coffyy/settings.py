@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'dashboard',
     'item_category',
     'item_list',
-    'purchase_order.apps.PurchaseOrderConfig'
+    'purchase_order.apps.PurchaseOrderConfig',
+    'supplier.apps.SupplierConfig'
 ] 
 
 MIDDLEWARE = [
@@ -134,3 +135,4 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

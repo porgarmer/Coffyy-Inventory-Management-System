@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +21,7 @@
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="login-box text-center p-4 rounded">
             <!-- Main Form -->
-            <form id="login-form" action="profile.html" method="GET">
+            <form id="login-form"  action="{% url 'index' %}" method="GET">
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label text-white">Username:</label>
                     <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
@@ -30,13 +31,12 @@
                     <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
                 <div class="mb-3 text-end">
-
-                    <a href="forgot_pass_email.html" class="forgot-password text-white text-decoration-none">Forgot Password?</a>
+                    <a href="{% url 'login:forgot_pass_email' %}" class="forgot-password text-white text-decoration-none">Forgot Password?</a>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <button type="submit" class="btn btn-warning">Login</button>
                     <div class="register-link-container">
-                        <a href="register.html" class="register-link">Register</a>
+                        <a href="{% url 'login:register' %}" class="register-link">Register</a>
                         <div class="no-account text-white">No account yet?</div>
                     </div>
                 </div>

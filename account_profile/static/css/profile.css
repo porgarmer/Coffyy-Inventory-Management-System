@@ -8,6 +8,7 @@
     min-height: 100vh;
     position: relative;
     padding: 20px;
+    text-align: left;
 }
 
 .profile-icon {
@@ -74,12 +75,13 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Align text to the left and icon to the right */
     margin-top: 20px;
 }
 
 .delete-account p {
     margin: 0;
+    text-align: left; /* Ensure text aligns to the left */
 }
 
 .delete-account img {
@@ -91,6 +93,7 @@
 .delete-info {
     color: #d32f;
     font-size: 12px;
+    text-align: left; /* Align delete-info text to the left */
 }
 
 .buttons {
@@ -119,5 +122,3 @@
     background-color: #ffeb3b;
     color: black;
 }
-
-

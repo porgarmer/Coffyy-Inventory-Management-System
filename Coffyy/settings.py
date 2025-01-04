@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'dashboard',
     'item_category',
     'item_list',
+    'login',
+    'account_profile',
     'purchase_order.apps.PurchaseOrderConfig'
 ] 
 

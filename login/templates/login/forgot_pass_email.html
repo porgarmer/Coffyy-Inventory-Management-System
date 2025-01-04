@@ -1,18 +1,19 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-   <!-- Link to external CSS -->
-<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"></link>
-<link rel="stylesheet" href="{% static 'css/forgot_pass_email.css' %}"></link>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forgot_pass_email.css' %}">
 </head>
 <body>
     <!-- Header -->
     <header class="header bg-brown position-relative">
         <div class="logo-container position-absolute top-100 start-50 translate-middle">
-            <img src="{% static 'images/logo.png'%}" alt="Logo" class="logo img-fluid">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo img-fluid">
         </div>
     </header>
 
@@ -21,14 +22,15 @@
         <div class="forgot-password-box text-center p-4 rounded">
             <h2 class="text-white mb-4">Forgot Password</h2>
             <!-- Main Form -->
-            <form id="forgot-password-form">
+            <form id="forgot-password-form" action="{% url 'login:forgot_pass' %}" method="POST">
+                {% csrf_token %}
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label text-white">Enter email address:</label>
                     <input type="email" id="username" name="username" class="form-control" placeholder="Email Address" required>
                 </div>
                 <div class="d-flex justify-content-center gap-4 mt-3">
                     <button type="submit" class="btn btn-warning">Submit</button>
-                    <a href="login.html" class="cancel-link">Cancel</a>
+                    <a href="{% url 'login:login_index' %}" class="cancel-link">Cancel</a>
                 </div>
             </form>
         </div>
@@ -37,7 +39,7 @@
     <!-- Footer -->
     <footer class="footer bg-brown"></footer>
     <!-- Link to external JS -->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/profile.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/profile.js' %}"></script>
 </body>
 </html>

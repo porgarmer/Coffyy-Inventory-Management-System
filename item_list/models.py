@@ -16,6 +16,7 @@ class Item(models.Model):
     purchase_cost = models.DecimalField(max_digits=20, decimal_places=2, default=0, null=True, blank=True)
     volume_per_unit = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     remaining_volume = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    cost_per_m = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     #supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.SET_NULL)
     is_composite = models.BooleanField(default=False)
 

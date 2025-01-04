@@ -208,11 +208,16 @@ def add_item(request):
             
         volume_per_unit = parse_float("volume_weight_per_unit", None) if sold_by == "volume_weight" else None
         remaining_volume = None  # Default to None
+        cost_per_m = None  # Default to None
 
         # Check if the item is sold by volume/weight
         if sold_by == "volume_weight":
             if volume_per_unit:
                 remaining_volume = float(volume_per_unit) * int(in_stock) if in_stock and in_stock.isdigit() else 0.00
+                if volume_per_unit > 0:
+                    cost_per_m = cost / volume_per_unit
+                else:
+                    cost_per_m = 0.00
             else:
                 remaining_volume = 0.00
 
@@ -234,6 +239,7 @@ def add_item(request):
                 reorder_level=int(reorder_level) if reorder_level and reorder_level.isdigit() else None,
                 volume_per_unit=volume_per_unit,
                 remaining_volume=remaining_volume,
+                cost_per_m=cost_per_m,
                 is_for_sale=request.POST.get("is_for_sale") == "on",
                 sold_by=sold_by,
                 is_composite=is_composite,
@@ -344,13 +350,23 @@ def edit_item(request, item_id):
         item.purchase_cost = request.POST.get('default_purchase_cost')
         item.optimal_stock = request.POST.get('optimal_stock')
 
+        def parse_float(field, default=0.00):
+            try:
+                return float(request.POST.get(field, default))
+            except (ValueError, TypeError):
+                return default
+
         # Handle volume per unit for 'volume_weight' items
         if item.sold_by == 'volume_weight':
             item.volume_per_unit = request.POST.get('volume_weight_per_unit')
             item.remaining_volume = request.POST.get('remaining_volume')
+            cost = parse_float("cost")
+            volume_per_unit = parse_float("volume_weight_per_unit", None)
+            item.cost_per_m = (cost / volume_per_unit if volume_per_unit > 0 else 0.00)  # Calculate cost per unit
         else:
             item.volume_per_unit = None
             item.remaining_volume = None
+            item.cost_per_m = None
 
 
         # Update composite items if applicable

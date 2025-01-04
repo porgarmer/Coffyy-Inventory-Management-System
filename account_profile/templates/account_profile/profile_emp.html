@@ -3,10 +3,6 @@
 {% block title %}Accounts Profile{% endblock %}
 
 {% block content %}
-    <!-- Header -->
-    <header class="header">
-        <img src="{% static 'images/logo.png'%}" alt="Logo" class="logo">
-    </header>
 
     <!-- Profile Container -->
     <div class="container">
@@ -56,8 +52,8 @@
             <button class="btn btn-save" onclick="saveChanges()">Save</button>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer"></footer>
+<!-- Link to external JS -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/profile.js' %}"></script>
 {% endblock %}
     

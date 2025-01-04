@@ -1,24 +1,4 @@
 /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f7f7;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px 20px;
-    background-color: #50260E;
-    color: white;
-}
-
-.header .logo {
-    height: 60px; 
-    margin-right: 10px;
-}
 
 .container {
     display: flex;
@@ -28,6 +8,7 @@ body {
     min-height: 100vh;
     position: relative;
     padding: 20px;
+    text-align: left;
 }
 
 .profile-icon {
@@ -94,12 +75,13 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Align text to the left and icon to the right */
     margin-top: 20px;
 }
 
 .delete-account p {
     margin: 0;
+    text-align: left; /* Ensure text aligns to the left */
 }
 
 .delete-account img {
@@ -111,6 +93,7 @@ body {
 .delete-info {
     color: #d32f;
     font-size: 12px;
+    text-align: left; /* Align delete-info text to the left */
 }
 
 .buttons {
@@ -139,15 +122,3 @@ body {
     background-color: #ffeb3b;
     color: black;
 }
-
-.footer {
-    background-color: #50260E;
-    color: white;
-    text-align: center;
-    padding: 20px 20px;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
-

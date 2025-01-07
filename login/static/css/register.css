@@ -1,17 +1,14 @@
-/* General Styles */
 body {
     background-color: #D5BF4D;
     font-family: Arial, sans-serif;
 }
 
-/* Header */
 .header {
     background-color: #50260E;
-    height: 150px; /* Increased height for better spacing */
+    height: 150px;
     position: relative;
 }
 
-/* Logo Overlay */
 .logo-container {
     width: 200px;
     height: 200px;
@@ -29,26 +26,22 @@ body {
     height: auto;
 }
 
-/* Footer */
 .footer {
     background-color: #50260E;
     height: 50px;
     width: 100%;
 }
 
-/* Registration Box */
 .register-password-box {
     background-color: #B20727;
-    width: 400px; /* Increased width for better spacing */
+    width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 20px;
-    margin-top: 150px; /* Ensure no overlap with logo */
-    margin-bottom: 50px; /* Adds space below the container */
+    margin-top: 150px;
+    margin-bottom: 50px;
 }
 
-
-/* Forgot Password Box Title */
 .register-password-box h2 {
     font-weight: bold;
     text-transform: uppercase;
@@ -57,18 +50,15 @@ body {
     color: #fff;
 }
 
-/* Label Styling */
 .register-password-box label {
     font-weight: bold;
     color: #fff;
 }
 
-/* Buttons Container */
 .d-flex.justify-content-center {
-    gap: 15px; /* Adds space between Submit and Cancel */
+    gap: 15px;
 }
 
-/* Submit Button */
 .btn-warning {
     font-weight: bold;
     padding: 10px 20px;
@@ -82,7 +72,6 @@ body {
     cursor: pointer;
 }
 
-/* Cancel Link */
 .cancel-link {
     font-weight: bold;
     color: #fff;
@@ -93,3 +82,24 @@ body {
 .cancel-link:hover {
     text-decoration: underline;
 }
+
+
+/* Popup */
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+

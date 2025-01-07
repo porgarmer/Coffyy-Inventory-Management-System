@@ -32,15 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
     // Display popup messages if hidden success messages are present
     const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
     hiddenMessages.forEach(message => {
-    const trimmedMessage = message.textContent.trim();
-    if (trimmedMessage) {
-        popupMessage.textContent = trimmedMessage;
-        popup.classList.add('show');
+        const trimmedMessage = message.textContent.trim();
+        console.log("Message Found:", trimmedMessage); // Debug: Check if message is retrieved
+        if (trimmedMessage) {
+            popupMessage.textContent = trimmedMessage;
+            popup.classList.add('show');
 
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 3000); // Hide popup after 3 seconds
-    }
-});
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000); // Hide popup after 3 seconds
+        }
+    });
     
 });

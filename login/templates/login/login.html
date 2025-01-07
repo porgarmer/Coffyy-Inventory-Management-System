@@ -10,27 +10,27 @@
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
+    
+    <div id="right-popup" class="right-popup">
+        <div class="popup-content">
+            <span id="popup-message"></span>
+        </div>
+    </div>
+    
+    {% if messages %}
+        <div style="display:none;"> <!-- Hide messages but include them for the script -->
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <!-- Header -->
     <header class="header bg-brown position-relative">
         <div class="logo-container position-absolute top-100 start-50 translate-middle">
             <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo img-fluid">
         </div>
     </header>
-    <!-- Display messages -->
-    <div id="right-popup" class="right-popup">
-        <div class="popup-content">
-            <span class="popup-message"></span>
-        </div>
-    </div>
-
-    {% if messages %}
-    <div style="display:none;"> <!-- Hide messages but include them for the script -->
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
-    
 
     <!-- Main Content -->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">

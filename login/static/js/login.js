@@ -5,6 +5,7 @@ const popupMessage = document.getElementById('popup-message');
 const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
 hiddenMessages.forEach(message => {
     const trimmedMessage = message.textContent.trim();
+    console.log("Message Found:", trimmedMessage); // Debug: Check if message is retrieved
     if (trimmedMessage) {
         popupMessage.textContent = trimmedMessage;
         popup.classList.add('show');

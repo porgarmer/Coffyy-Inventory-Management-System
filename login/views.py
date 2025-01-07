@@ -5,24 +5,21 @@ from .models import User
 
 def index(request):
     if request.method == 'POST':
-        # Extract username and password from the form
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-            # Check if the user exists in the database
         try:
             user = User.objects.get(username=username)
-
-                # Verify the password
             if check_password(password, user.password):
-                    # Redirect to the desired URL (dashboard or home page)
+                request.session['username'] = user.username
+                request.session['user_id'] = user.id  # Store user ID for hidden purposes
                 messages.success(request, f"Welcome back, {user.first_name}!")
-                return redirect('login:register')  # Replace 'dashboard' with your URL name
+                return redirect('dashboard:index')  # Redirect to the dashboard
             else:
                 messages.error(request, "Incorrect password. Please try again.")
         except User.DoesNotExist:
             messages.error(request, "Account does not exist. Please register first.")
-            
+    
     return render(request, "login/login.html")
 
 

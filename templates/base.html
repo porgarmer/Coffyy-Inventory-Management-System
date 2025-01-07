@@ -14,12 +14,33 @@
     {% endblock stylesheet %}
 </head>
 <body>
+
+    <div id="right-popup" class="right-popup">
+        <div class="popup-content">
+            <span id="popup-message"></span>
+        </div>
+    </div>
+    
+    {% if messages %}
+        <div style="display:none;"> <!-- Hide messages but include them for the script -->
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
     <header>
         <div class="header-logo">
             <img src="{% static 'images/logo.png' %}" alt="Logo">
         </div>
         <div class="header-user">
-            Welcome, User
+            <div class="header-user">
+                {% if request.session.username %}
+                    Welcome, {{ request.session.username }}!
+                {% else %}
+                    Welcome, Guest!
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -50,7 +71,7 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a href="{% url 'index' %}" class="sidebar-link">
+                    <a href="{% url 'dashboard:index' %}" class="sidebar-link">
                         <i class="lni lni-dashboard-square-1"></i>
                         <span>Dashboard</span>
                     </a>

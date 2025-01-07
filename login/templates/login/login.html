@@ -36,7 +36,7 @@
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="login-box text-center p-4 rounded">
             <!-- Main Form -->
-            <form id="login-form" action="{% url 'index' %}" method="POST">
+            <form id="login-form" action="{% url 'login:login_index' %}" method="POST">
                 {% csrf_token %}
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label text-white">Username:</label>

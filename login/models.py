@@ -11,6 +11,13 @@ class User(models.Model):
         max_length=255,
         validators=[MinLengthValidator(8)]
     )
+    role = models.CharField(max_length=50, default='unassigned')  
+
+    def save(self, *args, **kwargs):
+        # Ensure that the first user is assigned the 'owner' role
+        if not User.objects.exists():
+            self.role = 'owner'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"

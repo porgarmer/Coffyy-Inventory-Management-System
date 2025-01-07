@@ -67,7 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if (data.exists) {
                         // Show alert if name already exists
-                        alert("The category name already exists. Please use a different name.");
+                        Swal.fire({
+                            title: "Error",
+                            text: "The category name already exists. Please use a different name.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
                     } else {
                         // Name is valid, submit the form
                         categoryForm.submit();
@@ -75,11 +80,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error("Error checking category name:", error);
-                    alert("An error occurred while validating the category name. Please try again.");
+                    Swal.fire({
+                        title: "Error",
+                        text: "An error occurred while validating the category name. Please try again.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                 });
         } else {
             // Show alert if the name field is empty
-            alert("Please enter a category name before saving.");
+            Swal.fire({
+                title: "Error",
+                text: "Please enter a category name before saving.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
         }
     });
 

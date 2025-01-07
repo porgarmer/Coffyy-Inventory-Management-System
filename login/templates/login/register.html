@@ -5,23 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
- <!-- Link to external CSS -->
-<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"></link>
-<link rel="stylesheet" href="{% static 'css/register.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
 </head>
 <body>
-    <!-- Header -->
+    
+    <div id="right-popup" class="right-popup">
+        <div class="popup-content">
+            <span id="popup-message"></span>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div style="display:none;"> <!-- Hide messages but include them for the script -->
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
     <header class="header bg-brown position-relative">
         <div class="logo-container position-absolute top-100 start-50 translate-middle">
-            <img src="{% static 'images/logo.png'%}" alt="Logo" class="logo img-fluid">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo img-fluid">
         </div>
     </header>
 
-    <!-- Registration Form -->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="register-password-box text-center p-4 rounded">
             <h2 class="text-white mb-4">REGISTRATION</h2>
-            <form id="registration-form"  action="{% url 'login:login_index' %}">
+            <form id="registration-form" method="POST" action="{% url 'login:register' %}">
+                {% csrf_token %}
                 <div class="mb-3 text-start">
                     <label for="first-name" class="form-label text-white">First Name:</label>
                     <input type="text" id="first-name" name="first-name" class="form-control" required>
@@ -36,7 +50,11 @@
                 </div>
                 <div class="mb-3 text-start">
                     <label for="business-name" class="form-label text-white">Business Name:</label>
-                    <input type="text" id="business-name" name="business-name" class="form-control" required>
+                    <input type="text" id="business-name" name="business-name" class="form-control">
+                </div>
+                <div class="mb-3 text-start">
+                    <label for="contact-number" class="form-label text-white">Contact Number:</label>
+                    <input type="text" id="contact-number" name="contact-number" class="form-control" required>
                 </div>
                 <div class="mb-3 text-start">
                     <label for="email-address" class="form-label text-white">Email Address:</label>
@@ -45,20 +63,22 @@
                 <div class="mb-3 text-start">
                     <label for="password" class="form-label text-white">Password:</label>
                     <input type="password" id="password" name="password" class="form-control" required>
-                    <p class="text-warning mt-2 password-requirement">must be at least 8 characters long.</p>
+                    <p id="password-warning" class="text-warning mt-2 password-requirement d-none">Must be at least 8 characters long.</p>
                 </div>
                 <div class="d-flex justify-content-center mt-4">
-                    <button type="submit" class="btn btn-warning me-3">Register</button>
+                    <button type="submit" class="btn btn-warning me-3" id="submit-button" name="register">Register</button>
                     <a href="{% url 'login:login_index' %}" class="cancel-link">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer"></footer>
-   <!-- Link to external JS -->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/profile.js' %}"></script>
+
+    <!--External JS-->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/register.js' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>

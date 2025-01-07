@@ -105,7 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
             if (compositeItemRows.length === 0) {
                 // No rows added to the composite table
-                alert("Please add composite items to the table.");
+                Swal.fire({
+                    title: "Error",
+                    text: "Please add composite items to the table.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 isValid = false;
                 compositeItemTable.classList.add("error");
             } else {
@@ -116,7 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         
                 if (invalidRows.length > 0) {
-                    alert("All composite items must have a quantity greater than 0.");
+                    Swal.fire({
+                        title: "Error",
+                        text: "All composite items must have a quantity greater than 0.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                     isValid = false;
                     compositeItemTable.classList.add("error");
                 } else {
@@ -128,7 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
         // Separate alerts based on the validation results
         if (!nonCompositeValid) {
-            alert("Please fill out all required fields.");
+            Swal.fire({
+                title: "Error",
+                text: "Please fill out all required fields.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
         }
     
         return isValid;
@@ -158,7 +173,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const max = parseFloat(input.getAttribute("max"));
             if (!isNaN(max) && parseFloat(input.value) > max) {
                 input.value = max; // Enforce max value
-                alert(`Value for ${input.name || "field"} cannot exceed ${max}.`);
+                Swal.fire({
+                    title: "Error",
+                    text: `Value for ${input.name || "field"} cannot exceed ${max}.`,
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 isValid = false; // Mark as invalid
             }
         });
@@ -182,14 +202,24 @@ document.addEventListener("DOMContentLoaded", () => {
             // Step 2: Check name validation
             if (!isNameValid()) {
                 e.preventDefault();
-                alert("The item name is invalid or already exists. Please fix it before saving.");
+                Swal.fire({
+                    title: "Error",
+                    text: "The item name is invalid or already exists. Please fix it before saving.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 return;
             }
 
             // Step 3: Check quantity validation
             if (!areQuantitiesValid()) {
                 e.preventDefault();
-                alert("Some quantities are zero. Please correct them before saving.");
+                Swal.fire({
+                    title: "Error",
+                    text: "Some quantities are zero. Please correct them before saving.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 return;
             }
 
@@ -198,7 +228,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 const volumeWeightValue = parseFloat(volumeWeightInput.value) || 0;
                 if (volumeWeightValue <= 0) {
                     e.preventDefault();
-                    alert("Volume/Weight per unit cannot be zero. Please provide a valid value.");
+                    Swal.fire({
+                        title: "Error",
+                        text: "Volume/Weight per unit cannot be zero. Please provide a valid value.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                     return;
                 }
             }

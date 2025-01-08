@@ -1,3 +1,11 @@
+/* Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Apply Poppins Font Globally */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
 /* General Styles */
 .container {
     display: flex;
@@ -69,6 +77,33 @@
     height: 16px;
     cursor: pointer;
     margin-left: 10px;
+}
+
+.delete-account {
+    color: #d32f2f;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Align text to the left and icon to the right */
+    margin-top: 20px;
+}
+
+.delete-account p {
+    margin: 0;
+    text-align: left; /* Ensure text aligns to the left */
+}
+
+.delete-account img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.delete-info {
+    color: #d32f;
+    font-size: 12px;
+    text-align: left; /* Align delete-info text to the left */
 }
 
 .buttons {
@@ -169,7 +204,29 @@
 .modal-content .btn-no:hover {
     background-color: #e53935;
 }
+.modal-content .btn-save {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
 
+.modal-content .btn-save:hover {
+    background-color: #43a047;
+}
+
+.modal-content .btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-cancel:hover {
+    background-color: #e53935;
+}
+
+.modal-content label{
+    text-align: left;
+}
 /* Password Fields */
 .modal-content input[type="password"] {
     width: 100%;
@@ -289,3 +346,4 @@
 .modal-content .btn-no:hover {
     background-color: #e53935;
 }
+

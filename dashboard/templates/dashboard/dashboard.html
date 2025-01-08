@@ -34,10 +34,12 @@
             <h4 class="card-title">5</h4>
             <h5 class="card-title">Categories</h5>
         </div>
+        {% if user.role == "owner" %}
         <div class="card card-6">
             <h4 class="card-title">6</h4>
             <h5 class="card-title">Employees</h5>
         </div>
+        {% endif %}
         <div class="card card-7">
             <h4 class="card-title">7</h4>
             <h5 class="card-title">Incoming Products</h5>

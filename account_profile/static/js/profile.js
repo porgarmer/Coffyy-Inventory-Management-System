@@ -1,117 +1,174 @@
-const popup = document.getElementById('right-popup');
-const popupMessage = document.getElementById('popup-message');
-
 // Display popup messages if hidden success messages are present
-const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
-hiddenMessages.forEach(message => {
-    const trimmedMessage = message.textContent.trim();
-    console.log("Message Found:", trimmedMessage); // Debug: Check if message is retrieved
-    if (trimmedMessage) {
-        popupMessage.textContent = trimmedMessage;
-        popup.classList.add('show');
+document.addEventListener('DOMContentLoaded', () => {
+    const popup = document.getElementById('right-popup');
+    const popupMessage = document.getElementById('popup-message');
 
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 3000); // Hide popup after 3 seconds
-    }
+    const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
+    hiddenMessages.forEach(message => {
+        const trimmedMessage = message.textContent.trim();
+        if (trimmedMessage) {
+            popupMessage.textContent = trimmedMessage;
+            popup.classList.add('show');
+
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000); // Hide popup after 3 seconds
+        }
+    });
 });
 
+// Function to enable editing of input fields
 function enableEdit(fieldId) {
     const field = document.getElementById(fieldId);
-    field.removeAttribute('readonly');
-    field.focus();
+    if (field) {
+        field.removeAttribute('readonly');
+        field.focus();
+    }
 }
 
+// Open password edit modal
 function editPassword() {
-    document.getElementById('password-modal').classList.add('show');
+    const modal = document.getElementById('password-modal');
+    if (modal) modal.classList.add('show');
 }
 
+// Close modal
 function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('show');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('show');
 }
 
+// Show confirmation modal for saving changes
 function saveChanges() {
-    document.getElementById('confirm-modal').classList.add('show');
+    const modal = document.getElementById('confirm-modal');
+    if (modal) modal.classList.add('show');
 }
 
+// Save profile changes
 function confirmSave() {
     const contactNumber = document.getElementById('contact-number').value;
     const firstName = document.getElementById('first-name').value;
     const lastName = document.getElementById('last-name').value;
     const email = document.getElementById('email').value;
 
-    fetch('/update-profile/', {
+    fetch('/edit-account/', {
         method: 'POST',
-        headers: { 
-            'X-CSRFToken': '{{ csrf_token }}', 
-            'Content-Type': 'application/json' 
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-            contactNumber, 
-            firstName, 
-            lastName, 
-            email 
-        })
+        body: JSON.stringify({
+            operation: 'update_profile',
+            'contact-number': contactNumber,
+            'first-name': firstName,
+            'last-name': lastName,
+            'email': email,
+        }),
     })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            closeModal('confirm-modal');
-        });
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message || 'Profile updated successfully!');
+                location.reload();
+            } else {
+                alert(data.error || 'Failed to update profile.');
+            }
+        })
+        .catch((error) => console.error('Error:', error));
 }
 
+// Save password changes
 function savePassword() {
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
     if (newPassword !== confirmPassword) {
-        alert("Passwords do not match!");
+        alert('Passwords do not match!');
         return;
     }
 
-    fetch('/update-password/', {
-        method: 'POST',
-        headers: { 
-            'X-CSRFToken': '{{ csrf_token }}', 
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({ password: newPassword })
-    })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            closeModal('password-modal');
-        });
-}
-
-// Function to show the delete account confirmation modal
-function deleteAccount() {
-    document.getElementById('delete-modal').classList.add('show');
-}
-
-// Function to close the modal
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('show');
-}
-
-// Function to handle account deletion after confirmation
-function confirmDeletion() {
-    fetch('/delete-account/', {
+    fetch('/edit-account/', {
         method: 'POST',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({})
+        body: JSON.stringify({
+            operation: 'update_password',
+            password: newPassword,
+        }),
     })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message); // Show success message
-        closeModal('delete-modal'); // Close the modal
-        window.location.href = '/login/'; // Redirect to login page
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message || 'Password updated successfully!');
+                closeModal('password-modal');
+            } else {
+                alert(data.error || 'Failed to update password.');
+            }
+        })
+        .catch((error) => console.error('Error:', error));
+}
+
+// Function to open delete modal
+function openDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    if (modal) modal.classList.add('show');
+}
+
+// Close modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('show');
+}
+
+
+// Delete account
+function deleteAccount() {
+    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        return;
+    }
+
+    fetch('/edit-account/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ operation: 'delete_account' }),
     })
-    .catch(error => {
-        alert('Error: ' + error);
-        closeModal('delete-modal');
-    });
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert('Account deleted successfully!');
+                window.location.href = '/login/';
+            } else {
+                alert(data.error || 'Failed to delete your account.');
+            }
+        })
+        .catch((error) => console.error('Error:', error));
+}
+
+// Handle account deletion
+function confirmDelete() {
+    fetch('/edit-account/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            operation: 'delete_account',
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message || 'Account deleted successfully!');
+                window.location.href = '/login/'; // Redirect to login page
+            } else {
+                alert(data.error || 'Failed to delete account.');
+            }
+        })
+        .catch((error) => console.error('Error:', error));
 }

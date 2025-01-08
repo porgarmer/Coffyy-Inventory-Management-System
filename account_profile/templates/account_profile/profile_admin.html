@@ -57,16 +57,18 @@
         <div class="mb-4">
             <label for="password">Password</label>
             <div class="input-group">
-                <input type="password" id="password" value="••••••••" readonly>
+                <!-- Use placeholder instead of showing the password -->
+                <input type="password" id="password" placeholder="**********" readonly>
                 <img src="{% static 'images/edit.png' %}" alt="Edit Icon" onclick="editPassword()">
             </div>
         </div>
+        {% if user.role == "owner" %}
         <div class="delete-account">
             <p>Delete account</p>
-            <img src="{% static 'images/delete.png'%}" alt="Delete Icon" onclick="confirmDeletion()">
+            <img src="{% static 'images/delete.png'%}" alt="Delete Icon" onclick="openDeleteModal()">
         </div>
         <p class="delete-info">You can permanently delete your account and all its data.</p>
-        </div>
+        {% endif %}
     </div>
 
     <div class="buttons">
@@ -87,9 +89,9 @@
 <!-- Password Modal -->
 <div class="modal" id="password-modal">
     <div class="modal-content">
-        <label for="new-password">New Password</label>
+        <label for="new-password">New Password:</label>
         <input type="password" id="new-password">
-        <label for="confirm-password">Confirm Password</label>
+        <label for="confirm-password">Confirm Password:</label>
         <input type="password" id="confirm-password">
         <button class="btn btn-save" onclick="savePassword()">Save</button>
         <button class="btn btn-cancel" onclick="closeModal('password-modal')">Cancel</button>

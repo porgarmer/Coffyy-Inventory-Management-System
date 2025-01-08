@@ -35,7 +35,6 @@ def register(request):
         first_name = request.POST.get('first-name')
         last_name = request.POST.get('last-name')
         username = request.POST.get('username')
-        business_name = request.POST.get('business-name')
         contact_number = request.POST.get('contact-number')
         email_address = request.POST.get('email-address')
         password = request.POST.get('password')
@@ -50,7 +49,6 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
             username=username,
-            business_name=business_name,
             contact_number=contact_number,
             email_address=email_address,
             password=make_password(password),

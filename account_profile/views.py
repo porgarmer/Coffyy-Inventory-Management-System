@@ -5,17 +5,24 @@ from django.contrib.auth.decorators import login_required
 import json
 from login.models import User
 
-@login_required
 def edit_account(request):
-    user = User.objects.get(id=request.user.id)  # Fetch the logged-in user explicitly
-    # Store user information in the session
-    request.session['user_data'] = {
-        'contact_number': user.contact_number,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email_address': user.email_address,
-    }
-    return render(request, 'account_profile/profile_admin.html')
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        user_data = {
+            'contact_number': user.contact_number,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email_address': user.email_address,
+        }
+    else:
+        user_data = {
+            'contact_number': 'N/A',
+            'first_name': 'Guest',
+            'last_name': '',
+            'email_address': '',
+        }
+
+    return render(request, 'account_profile/profile_admin.html', {'user_data': user_data})
 
 @login_required
 def update_profile(request):

@@ -596,7 +596,6 @@ else {
     // monitorZeroQuantities();
 // const isCurrentItem = item.name === initialName; // Use `initialName` for the current item's name
 
-    // Function to fetch search results or show all items
 const fetchSearchResults = async (query = "") => {
     try {
         const url = new URL(`/item-list/search-items-edit/`, window.location.origin);
@@ -611,14 +610,14 @@ const fetchSearchResults = async (query = "") => {
 
         console.debug("Search Results Data:", data); // Debug: Check fetched search results
 
+        let visibleResults = 0;
+
         if (data.results.length > 0) {
             data.results.forEach((item) => {
                 const isAlreadyAdded = addedItems.includes(item.name);
                 const isRemoved = removedItems.includes(item.name);
                 const isCurrentItem = item.id && item.id.toString() === itemId;
                 const hasRelationship = item.has_relationship;
-
-                console.log(`Item: ${item.name}, Already Added: ${isAlreadyAdded}, Removed: ${isRemoved}, Current: ${isCurrentItem}, Has Relationship: ${hasRelationship}`); // Debug: Check filtering logic
 
                 if ((!isAlreadyAdded || isRemoved) && !isCurrentItem && !hasRelationship) {
                     const resultItem = document.createElement("div");
@@ -629,21 +628,21 @@ const fetchSearchResults = async (query = "") => {
                         removedItems = removedItems.filter((name) => name !== item.name);
                         searchInput.value = ""; // Clear search bar
                         searchResults.style.display = "none"; // Hide dropdown
-                        console.debug("Added item to table:", item); // Debug: Log added item
                     });
                     searchResults.appendChild(resultItem);
+                    visibleResults++; // Increment visible results
                 }
             });
+        }
 
-            searchResults.style.display = "block"; // Show dropdown if results exist
-        } else {
+        if (visibleResults === 0) {
             const noResultsItem = document.createElement("div");
             noResultsItem.classList.add("dropdown-item", "text-muted");
-            noResultsItem.textContent = data.message || "No items found.";
+            noResultsItem.textContent = "No items found.";
             searchResults.appendChild(noResultsItem);
-
-            searchResults.style.display = "block"; // Show dropdown even if empty
         }
+
+        searchResults.style.display = "block"; // Always show dropdown
     } catch (error) {
         console.error("Error fetching search results:", error);
     }

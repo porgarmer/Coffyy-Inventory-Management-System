@@ -211,17 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Step 3: Check quantity validation
-            if (!areQuantitiesValid()) {
-                e.preventDefault();
-                Swal.fire({
-                    title: "Error",
-                    text: "Some quantities are zero. Please correct them before saving.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
 
             // Step 4: Check Volume/Weight per Unit
             if (soldByVolumeWeight.checked) {
@@ -259,6 +248,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if (compositeToggle.checked) {
                 e.preventDefault(); // Prevent default form submission
                 
+                // Step 3: Check quantity validation
+                if (!areQuantitiesValid()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: "Error",
+                        text: "Some quantities in the composite table are zero. Please correct them before saving.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                    return;
+                }
+
                 const compositeItemsData = collectCompositeItemData(); // Collect composite item data
                 console.log("Composite Items Data:", compositeItemsData);
     
@@ -512,9 +513,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch search results or all items
     const fetchSearchResults = async (query = "") => {
         try {
+            console.log("Fetching items with query:", query); // Debugging
             const url = `/item-list/search-items/?q=${encodeURIComponent(query)}`;
             const response = await fetch(url);
             const data = await response.json();
+            console.log("Fetched results:", data.results); // Debugging
 
             searchResults.innerHTML = ""; // Clear previous results
 
@@ -550,14 +553,32 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Show dropdown when search bar gains focus
-    searchInput.addEventListener("focus", () => {
-        fetchSearchResults(); // Fetch all items
+    searchInput.addEventListener("focus", async () => {
+        await fetchSearchResults(""); // Fetch all items (empty query)
+        searchResults.style.display = "block"; // Force dropdown visibility
+    });
+    
+    searchInput.addEventListener("mouseover", async () => {
+        await fetchSearchResults(""); // Fetch all items (empty query)
+        searchResults.style.display = "block"; // Force dropdown visibility
     });
 
     // Fetch specific results when typing in the search bar
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
         fetchSearchResults(query);
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            const highlightedItem = searchResults.querySelector(".highlight"); // Adjust based on your dropdown highlighting logic
+            if (highlightedItem) {
+                // Simulate a click on the highlighted item to add it to the composite item table
+                highlightedItem.click();
+            } else {
+                event.preventDefault(); // Prevent form submission if no item is selected
+            }
+        }
     });
 
     // Hide dropdown when clicking outside

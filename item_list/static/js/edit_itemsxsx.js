@@ -478,9 +478,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // compositeItemCheckbox.addEventListener("change", () => {
+    //     toggleCompositeItemTable(); // Existing function call
+    //     toggleSoldByOptions();      // Update Sold By radio button states
+    // });
+
+    let previousCost = parseFloat(costInput.value) || 0;
+
     compositeItemCheckbox.addEventListener("change", () => {
-        toggleCompositeItemTable(); // Existing function call
-        toggleSoldByOptions();      // Update Sold By radio button states
+        if (compositeItemCheckbox.checked) {
+            // Store the current cost before switching to composite
+            previousCost = parseFloat(costInput.value) || 0;
+            toggleCompositeItemTable(); // Show composite table
+        } else {
+            // Restore the previous cost when switching back to non-composite
+            costInput.value = previousCost.toFixed(2);
+            toggleCompositeItemTable(); // Hide composite table
+        }
+        toggleSoldByOptions(); // Update Sold By radio button states
     });
 
     // Function to calculate Remaining Volume dynamically
@@ -581,74 +596,89 @@ else {
     // monitorZeroQuantities();
 // const isCurrentItem = item.name === initialName; // Use `initialName` for the current item's name
 
-    // Fetch search results or all items
-    const fetchSearchResults = async (query = "") => {
-        try {
-            const url = new URL(`/item-list/search-items-edit/`, window.location.origin);
-            url.searchParams.append("q", query);
-            url.searchParams.append("exclude_item_id", itemId); // Exclude current item's ID
-            removedItems.forEach((item) => url.searchParams.append("removed_items[]", item)); // Add removed items
+    // Function to fetch search results or show all items
+const fetchSearchResults = async (query = "") => {
+    try {
+        const url = new URL(`/item-list/search-items-edit/`, window.location.origin);
+        url.searchParams.append("q", query); // Empty query returns all results
+        url.searchParams.append("exclude_item_id", itemId); // Exclude current item
+        removedItems.forEach((item) => url.searchParams.append("removed_items[]", item)); // Exclude removed items
 
-            const response = await fetch(url);
-            const data = await response.json();
+        const response = await fetch(url);
+        const data = await response.json();
 
-            searchResults.innerHTML = ""; // Clear previous results
+        searchResults.innerHTML = ""; // Clear previous results
 
-            console.debug("Search Results Data:", data); // Debug: Check fetched search results
+        console.debug("Search Results Data:", data); // Debug: Check fetched search results
 
-            if (data.results.length > 0) {
-                data.results.forEach((item) => {
-                    const isAlreadyAdded = addedItems.includes(item.name);
-                    const isRemoved = removedItems.includes(item.name);
-                    const isCurrentItem = item.id && item.id.toString() === itemId;
-                    const hasRelationship = item.has_relationship;
+        if (data.results.length > 0) {
+            data.results.forEach((item) => {
+                const isAlreadyAdded = addedItems.includes(item.name);
+                const isRemoved = removedItems.includes(item.name);
+                const isCurrentItem = item.id && item.id.toString() === itemId;
+                const hasRelationship = item.has_relationship;
 
-                    console.log(`Item: ${item.name}, Already Added: ${isAlreadyAdded}, Removed: ${isRemoved}, Current: ${isCurrentItem}, Has Relationship: ${hasRelationship}`); // Debug: Check item filtering with relationships
+                console.log(`Item: ${item.name}, Already Added: ${isAlreadyAdded}, Removed: ${isRemoved}, Current: ${isCurrentItem}, Has Relationship: ${hasRelationship}`); // Debug: Check filtering logic
 
-                    if ((!isAlreadyAdded || isRemoved) && !isCurrentItem && !hasRelationship) {
-                        const resultItem = document.createElement("div");
-                        resultItem.classList.add("dropdown-item");
-                        resultItem.innerHTML = `
-                            <strong>${item.name}</strong> - Cost: ₱${item.cost}
-                        `;
-                        resultItem.addEventListener("click", () => {
-                            addItemToTable(item);
-                            removedItems = removedItems.filter((name) => name !== item.name);
-                            searchInput.value = ""; // Clear the search bar
-                            searchResults.style.display = "none"; // Hide the dropdown
-                            console.debug("Added item to table:", item); // Debug: Log added item
-                        });
-                        searchResults.appendChild(resultItem);
-                    }
-                });
+                if ((!isAlreadyAdded || isRemoved) && !isCurrentItem && !hasRelationship) {
+                    const resultItem = document.createElement("div");
+                    resultItem.classList.add("dropdown-item");
+                    resultItem.innerHTML = `<strong>${item.name}</strong> - Cost: ₱${item.cost}`;
+                    resultItem.addEventListener("click", () => {
+                        addItemToTable(item);
+                        removedItems = removedItems.filter((name) => name !== item.name);
+                        searchInput.value = ""; // Clear search bar
+                        searchResults.style.display = "none"; // Hide dropdown
+                        console.debug("Added item to table:", item); // Debug: Log added item
+                    });
+                    searchResults.appendChild(resultItem);
+                }
+            });
 
-                searchResults.style.display = "block"; // Show the dropdown if results are available
-            } else {
-                const noResultsItem = document.createElement("div");
-                noResultsItem.classList.add("dropdown-item", "text-muted");
-                noResultsItem.textContent = "No items found.";
-                searchResults.appendChild(noResultsItem);
+            searchResults.style.display = "block"; // Show dropdown if results exist
+        } else {
+            const noResultsItem = document.createElement("div");
+            noResultsItem.classList.add("dropdown-item", "text-muted");
+            noResultsItem.textContent = data.message || "No items found.";
+            searchResults.appendChild(noResultsItem);
 
-                searchResults.style.display = "block"; // Show the dropdown even if empty
-            }
-        } catch (error) {
-            console.error("Error fetching search results:", error);
+            searchResults.style.display = "block"; // Show dropdown even if empty
         }
-    };
+    } catch (error) {
+        console.error("Error fetching search results:", error);
+    }
+};
+
+// Automatically show all items when focusing or hovering on search bar
+searchInput.addEventListener("focus", async () => {
+    await fetchSearchResults(""); // Fetch all items (empty query)
+    searchResults.style.display = "block"; // Show dropdown
+});
+
+searchInput.addEventListener("mouseover", async () => {
+    if (!searchInput.value.trim()) {
+        await fetchSearchResults(""); // Fetch all items (empty query)
+        searchResults.style.display = "block"; // Show dropdown
+    }
+});
 
     
-    
-    
-
-    // Show dropdown when search bar gains focus
-    searchInput.addEventListener("focus", () => {
-        fetchSearchResults(); // Fetch all items
-    });
-
     // Fetch specific results when typing in the search bar
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
         fetchSearchResults(query);
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            const highlightedItem = searchResults.querySelector(".highlight"); // Adjust based on your dropdown highlighting logic
+            if (highlightedItem) {
+                // Simulate a click on the highlighted item to add it to the composite item table
+                highlightedItem.click();
+            } else {
+                event.preventDefault(); // Prevent form submission if no item is selected
+            }
+        }
     });
 
     // Hide dropdown when clicking outside

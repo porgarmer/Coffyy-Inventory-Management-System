@@ -286,18 +286,19 @@ input:checked + .switch-label::before {
 
 /* Style the image inside the button */
 .btn.remove-item img {
-    width: 20px;                     /* Adjust the size of the icon */
-    height: 20px;                    /* Adjust the size of the icon */
-    display: block;                  /* Make sure it's not inline */
-    margin: 0 auto;                  /* Center the icon within the button */
+    width: 25px;                    /* Default size of the icon */
+    height: 25px;                   /* Default size of the icon */
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 /* Add circular border on hover */
+.btn.remove-item:hover img {
+    transform: scale(1.2);          /* Enlarge the icon slightly */
+}
+
 .btn.remove-item:hover {
-    border: 2px solid #ccc;          /* Light gray border */
-    border-radius: 50%;               /* Make the border circular */
-    padding: 5px;                     /* Add some space around the icon */
     background-color: rgba(0, 0, 0, 0.1); /* Light background on hover */
+    border-radius: 50%;              /* Circular border effect */
 }
 
 .quantity-input {

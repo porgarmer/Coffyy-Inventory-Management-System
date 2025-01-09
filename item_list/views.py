@@ -108,69 +108,64 @@ def check_item_name_edit(request):
 
         
 def search_items(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()
+    
+    # If no query is provided, return all items
     if query:
         results = Item.objects.filter(name__icontains=query).values('name', 'cost')
-        return JsonResponse({'results': list(results)})
-    return JsonResponse({'results': []})
+    else:
+        results = Item.objects.all().values('name', 'cost')  # Fetch all items
+    
+    return JsonResponse({'results': list(results)})
+
 
 
 def search_items_edit(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()
     exclude_item_id = request.GET.get('exclude_item_id', None)
     removed_items = request.GET.getlist('removed_items[]', [])
 
-    if query:
-        exclude_ids = set()
+    exclude_ids = set()
 
-        # Find items with no composite items
-        items_without_composite = set(Item.objects.exclude(
-            id__in=CompositeItem.objects.values_list('parent_item_id', flat=True)
-        ).values_list('id', flat=True))
+    # Step 1: Recursively get all parent items of a given item
+    def get_all_parent_ids(item_id, visited=None):
+        if visited is None:
+            visited = set()
+        if item_id in visited:
+            return
+        visited.add(item_id)
+        parent_items = CompositeItem.objects.filter(item_id=item_id).values_list('parent_item_id', flat=True)
+        exclude_ids.update(parent_items)
+        for parent_id in parent_items:
+            get_all_parent_ids(parent_id, visited)
 
-        # Check if only one item has no composite and matches exclude_item_id
-        if len(items_without_composite) == 1:
-            remaining_item_id = list(items_without_composite)[0]
-            if int(exclude_item_id) == remaining_item_id:
-                return JsonResponse({'results': []})  # No results for the current item
+    if exclude_item_id:
+        get_all_parent_ids(exclude_item_id)
 
-        # Recursive exclusion logic to prevent circular relationships
-        if exclude_item_id:
-            def get_recursive_ids(item_id, visited=set()):
-                if item_id in visited:
-                    return
-                visited.add(item_id)
-                related_items = CompositeItem.objects.filter(parent_item_id=item_id).values_list('item_id', flat=True)
-                exclude_ids.update(related_items)
-                for related_id in related_items:
-                    get_recursive_ids(related_id, visited)
+    # Step 2: Exclude removed items
+    removed_items_ids = set(Item.objects.filter(name__in=removed_items).values_list('id', flat=True))
+    exclude_ids -= removed_items_ids
 
-            get_recursive_ids(exclude_item_id)
+    # Step 3: Fetch valid items excluding recursive relationships
+    results = []
+    items_query = Item.objects.exclude(id__in=exclude_ids)  # Exclude recursively related items
 
-        # Exclude removed items from the exclusion list
-        removed_items_ids = Item.objects.filter(name__in=removed_items).values_list('id', flat=True)
-        exclude_ids -= set(removed_items_ids)
+    if query:  # If searching, filter results
+        items_query = items_query.filter(name__icontains=query)
 
-        # Fetch valid results excluding items causing recursion or reserved as main items
-        results = []
-        for item in Item.objects.filter(name__icontains=query).exclude(id__in=exclude_ids):
-            # Include non-composite items unless it's the one being edited
-            if item.id in items_without_composite:
-                if int(exclude_item_id) == item.id:
-                    continue  # Exclude the current item being edited
+    for item in items_query:
+        has_relationship = CompositeItem.objects.filter(parent_item_id=item.id, item_id=exclude_item_id).exists()
+        results.append({
+            'id': item.id,
+            'name': item.name,
+            'cost': item.cost,
+            'has_relationship': has_relationship,
+        })
+    
+    
+    return JsonResponse({'results': results})
 
-            # Check if the current item already has a parent-child relationship
-            has_relationship = CompositeItem.objects.filter(parent_item_id=item.id, item_id=exclude_item_id).exists()
-            results.append({
-                'id': item.id,
-                'name': item.name,
-                'cost': item.cost,
-                'has_relationship': has_relationship,  # Add relationship check
-            })
 
-        return JsonResponse({'results': results})
-
-    return JsonResponse({'results': []})
 
 
 
@@ -441,6 +436,31 @@ def delete_items(request):
     Deletes selected items, recalculates costs for affected composite items,
     and updates the `is_composite` field when no components remain.
     """
+    def update_composite_costs(item):
+        """
+        Recursively updates the costs for composite items.
+        """
+        remaining_components = CompositeItem.objects.filter(parent_item=item).select_related('item')
+        
+        if not remaining_components.exists():
+            # If no components remain, set `is_composite` to False
+            item.is_composite = False
+            item.cost = 0
+        else:
+            # Recalculate the total cost from the remaining components
+            item.cost = sum(
+                component.quantity * component.item.cost
+                for component in remaining_components
+            )
+        
+        # Save the updated item
+        item.save()
+
+        # Recursively update all parent composite items
+        parent_composites = CompositeItem.objects.filter(item=item).select_related('parent_item')
+        for parent in parent_composites:
+            update_composite_costs(parent.parent_item)
+
     if request.method == "POST":
         selected_ids = request.POST.getlist('selected_ids')
 
@@ -449,32 +469,16 @@ def delete_items(request):
                 # Convert selected_ids to integers
                 selected_ids = list(map(int, selected_ids))
 
-                # Find affected composite items
+                # Identify all directly affected composite items
                 affected_composites = CompositeItem.objects.filter(item_id__in=selected_ids).select_related('parent_item')
                 affected_parent_items = set(composite.parent_item for composite in affected_composites)
 
                 # Delete the selected items
                 Item.objects.filter(id__in=selected_ids).delete()
 
-                # Recalculate costs and update `is_composite` for affected parent items
+                # Update the costs for affected parent items recursively
                 for parent_item in affected_parent_items:
-                    # Fetch remaining components of the composite item
-                    remaining_components = CompositeItem.objects.filter(parent_item=parent_item)
-
-                    if not remaining_components.exists():
-                        # If no components remain, set `is_composite` to False
-                        parent_item.is_composite = False
-                        parent_item.cost = 0  # Reset cost to 0
-                    else:
-                        # Recalculate the cost based on remaining components
-                        total_cost = 0
-                        for component in remaining_components:
-                            total_cost += component.quantity * component.item.cost
-
-                        parent_item.cost = total_cost
-
-                    # Save the updated parent item
-                    parent_item.save()
+                    update_composite_costs(parent_item)
 
                 # Get current page and rows from session or default values
                 rows = request.session.get('item_list_row', 10)
@@ -482,8 +486,6 @@ def delete_items(request):
 
                 # Calculate the total number of remaining items
                 items_count = Item.objects.count()
-
-                # Calculate the total number of pages
                 total_pages = (items_count + rows - 1) // rows  # Total pages based on rows per page
 
                 # Redirect to the current page if valid
@@ -496,7 +498,6 @@ def delete_items(request):
 
             except Exception as e:
                 messages.error(request, f"Error deleting items: {str(e)}")
-
         else:
             messages.error(request, "No items selected for deletion.")
 

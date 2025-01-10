@@ -47,7 +47,7 @@ def index(request):
 
     # Apply Stock Alert Filter
     if stock_alert == "low":
-        items = items.filter(in_stock__gt=0, in_stock__lte=F('reorder_level'))  # Low stock: 0 < In stock <= reorder level
+        items = items.filter(in_stock__lte=F('reorder_level'))  # Low stock: In stock <= reorder level
     elif stock_alert == "out-of-stock":
         items = items.filter(in_stock=0)  # Out of stock: In stock == 0
 

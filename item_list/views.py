@@ -112,9 +112,9 @@ def search_items(request):
     
     # If no query is provided, return all items
     if query:
-        results = Item.objects.filter(name__icontains=query).values('name', 'cost')
+        results = Item.objects.filter(name__icontains=query).order_by('name').values('name', 'cost')
     else:
-        results = Item.objects.all().values('name', 'cost')  # Fetch all items
+        results = Item.objects.all().order_by('name').values('name', 'cost')  # Fetch all items
     
     return JsonResponse({'results': list(results)})
 
@@ -148,7 +148,7 @@ def search_items_edit(request):
 
     # Step 3: Fetch valid items excluding recursive relationships
     results = []
-    items_query = Item.objects.exclude(id__in=exclude_ids)  # Exclude recursively related items
+    items_query = Item.objects.exclude(id__in=exclude_ids).order_by('name')  # Exclude recursively related items
 
     if query:  # If searching, filter results
         items_query = items_query.filter(name__icontains=query)
@@ -433,17 +433,17 @@ def edit_item(request, item_id):
 @csrf_exempt
 def delete_items(request):
     """
-    Deletes selected items, recalculates costs for affected composite items,
-    and updates the `is_composite` field when no components remain.
+    Deletes selected items, updates composite relationships, and recalculates costs for affected composite items.
     """
     def update_composite_costs(item):
         """
-        Recursively updates the costs for composite items.
+        Recursively updates the costs for composite items and ensures changes are saved.
         """
+        # Fetch remaining components for the composite item
         remaining_components = CompositeItem.objects.filter(parent_item=item).select_related('item')
-        
+
         if not remaining_components.exists():
-            # If no components remain, set `is_composite` to False
+            # If no components remain, set `is_composite` to False and reset cost
             item.is_composite = False
             item.cost = 0
         else:
@@ -452,7 +452,7 @@ def delete_items(request):
                 component.quantity * component.item.cost
                 for component in remaining_components
             )
-        
+
         # Save the updated item
         item.save()
 
@@ -469,31 +469,30 @@ def delete_items(request):
                 # Convert selected_ids to integers
                 selected_ids = list(map(int, selected_ids))
 
-                # Identify all directly affected composite items
+                # Step 1: Update composite relationships
                 affected_composites = CompositeItem.objects.filter(item_id__in=selected_ids).select_related('parent_item')
-                affected_parent_items = set(composite.parent_item for composite in affected_composites)
+                for composite in affected_composites:
+                    parent_item = composite.parent_item
+                    # Remove the selected item from the composite
+                    composite.delete()
 
-                # Delete the selected items
-                Item.objects.filter(id__in=selected_ids).delete()
-
-                # Update the costs for affected parent items recursively
-                for parent_item in affected_parent_items:
+                    # Recalculate the parent's cost
                     update_composite_costs(parent_item)
 
-                # Get current page and rows from session or default values
+                # Step 2: Delete the selected items
+                Item.objects.filter(id__in=selected_ids).delete()
+
+                # Step 3: Handle pagination and redirection
                 rows = request.session.get('item_list_row', 10)
                 current_page = int(request.session.get('item_list_page', 1))
-
-                # Calculate the total number of remaining items
                 items_count = Item.objects.count()
                 total_pages = (items_count + rows - 1) // rows  # Total pages based on rows per page
 
-                # Redirect to the current page if valid
-                if current_page > total_pages:  # If the current page is now invalid (all items on it deleted)
-                    current_page = max(total_pages, 1)  # Redirect to the last valid page (or first if no items remain)
+                if current_page > total_pages:
+                    current_page = max(total_pages, 1)  # Redirect to the last valid page
 
-                # Show success message to the user
-                messages.success(request, "Item/s deleted.")
+                # Success message
+                messages.success(request, "Item/s deleted and relationships updated.")
                 return redirect(f"{reverse('item_list:item_list_index')}?page={current_page}&rows={rows}")
 
             except Exception as e:

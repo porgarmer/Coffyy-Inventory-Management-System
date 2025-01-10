@@ -12,7 +12,7 @@
 {% block content %}
 <h1>Create Purchase Order</h1>
 <br>
-<form action="{% url 'purchase-order' %}" method="post" id="purchase-form" name="item-form">
+<form action="{% url 'create-purchase-order' %}?page=1&rows=10" method="post" id="purchase-form" name="item-form">
     {% csrf_token %}
     <div class="container my-4">
         <!-- Supplier Section -->
@@ -47,8 +47,6 @@
         </div>
 
     </div>
-
-
 
         <!-- Items Section -->
         <div class="form-section">
@@ -103,7 +101,7 @@
         <!-- Action Buttons -->
     <div class="btn-group d-flex flex-wrap justify-content-end gap-4">
             <div class="d-flex justify-content-center">
-                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'purchase-order' %}">
+                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'purchase-order' %}?page=1&rows=10">
                     CANCEL
                 </a>
             </div>    
@@ -124,4 +122,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'js/select2.js' %}"></script>
+
 {% endblock scripts %}

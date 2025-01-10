@@ -13,7 +13,7 @@ class PurchaseOrder(models.Model):
     po_total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
 
     # user_id = models.ForeignKey()
-    supp_id = models.ForeignKey(Supplier, models.CASCADE)
+    supp_id = models.ForeignKey(Supplier, models.CASCADE, related_name="purchase_order")
     
     def __str__(self):
         return f"{self.po_id} - {self.po_date} - {self.po_expected_date} - {self.po_status} - {self.po_notes}"
@@ -27,7 +27,7 @@ class PurchaseItem(models.Model):
     pur_item_purchase_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
     pur_item_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
-    po_id = models.ForeignKey(PurchaseOrder, models.CASCADE, null=True)
+    po_id = models.ForeignKey(PurchaseOrder, models.CASCADE, null=True, related_name='items')
     
     def __str__(self):
         return f"{self.pur_item_id} -- {self.po_id} - {self.item_id.name} - {self.pur_item_qty}"

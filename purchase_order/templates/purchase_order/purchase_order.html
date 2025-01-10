@@ -37,27 +37,34 @@
         <!-- Search Bar with Combo Boxes for Category and Stock Alert -->
         <div class="d-flex ms-auto">
             <!-- Category Combo Box -->
-            <select id="category-filter" class="form-select form-select-sm me-2" aria-label="Select Category">
-                <option value="" disabled selected>Status</option>
-                <option value="">Draft</option>
-                <option value="">Pending</option>
-                <option value="">Partially Received</option>
-                <option value="">Closed</option>
+            <select id="status-filter" name="status" class="form-select form-select-sm me-2" aria-label="Select Category">
+         
+                <option value="All" {% if status == 'All' %}selected{% endif %}>All</option>
+                <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Partially Received" {% if status == 'Partially Received' %}selected{% endif %}>Partially Received</option>
+                <option value="Closed" {% if status == 'Closed' %}selected{% endif %}>Closed</option>
             </select>
 
             <!-- Stock Alert Combo Box -->
             <select 
-                id="stock-alert-filter" 
+                id="supplier-filter" 
                 class="form-select form-select-sm me-2" 
                 aria-label="Select Stock Alert" 
                 style="width: 150px !important;"
+                name="selected_supplier"
             >
-                <option value="" disabled selected>Supplier</option>
+                <option option value="All Suppliers" {% if selected_supplier == 'All Suppliers' %}{% endif %}>All Suppliers</option>
+                {% for supplier in suppliers %}
+                    <option option value="{{supplier.supp_name}}" {% if selected_supplier == '{{supplier.supp_name}}' %}selected{% endif %}>{{supplier.supp_name}}</option>
+
+                {% endfor %} 
+
+
             </select>
 
 
             <!-- Search Input -->
-            <form method="GET" action="{% url 'item_list:item_list_index' %}" id="search-form" class="d-flex w-100 align-items-center">
+            <form method="GET" action="{% url 'purchase-order' %}" id="search-form" class="d-flex w-100 align-items-center">
                 <input
                     type="text"
                     id="item-search-bar"
@@ -89,7 +96,7 @@
                             <input type="checkbox" id="select-all">
                         </th>
                         <th scope="col">Purchase Order No.</th>
-                        <th scope="col">Date</th>
+                        <th scope="col" >Date</th>
                         <th scope="col">Supplier</th>
                         <th scope="col">Store</th>
                         <th scope="col">Status</th>
@@ -101,23 +108,23 @@
                         </th> -->
                     </tr>
                 </thead>
-                {% if items %}
+                {% if purchase_orders %}
                 <tbody id="item-table-body">
-                    {% for item in items %}
+                    {% for purchase_order in purchase_orders  %}
                         <tr class="item-row">
-                            <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
-                            <td>{{ item.name }}</td>
-                            <td>
-                                {% if item.category %}
-                                    {{ item.category }}
-                                {% else %}
-                                    No category
-                                {% endif %}
-                            </td>
-                            <td style="text-align: right;">₱{{ item.price }}</td>
-                            <td style="text-align: right;">₱{{ item.cost }}</td>
-                            <td style="text-align: right;">{{ item.in_stock }}</td>
-                            <td style="text-align: right;">{{ item.remaining_volume }}</td>
+                            <td><input type="checkbox" name="selected_items" value="{{ purchase_order.po_id }}"></td>
+                            <td>{{ purchase_order.po_id}}</td>
+                            <td>{{ purchase_order.po_date}}</td>
+                            <td>{{ purchase_order.supp_id }}</td>
+                            <td>Coffyy</td>
+                            <td>{{ purchase_order.po_status }}</td>
+                            <td>{{ purchase_order.total_received_items }}</td>
+                            {% if purchase_order.po_expected_date == None %}
+                            <td></td>
+                            {% else %}
+                            <td>{{ purchase_order.po_expected_date }}</td>
+                            {% endif %}
+                            <td>₱{{purchase_order.po_total_amount}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -131,10 +138,10 @@
                     
             <!-- Updated Pagination -->
             <div class="d-flex justify-content-between mt-3">
-                <div>Page {{ items.number }} of {{ items.paginator.num_pages }}</div>
+                <div>Page {{ purchase_orders.number }} of {{ purchase_orders.paginator.num_pages }}</div>
                 <div>
                     <ul class="pagination justify-content-center">
-                        {% if items.has_previous %}
+                        {%if purchase_orders.has_previous  %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Previous</a>
                         </li>
@@ -144,21 +151,21 @@
                         </li>
                         {% endif %}
 
-                        {% for num in items.paginator.page_range %}
-                            {% if num >= items.number|add:-5 and num <= items.number|add:5 %}
-                            <li class="page-item {% if num == items.number %}active{% endif %}">
+                        {% for num in purchase_orders.paginator.page_range %}
+                            {% if num >= purchase_orders.number|add:-5 and num <= purchase_orders.number|add:5 %}
+                            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
                                 <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
                             </li>
                             {% endif %}
                         {% endfor %}
 
-                        {% if items.has_next %}
+                        {% if purchase_orders.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ items.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Next</a>
+                            <a class="page-link" href="?page={{ purchase_orders.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Next</a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
-                            <a class="page-link" href="#">Next</a>
+                            <a class="page-link" href="#">Last</a>
                         </li>
                         {% endif %}
                     </ul>
@@ -177,7 +184,8 @@
                         </select>
                         <!-- Preserve the current search query and page -->
                         <input type="hidden" name="search" value="{{ search_query }}">
-                        <input type="hidden" name="page" value="{{ items.number }}">
+                        <input type="hidden" name="status" value="{{ status }}">
+                        <input type="hidden" name="page" value="{{ purchase_orders.number }}">
                     </form>
                 </div>
             </div>
@@ -227,8 +235,9 @@
 
 
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
-<script src="{% static 'js/index_x.js' %}"></script>
-
+{% block scripts %}
+<script src="{% static 'js/purchase_order.js' %}"></script>
+{% endblock scripts %}
 
 
 {% endblock %}

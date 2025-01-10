@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'item_list',
     'account_profile',
     'purchase_order.apps.PurchaseOrderConfig',
+    'employee_management',
 ] 
 
 MIDDLEWARE = [

@@ -492,7 +492,7 @@ def delete_items(request):
                     current_page = max(total_pages, 1)  # Redirect to the last valid page
 
                 # Success message
-                messages.success(request, "Item/s deleted and relationships updated.")
+                messages.success(request, "Item/s deleted.")
                 return redirect(f"{reverse('item_list:item_list_index')}?page={current_page}&rows={rows}")
 
             except Exception as e:

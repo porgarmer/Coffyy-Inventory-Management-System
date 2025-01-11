@@ -76,7 +76,55 @@ function confirmSave() {
         })
         .catch((error) => console.error('Error:', error));
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const newPasswordInput = document.getElementById("new-password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    const newPasswordWarning = document.getElementById("new-password-warning");
+    const confirmPasswordWarning = document.getElementById("confirm-password-warning");
 
+    // Validate new password length
+    newPasswordInput.addEventListener("input", function () {
+        if (newPasswordInput.value.length < 8) {
+            newPasswordWarning.classList.remove("d-none");
+        } else {
+            newPasswordWarning.classList.add("d-none");
+        }
+    });
+
+    // Validate password match
+    confirmPasswordInput.addEventListener("input", function () {
+        if (newPasswordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordWarning.classList.remove("d-none");
+        } else {
+            confirmPasswordWarning.classList.add("d-none");
+        }
+    });
+
+    // Validate and save password
+    window.validateAndSavePassword = function () {
+        if (newPasswordInput.value.length < 8) {
+            Swal.fire({
+                title: "Error",
+                text: "Password must be at least 8 characters long.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+        if (newPasswordInput.value !== confirmPasswordInput.value) {
+            Swal.fire({
+                title: "Error",
+                text: "Passwords do not match.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        // Call function to save the password (assumes `savePassword` is defined)
+        savePassword();
+    };
+});
 // Save password changes
 function savePassword() {
     const newPassword = document.getElementById('new-password').value;
@@ -120,33 +168,6 @@ function openDeleteModal() {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('show');
-}
-
-
-// Delete account
-function deleteAccount() {
-    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        return;
-    }
-
-    fetch('/edit-account/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ operation: 'delete_account' }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert('Account deleted successfully!');
-                window.location.href = '/login/';
-            } else {
-                alert(data.error || 'Failed to delete your account.');
-            }
-        })
-        .catch((error) => console.error('Error:', error));
 }
 
 // Handle account deletion

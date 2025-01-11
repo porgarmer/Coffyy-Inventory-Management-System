@@ -11,13 +11,13 @@ def edit_account(request):
     user_id = request.session.get('user_id')
     if not user_id:
         messages.error(request, "You must be logged in to access this page.")
-        return redirect('login:index')
+        return redirect('login:login_index')
 
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         messages.error(request, "User not found. Please log in again.")
-        return redirect('login:index')
+        return redirect('login:login_index')
 
     if request.method == 'POST':
         try:
@@ -28,7 +28,7 @@ def edit_account(request):
                 user.contact_number = data.get('contact-number', user.contact_number)
                 user.first_name = data.get('first-name', user.first_name)
                 user.last_name = data.get('last-name', user.last_name)
-                user.email = data.get('email', user.email)
+                user.email_address = data.get('email', user.email)
                 user.save()
                 return JsonResponse({"success": True, "message": "Profile updated successfully!"})
 

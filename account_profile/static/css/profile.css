@@ -227,6 +227,7 @@ body {
 .modal-content label{
     text-align: left;
 }
+
 /* Password Fields */
 .modal-content input[type="password"] {
     width: 100%;

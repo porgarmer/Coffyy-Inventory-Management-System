@@ -89,7 +89,10 @@
                             </a>
                             <ul id="employee-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                                 <li class="sidebar-item">
-                                    <a href="{% url 'employee_management:employee_list' %}" class="sidebar-link">Employees</a>
+                                    <a href="#" class="sidebar-link">Employees</a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="#" class="sidebar-link">Roles</a>
                                 </li>
                             </ul>
                         </li>
@@ -113,15 +116,7 @@
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     {% block scripts %}
-    {% if messages %}
-<div>
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+    
     {% endblock  %}
 </body>
 </html>

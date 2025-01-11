@@ -31,6 +31,7 @@
             <div class="input-group">
                 <input type="text" id="contact-number" value="{{ user.contact_number }}" readonly>
                 <img src="{% static 'images/edit.png' %}" alt="Edit Icon" onclick="enableEdit('contact-number')">
+                <p id="contact-warning" class="text-warning mt-2 d-none">Contact number must be exactly 11 digits.</p>
             </div>
         </div>
         <div class="mb-4">
@@ -52,6 +53,7 @@
             <div class="input-group">
                 <input type="email" id="email" value="{{ user.email_address }}" readonly>
                 <img src="{% static 'images/edit.png' %}" alt="Edit Icon" onclick="enableEdit('email')">
+                <div id="email-warning" class="text-danger d-none">Please enter a valid email address.</div>
             </div>
         </div>
         <div class="mb-4">
@@ -72,7 +74,7 @@
 
     <div class="buttons">
         <button class="btn btn-cancel" onclick="redirectToDashboard()">Cancel</button>
-        <button class="btn btn-save" onclick="saveChanges()">Save</button>
+        <button class="btn btn-save" onclick="openModal('confirm-modal')">Save</button>
     </div>
 </div>
 
@@ -103,7 +105,7 @@
 <!-- Delete Account Confirmation Modal -->
 <div class="modal" id="delete-modal">
     <div class="modal-content">
-        <p>Are you sure you want to delete your account?</p>
+        <p>Are you sure you want to delete your account?<br>This action cannot be undone.</p>
         <button class="btn btn-yes" onclick="confirmDelete()">Yes</button>
         <button class="btn btn-no" onclick="closeModal('delete-modal')">No</button>
     </div>

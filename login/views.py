@@ -78,11 +78,12 @@ def forgot_pass(request):
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm-password")
 
-        # Check if username exists in the database
+        # Check if username is provided
         if not username:
             messages.error(request, "Username is required.")
             return render(request, "login/forgot_pass.html")
 
+        # Check if user exists in the database
         user = User.objects.filter(username=username).first()
         if not user:
             messages.error(request, "Username not found.")

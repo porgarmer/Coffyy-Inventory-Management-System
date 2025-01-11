@@ -1,74 +1,52 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
 import json
 from login.models import User
 
+@csrf_exempt
 def edit_account(request):
-    if request.user.is_authenticated:
-        user = User.objects.get(id=request.user.id)
-        user_data = {
-            'contact_number': user.contact_number,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email_address': user.email_address,
-        }
-    else:
-        user_data = {
-            'contact_number': 'N/A',
-            'first_name': 'Guest',
-            'last_name': '',
-            'email_address': '',
-        }
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "You must be logged in to access this page.")
+        return redirect('login:login_index')
 
-    return render(request, 'account_profile/profile_admin.html', {'user_data': user_data})
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login:login_index')
 
-@login_required
-def update_profile(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        user = User.objects.get(id=request.user.id)
-        user.contact_number = data.get('contactNumber', user.contact_number)
-        user.first_name = data.get('firstName', user.first_name)
-        user.last_name = data.get('lastName', user.last_name)
-        user.email = data.get('email', user.email)
-        user.save()
+        try:
+            data = json.loads(request.body)
+            operation = data.get('operation')
 
-        # Update the session data
-        request.session['user_data'] = {
-            'contact_number': user.contact_number,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email_address': user.email,
-        }
+            if operation == 'update_profile':
+                user.contact_number = data.get('contact-number', user.contact_number)
+                user.first_name = data.get('first-name', user.first_name)
+                user.last_name = data.get('last-name', user.last_name)
+                user.email_address = data.get('email', user.email)
+                user.save()
+                return JsonResponse({"success": True, "message": "Profile updated successfully!"})
 
-        # Add success message
-        messages.success(request, 'Profile updated successfully!')
+            elif operation == 'update_password':
+                new_password = data.get('password')
+                if new_password:
+                    user.password = make_password(new_password)
+                    user.save()
+                    return JsonResponse({"success": True, "message": "Password updated successfully!"})
+                else:
+                    return JsonResponse({"success": False, "error": "Password cannot be empty!"})
 
-        return redirect('account_profile:edit_profile')  # Redirect back to profile admin page
+            elif operation == 'delete_account':
+                user.delete()
+                request.session.flush()
+                return JsonResponse({"success": True, "message": "Account deleted successfully!"})
 
-@login_required
-def update_password(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user = User.objects.get(id=request.user.id)
-        user.set_password(data['password'])  # Securely hash the password
-        user.save()
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
 
-        # Add success message
-        messages.success(request, 'Password updated successfully!')
-
-        return redirect('account_profile:edit_profile')  # Redirect back to profile admin page
-
-@login_required
-def delete_account(request):
-    if request.method == 'POST':
-        user = User.objects.get(id=request.user.id)
-        user.delete()
-        request.session.flush()  # Clear all session data
-
-        # Add success message
-        messages.success(request, 'Account deleted successfully!')
-
-        return redirect('login:login_index')  # Redirect to login page
+    return render(request, 'account_profile/profile_admin.html', {'user': user})

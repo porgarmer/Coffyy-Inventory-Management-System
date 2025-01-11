@@ -24,18 +24,36 @@
     right: 20px;
 }
 
-header {
+
+.custom-header{
     background-color: #50260E;
     color: #fff;
-    padding: 10px 20px;
-    padding-left: 90px; /* Added padding to prevent overlap with sidebar */
+    padding: .5em;
+    position: sticky;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: fixed;
-    top: 0;
     width: 100%;
+    top: 0px;
+    bottom: 0px;
     z-index: 900; /* Lower than sidebar */
+    padding-left: 1rem; /* Use rem for more flexible spacing */
+    padding-right: 1rem;
+}
+
+.custom-footer{
+    background-color: #50260E;
+    color: #fff;
+    padding: 1.8em;
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    top: 0px;
+    bottom: 0px;
+    padding-left: 1rem; /* Use rem for more flexible spacing */
+    padding-right: 1rem;
 }
 
 .header-logo img {
@@ -50,7 +68,6 @@ header {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #B20727;
     margin: 0;
     padding: 0;
 
@@ -72,7 +89,7 @@ li {
 }
 
 .wrapper {
-    display: flex;
+    display: grid;
 }
 
 
@@ -105,7 +122,9 @@ li {
     top: 0;
     bottom: 0;
     left: 0;
-    height: 100%;
+
+    margin-top: 66px;
+    margin-bottom: 57.6px;
 }
 
 #sidebar.expand {
@@ -127,6 +146,9 @@ li {
 
 .sidebar-logo {
     margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
 }
 
 .sidebar-logo a {

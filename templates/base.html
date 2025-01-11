@@ -29,7 +29,7 @@
         </div>
     {% endif %}
     
-    <header>
+    <div class="custom-header">
         <div class="header-logo">
             <img src="{% static 'images/logo.png' %}" alt="Logo">
         </div>
@@ -42,16 +42,17 @@
                 {% endif %}
             </div>
         </div>
-    </header>
-
-    <div class="wrapper" style="padding-top: 70px; padding-bottom: 50px;">
+    </div>
+    <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
                 <button id="toggle-btn" type="button">
                     <i class="lni lni-menu-hamburger-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">Coffyy</a>
+                    {% comment %} <img src="{% static 'images/logo.png' %}" alt="Logo" width=80px> {% endcomment %}
+
+                    <a href="#"></a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -141,9 +142,11 @@
             </div>
         </div>
     </div>
-
+    <div class="custom-footer">
+    </div>
+{% comment %} 
     <footer>
-    </footer>
+    </footer> {% endcomment %}
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>

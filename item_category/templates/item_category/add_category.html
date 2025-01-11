@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}ADD CATEGORY{% endblock %}
+{% block title %}Add Category{% endblock %}
 {% block content %}
-<h1>Add New Category</h1>
 
 <div id="right-popup" class="right-popup">
     <div class="popup-content">
@@ -27,7 +26,7 @@
                 <input type="hidden" name="rows" value="{{ rows }}">
                 
                 <div class="mb-3">
-                    <label for="category-name">Name</label>
+                    <h4 style="font-weight:bold; text-align:left;">Name</h4>
                     <input type="text" class="form-control underline-input" id="category-name" name="name" required>
                     <span id="category-name-error" style="color: red; display: none;">Category name already exists.</span>
                 </div>
@@ -64,8 +63,8 @@
                 </div>
                 
                 <div class="mt-4 d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-custom btn-custom-cancel me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">CANCEL</button>
+                    <button type="submit" class="btn btn-custom btn-custom-save">SAVE</button>
                 </div>
             </form>
         </div>
@@ -76,5 +75,6 @@
 <link rel="stylesheet" href="{% static 'css/add_category.css' %}">
 
 <!-- Link to external JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{% static 'js/add_category.js' %}"></script>
 {% endblock %}

@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const volumeWeightInput = document.getElementById("volume-weight-per-unit");
     const remainingVolumeOutput = document.getElementById("remaining-volume");
 
+    const reorderLevelInput = document.getElementById("reorder-level");
+    const optimalStockInput = document.getElementById("optimal-stock");
+
     // Search Bar and Dropdown Logic
     const searchInput = document.getElementById("composite-item-search");
     const searchResults = document.getElementById("search-results");
@@ -31,18 +34,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const nameErrorLabel = document.createElement("span");
     nameErrorLabel.style.color = "red";
     nameErrorLabel.style.display = "none";
+    
     itemNameInput.parentNode.appendChild(nameErrorLabel);
 
     itemNameInput.addEventListener("blur", function () {
         const name = itemNameInput.value.trim();
+        const currentItemId = itemNameInput.dataset.currentItemId; // Assuming this is set on the input
         if (name) {
-            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}`)
+            fetch(`/item-list/check-item-name/?name=${encodeURIComponent(name)}&current_item_id=${encodeURIComponent(currentItemId)}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.exists) {
+                    if (data.exists && data.is_current !== true) {
                         nameErrorLabel.textContent = "This name already exists.";
                         nameErrorLabel.style.display = "inline";
-                        itemNameInput.classList.add("input-error"); // Optional: Add error styling
+                        itemNameInput.classList.add("input-error");
                     } else {
                         nameErrorLabel.textContent = "";
                         nameErrorLabel.style.display = "none";
@@ -97,27 +102,48 @@ document.addEventListener("DOMContentLoaded", () => {
         // Validate composite item table only if the checkbox is checked
         if (compositeItemCheckbox.checked) {
             const compositeItemRows = compositeItemTable.querySelectorAll("tbody tr");
-            const hasData = Array.from(compositeItemRows).some(row => {
-                const quantityInput = row.querySelector(".quantity-input");
-                return quantityInput && parseInt(quantityInput.value, 10) > 0;
-            });
-    
-            if (!hasData) {
+        
+            if (compositeItemRows.length === 0) {
+                // No rows added to the composite table
+                Swal.fire({
+                    title: "Error",
+                    text: "Please add composite items to the table.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 isValid = false;
-                // Add error styling for the composite item table (highlight in red)
                 compositeItemTable.classList.add("error");
             } else {
-                compositeItemTable.classList.remove("error");
+                // Check if all rows have valid quantities
+                const invalidRows = Array.from(compositeItemRows).filter(row => {
+                    const quantityInput = row.querySelector(".quantity-input");
+                    return !quantityInput || parseInt(quantityInput.value, 10) <= 0;
+                });
+        
+                if (invalidRows.length > 0) {
+                    Swal.fire({
+                        title: "Error",
+                        text: "All composite items must have a quantity greater than 0.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                    isValid = false;
+                    compositeItemTable.classList.add("error");
+                } else {
+                    compositeItemTable.classList.remove("error");
+                }
             }
         }
+        
     
         // Separate alerts based on the validation results
         if (!nonCompositeValid) {
-            alert("Please fill out all required fields.");
-        }
-    
-        if (compositeItemCheckbox.checked && !isValid) {
-            alert("Please add composite items to the table.");
+            Swal.fire({
+                title: "Error",
+                text: "Please fill out all required fields.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
         }
     
         return isValid;
@@ -140,10 +166,34 @@ document.addEventListener("DOMContentLoaded", () => {
         return isValid;
     };
 
-    
+    const validateMaxConstraints = () => {
+        let isValid = true; // Flag to track if all constraints are valid
+        const allInputs = document.querySelectorAll("input[type='number']");
+        allInputs.forEach((input) => {
+            const max = parseFloat(input.getAttribute("max"));
+            if (!isNaN(max) && parseFloat(input.value) > max) {
+                input.value = max; // Enforce max value
+                Swal.fire({
+                    title: "Error",
+                    text: `Value for ${input.name || "field"} cannot exceed ${max}.`,
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                isValid = false; // Mark as invalid
+            }
+        });
+        return isValid; // Return the validation status
+    };
+
     if (saveButton) {
         saveButton.addEventListener("click", (e) => {
             // Step 1: Validate required fields before proceeding
+
+            if (!validateMaxConstraints()) {
+                e.preventDefault(); // Stop form submission if validation fails
+                return;
+            }
+            
             if (!validateRequiredFields()) {
                 e.preventDefault(); // Prevent form submission if validation fails
                 return;
@@ -152,25 +202,68 @@ document.addEventListener("DOMContentLoaded", () => {
             // Step 2: Check name validation
             if (!isNameValid()) {
                 e.preventDefault();
-                alert("The item name is invalid or already exists. Please fix it before saving.");
+                Swal.fire({
+                    title: "Error",
+                    text: "The item name is invalid or already exists. Please fix it before saving.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
                 return;
             }
 
-            // Step 3: Check quantity validation
-            if (!areQuantitiesValid()) {
-                e.preventDefault();
-                alert("Some quantities are zero. Please correct them before saving.");
-                return;
+
+            // Step 4: Check Volume/Weight per Unit
+            if (soldByVolumeWeight.checked) {
+                const volumeWeightValue = parseFloat(volumeWeightInput.value) || 0;
+                if (volumeWeightValue <= 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: "Error",
+                        text: "Volume/Weight per unit cannot be zero. Please provide a valid value.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                    return;
+                }
             }
 
+            const form = document.querySelector("form");
+
+            // Set blank fields (in-stock, optimal-stock, reorder-level) to 0 if they are empty
+            if (!inStockInput.value.trim()) {
+                inStockInput.value = "0";
+            }
+            if (!optimalStockInput.value.trim()) {
+                optimalStockInput.value = "0";
+            }
+            if (!reorderLevelInput.value.trim()) {
+                reorderLevelInput.value = "0";
+            }
+
+            console.log(reorderLevelInput.value)
+            console.log(reorderLevelInput.value)
+            console.log(reorderLevelInput.value)
+            
             // Step 2: If composite item toggle is checked, proceed with collecting composite item data
             if (compositeToggle.checked) {
                 e.preventDefault(); // Prevent default form submission
                 
+                // Step 3: Check quantity validation
+                if (!areQuantitiesValid()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: "Error",
+                        text: "Some quantities in the composite table are zero. Please correct them before saving.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                    return;
+                }
+
                 const compositeItemsData = collectCompositeItemData(); // Collect composite item data
                 console.log("Composite Items Data:", compositeItemsData);
     
-                const form = document.querySelector("form");
+                
     
                 // Step 3: Append composite item data as a hidden input field
                 const hiddenInput = document.createElement("input");
@@ -207,20 +300,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    if (cancelButton) {
-        cancelButton.addEventListener("click", () => {
-            // Retrieve page and rows from button's data attributes
-            const page = cancelButton.getAttribute("data-page") || 1;
-            const rows = cancelButton.getAttribute("data-rows") || 10;
-
-            // Construct the URL for redirection
-            const redirectUrl = `/item-list/?page=${page}&rows=${rows}`;
-
-            // Perform the redirection
-            window.location.href = redirectUrl;
-        });
-    }
+    cancelButton.addEventListener("click", () => {
+        // Retrieve the session-stored page and rows values via data attributes
+        const currentPage = cancelButton.getAttribute('data-page') || 1;
+        const currentRows = cancelButton.getAttribute('data-rows') || 10;
     
+        console.log("Redirecting to page:", currentPage, "with rows:", currentRows);
+    
+        // Construct the redirection URL
+        const redirectUrl = `/item-list/?page=${currentPage}&rows=${currentRows}`;
+        window.location.href = redirectUrl;
+    });
+    
+    // Allow radio buttons to be deselected
+    document.querySelectorAll("input[type='radio']").forEach((radio) => {
+        radio.addEventListener("mousedown", (e) => {
+            if (radio.checked) {
+                // If already checked, add a custom attribute to track deselection
+                radio.dataset.wasChecked = "true";
+            } else {
+                delete radio.dataset.wasChecked;
+            }
+        });
+
+        radio.addEventListener("click", (e) => {
+            if (radio.dataset.wasChecked === "true") {
+                // If it was already checked, deselect it
+                radio.checked = false;
+                delete radio.dataset.wasChecked;
+                // Trigger the change event for consistency
+                radio.dispatchEvent(new Event("change"));
+            }
+        });
+    });
     // Function to toggle visibility for Volume/Weight groups
     const toggleVolumeWeightGroup = () => {
         if (soldByVolumeWeight.checked) {
@@ -244,7 +356,31 @@ document.addEventListener("DOMContentLoaded", () => {
             costInput.value = "0.00"; // Reset to default
         }
     };
-
+    
+    const toggleSoldByOptions = () => {
+        const isComposite = compositeItemCheckbox.checked;
+    
+        if (isComposite) {
+            // Disable and uncheck the radio buttons
+            soldByEach.disabled = true;
+            soldByVolumeWeight.disabled = true;
+            soldByEach.checked = false;
+            soldByVolumeWeight.checked = false;
+    
+            // Hide the associated elements for "Volume/Weight"
+            volumeWeightGroup.style.display = "none";
+            remainingVolumeGroup.style.display = "none";
+        } else {
+            // Enable the radio buttons
+            soldByEach.disabled = false;
+            soldByVolumeWeight.disabled = false;
+    
+            // Show or hide the elements based on the selected "Sold by" option
+            toggleVolumeWeightGroup();
+        }
+    };
+    
+    
     // Function to calculate Remaining Volume dynamically
     const calculateRemainingVolume = () => {
         if (inStockInput && volumeWeightInput && remainingVolumeOutput) {
@@ -264,7 +400,10 @@ document.addEventListener("DOMContentLoaded", () => {
     soldByVolumeWeight.addEventListener("change", toggleVolumeWeightGroup);
 
     // Add event listener for Composite Item checkbox
-    compositeItemCheckbox.addEventListener("change", toggleCompositeItemTable);
+    compositeItemCheckbox.addEventListener("change", () => {
+        toggleCompositeItemTable();
+        toggleSoldByOptions(); // Update radio button states when composite toggle changes
+    });
 
     // Function to update Total Cost based on Composite Items
     const updateTotalCost = () => {
@@ -305,7 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial visibility setup
     toggleVolumeWeightGroup();
     toggleCompositeItemTable();
-
+    toggleSoldByOptions(); // Ensure radio buttons are updated on page load
+    
     const monitorZeroQuantities = () => {
         const quantityInputs = compositeItemTable.querySelectorAll(".quantity-input");
     
@@ -373,9 +513,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch search results or all items
     const fetchSearchResults = async (query = "") => {
         try {
+            console.log("Fetching items with query:", query); // Debugging
             const url = `/item-list/search-items/?q=${encodeURIComponent(query)}`;
             const response = await fetch(url);
             const data = await response.json();
+            console.log("Fetched results:", data.results); // Debugging
 
             searchResults.innerHTML = ""; // Clear previous results
 
@@ -398,7 +540,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 searchResults.style.display = "block"; // Show the dropdown
             } else {
-                searchResults.style.display = "none"; // Hide if no results
+                const noResultsItem = document.createElement("div");
+                noResultsItem.classList.add("dropdown-item", "text-muted");
+                noResultsItem.textContent = "No items found.";
+                searchResults.appendChild(noResultsItem);
+
+                searchResults.style.display = "block"; // Show the dropdown even if empty
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
@@ -406,14 +553,32 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Show dropdown when search bar gains focus
-    searchInput.addEventListener("focus", () => {
-        fetchSearchResults(); // Fetch all items
+    searchInput.addEventListener("focus", async () => {
+        await fetchSearchResults(""); // Fetch all items (empty query)
+        searchResults.style.display = "block"; // Force dropdown visibility
+    });
+    
+    searchInput.addEventListener("mouseover", async () => {
+        await fetchSearchResults(""); // Fetch all items (empty query)
+        searchResults.style.display = "block"; // Force dropdown visibility
     });
 
     // Fetch specific results when typing in the search bar
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
         fetchSearchResults(query);
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            const highlightedItem = searchResults.querySelector(".highlight"); // Adjust based on your dropdown highlighting logic
+            if (highlightedItem) {
+                // Simulate a click on the highlighted item to add it to the composite item table
+                highlightedItem.click();
+            } else {
+                event.preventDefault(); // Prevent form submission if no item is selected
+            }
+        }
     });
 
     // Hide dropdown when clicking outside

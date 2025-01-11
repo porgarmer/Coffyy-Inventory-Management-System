@@ -53,6 +53,7 @@ def index(request):
         'rows_per_page': rows,
         'search_query': search_query,  # Include this for pre-filling the search bar
     })
+    
 
 def validate_category_name(request):
     if request.method == 'GET':
@@ -90,7 +91,7 @@ def add_category(request):
 
         # Save new category
         Category.objects.create(name=name, color=color)
-        messages.success(request,"Category added!")
+        messages.success(request,"Category added.")
         # Redirect with pagination parameters
         return redirect(f"{reverse('item_categories_index')}?page={page}&rows={rows}")
 
@@ -131,7 +132,7 @@ def edit_category(request, category_id):
         category.name = name
         category.color = color
         category.save()
-        messages.success(request, "Category edited!")
+        messages.success(request, "Category edited.")
         # Redirect with pagination parameters
         return redirect(f"{reverse('item_categories_index')}?page={page}&rows={rows}")
 
@@ -150,6 +151,6 @@ def delete_categories(request):
         # Delete the selected categories
         if categories.exists():
             categories.delete()
-            messages.success(request, 'Category/ies deleted!')
+            messages.success(request, 'Category/ies deleted.')
 
     return redirect('item_categories_index')  # Redirect after deletion

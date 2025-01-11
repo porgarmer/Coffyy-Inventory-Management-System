@@ -25,10 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {
+                        // Display the error if the category name exists
                         categoryNameErrorLabel.textContent = "Category name already exists.";
                         categoryNameErrorLabel.style.display = "inline";
                         categoryNameInput.classList.add("input-error");
                     } else {
+                        // Clear the error if the category name is unique
                         categoryNameErrorLabel.textContent = "";
                         categoryNameErrorLabel.style.display = "none";
                         categoryNameInput.classList.remove("input-error");
@@ -37,8 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(error => {
                     console.error("Error checking category name:", error);
                 });
+        } else {
+            // Clear the error if the input is empty
+            categoryNameErrorLabel.textContent = "";
+            categoryNameErrorLabel.style.display = "none";
+            categoryNameInput.classList.remove("input-error");
         }
     });
+
 
     const saveButton = document.querySelector("button[type='submit']");
     const categoryForm = document.querySelector("form");
@@ -59,7 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if (data.exists) {
                         // Show alert if name already exists
-                        alert("The category name already exists. Please use a different name.");
+                        Swal.fire({
+                            title: "Error",
+                            text: "The category name already exists. Please use a different name.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
                     } else {
                         // Name is valid, submit the form
                         categoryForm.submit();
@@ -67,11 +80,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error("Error checking category name:", error);
-                    alert("An error occurred while validating the category name. Please try again.");
+                    Swal.fire({
+                        title: "Error",
+                        text: "An error occurred while validating the category name. Please try again.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                 });
         } else {
             // Show alert if the name field is empty
-            alert("Please enter a category name before saving.");
+            Swal.fire({
+                title: "Error",
+                text: "Please enter a category name before saving.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
         }
     });
 

@@ -2,31 +2,58 @@
 
 *,
 ::after,
-::before 
-
-{
+::before {
     box-sizing: border-box;
 }
+
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+
 header {
     background-color: #50260E;
     color: #fff;
-    padding: 10px 20px; 
-    text-align: left; 
-    width: 100%;
+    padding: 10px 20px;
+    padding-left: 90px; /* Added padding to prevent overlap with sidebar */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     position: fixed;
     top: 0;
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-start; 
+    width: 100%;
+    z-index: 900; /* Lower than sidebar */
 }
 
-.header .logo {
-    height: 60px;
+.header-logo img {
+    height: 50px;
+    margin-left: 0px;
+}
+
+.header-user {
+    font-size: 1rem;
+    color: #fff;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #B20727;
+    margin: 0;
+    padding: 0;
+
 }
 
 h3 {
@@ -44,15 +71,10 @@ li {
     list-style: none;
 }
 
-/* .square{
-    background-color: #50260E;
-    padding: 3rem;
-    position: sticky;
-    top: 0px;
-} */
 .wrapper {
     display: flex;
 }
+
 
 .sidebar-container{
     top: 0;
@@ -68,6 +90,7 @@ li {
     overflow: hidden;
     transition: all 0.35s ease-in-out;
     background-color: #F8F5F5;
+    padding-left: 90px; /* Added padding for main content to align properly */
 }
 
 #sidebar {
@@ -77,50 +100,52 @@ li {
     display: flex;
     flex-direction: column;
     background-color: #B20727;
-    z-index: 1000;
+    z-index: 1000; /* Higher than header and footer */
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
 }
 
-#sidebar.expand{
+#sidebar.expand {
     width: 18rem;
     min-width: 18rem;
-
 }
 
-#toggle-btn{
+#toggle-btn {
     background-color: transparent;
     cursor: pointer;
     border: 0;
     padding: 1rem 1.5rem;
 }
 
-#toggle-btn i{
+#toggle-btn i {
     font-size: 1.5rem;
     color: white;
 }
 
-.sidebar-logo{
+.sidebar-logo {
     margin: auto 0;
 }
 
-.sidebar-logo a{
+.sidebar-logo a {
     color: white;
     font-size: 1.15rem;
     font-weight: 600;
 }
 
 #sidebar:not(.expand) .sidebar-logo,
-#sidebar:not(.expand) a.sidebar-link span{
+#sidebar:not(.expand) a.sidebar-link span {
     display: none;
 }
 
-.sidebar-nav{
+.sidebar-nav {
     padding: 2rem 0;
     flex: 1 1 auto;
 }
 
-
-
-a.sidebar-link{
+a.sidebar-link {
     padding: .625rem 1.62rem;
     color: #DDC234;
     display: block;
@@ -129,38 +154,38 @@ a.sidebar-link{
     border-left: 3px solid transparent;
 }
 
-.sidebar-link i{
+.sidebar-link i {
     font-size: 1.4rem;
     margin-right: .75rem;
 }
 
-.sidebar-link:hover{
+.sidebar-link:hover {
     background-color: #D70A30;
     border-left: 3px solid #DDC234;
 }
 
-.sidebar-item{
+.sidebar-item {
     position: relative;
 }
 
-#sidebar:not(.expand) .sidebar-item .sidebar-dropdown{
+#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
     position: absolute;
     top: 0;
     left: 70px;
-    background-color:  #B20727;
+    background-color: #B20727;
     padding: 0;
     min-width: 15rem;
     display: none;
 }
 
-#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+ .sidebar-dropdown{
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+ .sidebar-dropdown {
     display: block;
     max-height: 15rem;
     width: 100%;
     opacity: 1;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after{
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
     border: solid;
     border-width: 0 .075rem .075rem 0;
     content: "";
@@ -173,7 +198,19 @@ a.sidebar-link{
     transition: all .2s ease-out;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after{
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
     transform: rotate(45deg);
     transition: all .2s ease-out;
+}
+
+footer {
+    background-color: #50260E;
+    color: #fff;
+    padding: 15px 20px;
+    padding-left: 90px; /* Added padding to prevent overlap with sidebar */
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 900; /* Same as header */
 }

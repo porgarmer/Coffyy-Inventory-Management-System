@@ -5,9 +5,7 @@
 {% block title %}Add Item{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/add_item.css' %}">
-
-<h1 class="form-title">Add New Item</h1>
+<link rel="stylesheet" href="{% static 'css/add_iitemss.css' %}">
 
 <div id="right-popup" class="right-popup">
     <div class="popup-content">
@@ -32,7 +30,7 @@
         <div class="top-section">
             <!-- Name Field -->
             <div class="form-group">
-                <label for="item-name">Name</label>
+                <h4 style="text-align: left; font-weight: bold;">Name</h4>
                 <input type="text" id="item-name" name="name" class="form-control underline-input" value="{{ form_data.name|default:'' }}" required>
             </div>
 
@@ -50,7 +48,7 @@
             <!-- Description Field -->
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" class="form-control underline-input" value="{{ form_data.description|default:'' }}"></textarea>
+                <textarea id="description" name="description" class="form-control underline-input">{{ form_data.description|default:'' }}</textarea>
             </div>
         </div>
 
@@ -68,19 +66,19 @@
                 <div class="form-group">
                     <label>Sold by</label>
                     <div class="radio-group">
-                        <input type="radio" id="sold-by-each" name="sold_by" value="each" {% if form_data.sold_by == "each" %}checked{% endif %} required>
+                        <input type="radio" id="sold-by-each" name="sold_by" value="each" {% if form_data.sold_by == "each" %}checked{% endif %}>
                         <label for="sold-by-each">Each</label>
                 
-                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight" {% if form_data.sold_by == "volume_weight" %}checked{% endif %} required>
+                        <input type="radio" id="sold-by-volume-weight" name="sold_by" value="volume_weight" {% if form_data.sold_by == "volume_weight" %}checked{% endif %}>
                         <label for="sold-by-volume-weight">Volume/Weight</label>
                     </div>
-                </div>
+                </div>                  
                 <!-- Price Field -->
                 <div class="form-group">
                     <label for="price">Price</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="price" name="price" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.price|default:'' }}" required>
+                        <input type="number" id="price" name="price" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.price|default:'0.00' }}">
                     </div>
                 </div>
             </div>
@@ -90,7 +88,7 @@
                 <!-- Volume/Weight per Unit (hidden by default) -->
                 <div id="volume-weight-group" class="form-group" style="display:none;">
                     <label for="volume-weight-per-unit">Volume/Weight per unit</label>
-                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.volume_weight_per_unit|default:'0.00' }}">
+                    <input type="number" id="volume-weight-per-unit" name="volume_weight_per_unit" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.volume_weight_per_unit|default:'0.00' }}">
                     <span class="small-label">(milliliters for volume, milligrams for weight)</span>
                 </div>
 
@@ -99,7 +97,7 @@
                     <label for="cost">Cost</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" step="0.01" value="0.00" required>
+                        <input type="number" id="cost" name="cost" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="0.00">
                     </div>
                     <span class="small-label">(per item including shipping fee, etc.)</span>
                 </div>
@@ -160,18 +158,18 @@
             <div class="left-column">
                 <div class="form-group">
                     <label for="in-stock">In Stock</label>
-                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0" value="{{ form_data.in_stock|default:'' }}" required>
+                    <input type="number" id="in-stock" name="in_stock" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.in_stock|default:'0' }}">
                 </div>
                 <div class="form-group">
                     <label for="reorder-level">Reorder Level</label>
-                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0" value="{{ form_data.reorder_level|default:'' }}" required>
+                    <input type="number" id="reorder-level" name="reorder_level" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.reorder_level|default:'0' }}">
                     <span class="small-label">(Item quantity for low stock notification)</span>
                 </div>
                 <div class="form-group">
                     <label for="default-purchase-cost">Default Purchase Cost</label>
                     <div class="underline-input-wrapper">
                         <span class="peso-sign">₱</span>
-                        <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" step="0.01" value="{{ form_data.default_purchase_cost|default:'0.00' }}" required>
+                        <input type="number" id="default-purchase-cost" name="default_purchase_cost" class="form-control underline-input" min="0" max="99999999.99" step="0.01" value="{{ form_data.default_purchase_cost|default:'0.00' }}">
                     </div>
                 </div>
             </div>
@@ -188,12 +186,12 @@
                 </div>
                 <div class="form-group">
                     <label for="optimal-stock">Optimal Stock</label>
-                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0" value="{{ form_data.optimal_stock|default:'' }}" required>
+                    <input type="number" id="optimal-stock" name="optimal_stock" class="form-control underline-input" min="0" max="99999999" value="{{ form_data.optimal_stock|default:'0' }}">
                     <span class="small-label">(The amount of inventory needed to meet demand)</span>
                 </div>
                 <div id="remaining-volume-group" class="form-group" style="display:none;">
                     <label for="remaining-volume">Remaining Volume</label>
-                    <input type="text" id="remaining-volume" class="form-control underline-input" readonly/>
+                    <input type="text" id="remaining-volume" max="99999999.99" class="form-control underline-input" readonly/>
                 </div>
             </div>
         </div>
@@ -203,12 +201,14 @@
 <div class="form-container button-container">
     <div class="button-group">
         <!-- Cancel Button -->
-        <button type="button" class="btn btn-secondary me-2" id="cancel-button" data-page="{{ page }}" data-rows="{{ rows }}">Cancel</button>
+        <button type="button" class="btn-custom-cancel" id="cancel-button" data-page="{{ request.session.item_list_page|default:1 }}" data-rows="{{ request.session.item_list_row|default:10 }}">CANCEL</button>
         <!-- Save Button -->
-        <button type="submit" class="btn btn-success" id="saveButton" data-url="{% url 'item_list:add_item' %}">Save</button>
+        <button type="submit" class="btn btn-custom-save" id="saveButton" data-url="{% url 'item_list:add_item' %}">SAVE</button>
     </div>
 </div>
+
 </form>
-<script src="/static/js/add_itm.js"></script>
+<script src="/static/js/add_itemsxsx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {% endblock %}

@@ -6,10 +6,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const popupMessage = document.getElementById('popup-message');
     const paginationLinks = document.querySelectorAll('.pagination .page-link');
     const rowsPerPageSelector = document.getElementById('rows-per-page');
+    const categoryFilter = document.getElementById('category-filter');
+    const stockAlertFilter = document.getElementById('stock-alert-filter');
     const deleteButton = document.getElementById('delete-button');
     const selectAllCheckbox = document.getElementById('select-all');
     const rowCheckboxes = document.querySelectorAll('#item-table-body input[type="checkbox"]');
     const deleteForm = document.getElementById('delete-form');
+
+    const tableRowCell = document.querySelectorAll('#item-table-body .item-row');
+
+    tableRowCell.forEach(row => {
+        row.addEventListener('click', function (event) {
+            // Prevent redirect if the user clicks a checkbox
+            if (event.target.tagName === 'INPUT' && event.target.type === 'checkbox') {
+                return;
+            }
+
+            const href = this.dataset.href;
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
 
     // Search functionality
     searchBar.addEventListener('submit', function () {
@@ -35,15 +53,36 @@ document.addEventListener('DOMContentLoaded', function () {
         window.history.pushState({}, '', url);
     });
 
-    // Handle rows per page change
+    
+
+    // Function to update URL parameters and reload the page
+    function updateUrlParam(param, value) {
+        const url = new URL(window.location);
+        url.searchParams.set(param, value); // Set the specified parameter
+        url.searchParams.set('page', 1); // Reset to the first page
+        window.history.pushState({}, '', url); // Update the browser URL
+        location.reload(); // Reload the page
+    }
+
+    // Add event listeners for the dropdowns
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function () {
+            const selectedCategory = categoryFilter.value; // Get selected category
+            updateUrlParam('category', selectedCategory); // Update URL and reload
+        });
+    }
+
+    if (stockAlertFilter) {
+        stockAlertFilter.addEventListener('change', function () {
+            const selectedStockAlert = stockAlertFilter.value; // Get selected stock alert
+            updateUrlParam('stock_alert', selectedStockAlert); // Update URL and reload
+        });
+    }
+
     if (rowsPerPageSelector) {
         rowsPerPageSelector.addEventListener('change', function () {
-            const rowsPerPage = rowsPerPageSelector.value;
-            const url = new URL(window.location);
-            url.searchParams.set('rows', rowsPerPage);
-            url.searchParams.set('page', 1);
-            window.history.pushState({}, '', url);
-            location.reload();
+            const rowsPerPage = rowsPerPageSelector.value; // Get selected rows per page
+            updateUrlParam('rows', rowsPerPage); // Update URL and reload
         });
     }
 
@@ -96,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isChecked = selectAllCheckbox.checked;
         rowCheckboxes.forEach(checkbox => {
             checkbox.checked = isChecked;
+            checkbox.disabled = this.checked; // Disable checkboxes when 'Select All' is checked
         });
         toggleDeleteButton();
     });

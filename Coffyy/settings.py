@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'item_category',
     'item_list',
     'purchase_order.apps.PurchaseOrderConfig',
-    'supplier.apps.SupplierConfig'
+    'supplier.apps.SupplierConfig',
     'login',
     'account_profile',
 ] 

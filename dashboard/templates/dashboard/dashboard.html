@@ -11,12 +11,12 @@
 <div class="container py-5">
     <div class="custom-row">
         <!-- First Row -->
-        <div class="card card-1">
-            <h4 class="card-title">1</h4>
+        <div class="card card-1" onclick="window.location.href='{% url 'item_list:item_list_index' %}?stock_alert=low'">
+            <h4 class="card-title">{{ low_stock_count }}</h4>
             <h5 class="card-title">Low Stock Items</h5>
         </div>
-        <div class="card card-2">
-            <h4 class="card-title">2</h4>
+        <div class="card card-2" onclick="window.location.href='{% url 'item_list:item_list_index' %}'">
+            <h4 class="card-title">{{ total_items_count }}</h4>
             <h5 class="card-title">Total Items</h5>
         </div>
         <div class="card card-3">
@@ -30,8 +30,8 @@
     </div>
     <div class="custom-row">
         <!-- Second Row -->
-        <div class="card card-5">
-            <h4 class="card-title">5</h4>
+        <div class="card card-5" onclick="window.location.href='{% url 'item_categories_index' %}'" style="cursor: pointer;">
+            <h4 class="card-title">{{ category_count }}</h4>
             <h5 class="card-title">Categories</h5>
         </div>
         <div class="card card-6">

@@ -23,12 +23,12 @@
     </div>
 {% endif %}
 
-{% comment %} {% if items or search_query == "" or search_query %} {% endcomment %}
+{% if purchase_orders%}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex">
                 <a href="{% url 'create-purchase-order' %}" class="btn btn-success me-2" id="add-item">+ Create Purchase Order</a>
-            <form id="delete-form" action="{% url 'item_list:delete_items' %}">
+            <form id="delete-form" action="{% url 'delete_purchase_order' %}">
                 {% csrf_token %}
                 <button type="button" class="btn btn-outline-danger d-none" id="delete-button">Delete Selected</button>
             </form>
@@ -55,7 +55,7 @@
             >
                 <option option value="All Suppliers" {% if selected_supplier == 'All Suppliers' %}{% endif %}>All Suppliers</option>
                 {% for supplier in suppliers %}
-                    <option option value="{{supplier.supp_name}}" {% if selected_supplier == '{{supplier.supp_name}}' %}selected{% endif %}>{{supplier.supp_name}}</option>
+                    <option option value="{{supplier.supp_name}}" {% if selected_supplier == supplier.supp_name %}selected{% endif %}>{{supplier.supp_name}}</option>
 
                 {% endfor %} 
 
@@ -143,7 +143,7 @@
                     <ul class="pagination justify-content-center">
                         {%if purchase_orders.has_previous  %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Previous</a>
+                            <a class="page-link" href="?page={{ items.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&supplier={{ selected_supplier }}">Previous</a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
@@ -154,15 +154,15 @@
                         {% for num in purchase_orders.paginator.page_range %}
                             {% if num >= purchase_orders.number|add:-5 and num <= purchase_orders.number|add:5 %}
                             <li class="page-item {% if num == page_obj.number %}active{% endif %}">
-                                <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}">{{ num }}</a>
+                                <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&supplier={{ selected_supplier }}">{{ num }}</a>
                             </li>
                             {% endif %}
                         {% endfor %}
 
                         {% if purchase_orders.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ purchase_orders.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}">Next</a>
-                        </li>
+                            <a class="page-link" href="?page={{ purchase_orders.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&supplier={{ selected_supplier }}">Next</a>
+                        </li> 
                         {% else %}
                         <li class="page-item disabled">
                             <a class="page-link" href="#">Last</a>
@@ -193,9 +193,9 @@
     </div>
 </div>
 
-{% comment %} {% else %} {% endcomment %}
+{% else %}
 
-{% comment %} <div class="container">
+<div class="container">
     <div class="row">
         <div class="col-12 col-sm-8 col-md-6 mx-auto">
             <div class="card-no-purchase-order p-4 shadow-sm">
@@ -210,9 +210,9 @@
             </div>
         </div>
     </div>
-</div> {% endcomment %}
+</div>
 
-{% comment %} {% endif %} {% endcomment %}
+{% endif %}
 
 <!-- Modal Popup for Deletion Confirmation -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -232,8 +232,6 @@
         </div>
     </div>
 </div>
-
-
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% block scripts %}
 <script src="{% static 'js/purchase_order.js' %}"></script>

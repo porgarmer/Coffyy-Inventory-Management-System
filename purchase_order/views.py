@@ -6,6 +6,7 @@ from item_list.models import Item
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -134,3 +135,39 @@ def create_purchase_order(request):
         'suppliers': suppliers,
         'items': items
     })
+    
+@csrf_exempt
+def delete_purchase_order(request):
+    if request.method == "POST":
+        # Retrieve the list of selected item IDs from the form
+        selected_ids = request.POST.getlist('selected_ids')
+
+        if selected_ids:
+            try:
+                # Delete the selected items
+                PurchaseOrder.objects.filter(po_id__in=selected_ids).delete()
+
+                # Calculate updated pagination
+                rows = request.session.get('rows', 10)
+                current_page = int(request.session.get('page', 1))
+                purchase_order_count = PurchaseOrder.objects.count()
+                total_pages = (purchase_order_count + rows - 1) // rows  # Calculate total pages
+
+                if current_page > total_pages:
+                    current_page = max(total_pages, 1) 
+                    
+                # Show success message to the user
+                messages.success(request, "Purchase order/s deleted successfully!")
+
+                return redirect(f"{reverse('purchase-order')}?page={current_page}&rows={rows}")
+
+            except Exception as e:
+                # Handle any errors that occur during deletion
+                messages.error(request, f"Error deleting items: {str(e)}")
+
+        else:
+            # Handle case where no items were selected
+            messages.error(request, "No items selected for deletion.")
+        current_page = request.session.get('page', 1)
+        rows = request.session.get('rows', 10)
+        return redirect(f"{reverse('purchase-order')}?page={current_page}&rows={rows}")

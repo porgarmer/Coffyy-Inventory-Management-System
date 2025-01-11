@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteForm = document.getElementById('delete-form');
     const statusFilter = document.getElementById('status-filter');
     const supplierFilter = document.getElementById('supplier-filter');
+    const deleteModalElement = document.getElementById('deleteModal');
+
+
     // Search functionality
     searchBar.addEventListener('submit', function () {
         const searchTerm = searchBar.value.toLowerCase().trim(); // Normalize input
@@ -132,13 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("No items selected.");
             return;
         }
-    
         // Show confirmation modal
         const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
         const deleteCount = document.getElementById('delete-count');
         deleteCount.textContent = selectedIds.length;
         deleteModal.show();
-    
         // Confirm deletion in modal
         document.getElementById('confirm-delete').addEventListener('click', function () {
             // Form submission method
@@ -167,9 +168,16 @@ document.addEventListener('DOMContentLoaded', function () {
             form.submit();
     
             // Show popup message
-            popupMessage.textContent = "Items deleted successfully!";
+            popupMessage.textContent = "Purchase order/s deleted successfully!";
             popup.classList.add('show');
-            setTimeout(() => popup.classList.remove('show'), 3000);
+            setTimeout(() => popup.classList.remove('show'), 30000);
         });
     });    
+    deleteModalElement.addEventListener('hidden.bs.modal', function () {
+        // Manually remove any remaining backdrop
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    });
 });

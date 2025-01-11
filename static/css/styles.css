@@ -50,8 +50,10 @@ header {
 
 body {
     font-family: 'Poppins', sans-serif;
+    background-color: #B20727;
     margin: 0;
     padding: 0;
+
 }
 
 h3 {
@@ -73,7 +75,16 @@ li {
     display: flex;
 }
 
-.main {
+
+.sidebar-container{
+    top: 0;
+    position: sticky;
+    align-self: flex-start;
+    z-index: 1000;
+
+}
+
+.main{
     min-height: 100vh;
     width: 100%;
     overflow: hidden;
@@ -86,7 +97,6 @@ li {
     max-width: 70px;
     min-width: 70px;
     transition: all 0.25s ease-in-out;
-    box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
     display: flex;
     flex-direction: column;
     background-color: #B20727;

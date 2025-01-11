@@ -62,6 +62,7 @@
                         <span>Account Profile</span>
                     </a>
                     <ul id="account-profile" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+
                         <li class="sidebar-item">
                             <a href="{% url 'login:login_index' %}" class="sidebar-link">Sign Out</a>
                         </li>
@@ -99,13 +100,13 @@
                     </a>
                     <ul id="inventory-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
-                            <a href="{% url 'purchase-order' %}" class="sidebar-link">Purchase Order</a>
+                              <a href="{% url 'purchase-order' %}?page=1&rows=10" class="sidebar-link">Purchase Order</a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">Item Requests</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Suppliers</a>
+                            <a href="{% url 'suppliers' %}?page=1&rows=10"" class="sidebar-link">Suppliers</a>
                         </li>
                     </ul>
                 </li>

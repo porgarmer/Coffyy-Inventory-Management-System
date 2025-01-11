@@ -39,8 +39,6 @@ $(document).ready(function() {
 
 
 
-
-
     $('#item').select2({
         width: '100%',
         placeholder: "Select item",

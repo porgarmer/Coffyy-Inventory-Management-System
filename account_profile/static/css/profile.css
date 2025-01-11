@@ -348,3 +348,16 @@ body {
     background-color: #e53935;
 }
 
+/* Warning Text Styles */
+.warning-text {
+    font-size: 0.8em; 
+    margin-top: 5px;
+    display: none; 
+}
+
+.text-danger {
+    font-size: 0.8em; 
+    color: #d32f2f; 
+}
+
+

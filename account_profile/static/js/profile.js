@@ -1,195 +1,230 @@
-// Display popup messages if hidden success messages are present
-document.addEventListener('DOMContentLoaded', () => {
-    const popup = document.getElementById('right-popup');
-    const popupMessage = document.getElementById('popup-message');
-
-    const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
-    hiddenMessages.forEach(message => {
-        const trimmedMessage = message.textContent.trim();
-        if (trimmedMessage) {
-            popupMessage.textContent = trimmedMessage;
-            popup.classList.add('show');
-
-            setTimeout(() => {
-                popup.classList.remove('show');
-            }, 3000); // Hide popup after 3 seconds
-        }
-    });
-});
-
-// Function to enable editing of input fields
-function enableEdit(fieldId) {
-    const field = document.getElementById(fieldId);
-    if (field) {
-        field.removeAttribute('readonly');
-        field.focus();
-    }
-}
-
-// Open password edit modal
-function editPassword() {
-    const modal = document.getElementById('password-modal');
-    if (modal) modal.classList.add('show');
-}
-
-// Close modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove('show');
-}
-
-// Show confirmation modal for saving changes
-function saveChanges() {
-    const modal = document.getElementById('confirm-modal');
-    if (modal) modal.classList.add('show');
-}
-
-// Save profile changes
-function confirmSave() {
-    const contactNumber = document.getElementById('contact-number').value;
-    const firstName = document.getElementById('first-name').value;
-    const lastName = document.getElementById('last-name').value;
-    const email = document.getElementById('email').value;
-
-    fetch('/edit-account/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            operation: 'update_profile',
-            'contact-number': contactNumber,
-            'first-name': firstName,
-            'last-name': lastName,
-            'email': email,
-        }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert(data.message || 'Profile updated successfully!');
-                location.reload();
-            } else {
-                alert(data.error || 'Failed to update profile.');
-            }
-        })
-        .catch((error) => console.error('Error:', error));
-}
 document.addEventListener("DOMContentLoaded", function () {
     const newPasswordInput = document.getElementById("new-password");
     const confirmPasswordInput = document.getElementById("confirm-password");
-    const newPasswordWarning = document.getElementById("new-password-warning");
+    const contactNumberInput = document.getElementById("contact-number");
+    const contactWarning = document.getElementById("contact-warning");
+    const emailInput = document.getElementById("email");
+    const emailWarning = document.getElementById("email-warning");
+    const popup = document.getElementById("right-popup");
+    const popupMessage = document.getElementById("popup-message");
+
+    const passwordWarning = document.getElementById("new-password-warning");
     const confirmPasswordWarning = document.getElementById("confirm-password-warning");
 
-    // Validate new password length
-    newPasswordInput.addEventListener("input", function () {
-        if (newPasswordInput.value.length < 8) {
-            newPasswordWarning.classList.remove("d-none");
+    const editFields = ["contact-number", "first-name", "last-name", "email"];
+    const originalValues = {};
+
+    // Store original values for reset
+    editFields.forEach((field) => {
+        const input = document.getElementById(field);
+        originalValues[field] = input.value;
+    });
+
+    window.enableEdit = function (fieldId) {
+        const input = document.getElementById(fieldId);
+        input.readOnly = false;
+        input.classList.add("editable");
+        input.focus();
+    };
+
+    contactNumberInput.addEventListener("input", function () {
+        if (contactNumberInput.value.length !== 11 || isNaN(contactNumberInput.value)) {
+            contactWarning.classList.remove("d-none");
         } else {
-            newPasswordWarning.classList.add("d-none");
+            contactWarning.classList.add("d-none");
         }
     });
 
-    // Validate password match
-    confirmPasswordInput.addEventListener("input", function () {
-        if (newPasswordInput.value !== confirmPasswordInput.value) {
+    // Email validation
+    emailInput.addEventListener("input", function () {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(emailInput.value)) {
+            emailWarning.classList.remove("d-none");
+        } else {
+            emailWarning.classList.add("d-none");
+        }
+    });
+
+    // Real-time password validation
+    newPasswordInput.addEventListener("input", function () {
+        const newPassword = newPasswordInput.value;
+        
+        if (newPassword.length < 8) {
+            passwordWarning.classList.remove("d-none");
+        } else {
+            passwordWarning.classList.add("d-none");
+        }
+
+        // Check if passwords match
+        if (confirmPasswordInput.value && confirmPasswordInput.value !== newPassword) {
             confirmPasswordWarning.classList.remove("d-none");
         } else {
             confirmPasswordWarning.classList.add("d-none");
         }
     });
 
-    // Validate and save password
-    window.validateAndSavePassword = function () {
-        if (newPasswordInput.value.length < 8) {
-            Swal.fire({
-                title: "Error",
-                text: "Password must be at least 8 characters long.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-            return;
+    // Confirm password validation
+    confirmPasswordInput.addEventListener("input", function () {
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword !== newPasswordInput.value) {
+            confirmPasswordWarning.classList.remove("d-none");
+        } else {
+            confirmPasswordWarning.classList.add("d-none");
         }
-        if (newPasswordInput.value !== confirmPasswordInput.value) {
-            Swal.fire({
-                title: "Error",
-                text: "Passwords do not match.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-            return;
-        }
+    });
 
-        // Call function to save the password (assumes `savePassword` is defined)
-        savePassword();
+    window.editPassword = function () {
+        const passwordModal = document.getElementById("password-modal");
+        passwordModal.classList.add("show");
     };
-});
-// Save password changes
-function savePassword() {
-    const newPassword = document.getElementById('new-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
 
-    if (newPassword !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
+    // Open modal by ID
+    window.openModal = function (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('show'); // Show the modal
+        }
+    };
+
+    window.closeModal = function (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show'); // Hide the modal
+        }
+    };
+
+    // Open delete modal
+    window.openDeleteModal = function () {
+        const deleteModal = document.getElementById("delete-modal");
+        deleteModal.classList.add("show"); // Show the delete modal
+    };
+
+    // Close delete modal
+    window.closeDeleteModal = function () {
+        const deleteModal = document.getElementById("delete-modal");
+        deleteModal.classList.remove("show"); // Hide the delete modal
+    };
+
+    window.confirmSave = function () {
+        const contactNumber = contactNumberInput.value;
+        const firstName = document.getElementById("first-name").value;
+        const lastName = document.getElementById("last-name").value;
+        const email = emailInput.value;
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (contactNumber.length !== 11 || isNaN(contactNumber)) {
+            contactWarning.classList.remove("d-none");
+            return;
+        }
+        if (!emailPattern.test(email)) {
+            emailWarning.classList.remove("d-none");
+            return;
+        }
+
+        fetch("{% url 'account_profile:edit_account' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                operation: "update_profile",
+                "contact-number": contactNumber,
+                "first-name": firstName,
+                "last-name": lastName,
+                email: email,
+            }),
+        })
+            .then(() => {
+                location.reload(); // Refresh page to get updated hidden messages from backend
+            })
+            .catch(() => {
+                displayPopupMessage("An error occurred. Please try again.");
+            });
+    };
+
+    window.confirmDelete = function () {
+        fetch("{% url 'account_profile:delete_account' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                operation: "delete_account",
+            }),
+        })
+            .then(() => {
+                location.reload(); // Refresh page to get updated hidden messages from backend
+            })
+            .catch(() => {
+                displayPopupMessage("An error occurred. Please try again.");
+            });
+    };
+
+    // Save password function
+    window.savePassword = function () {
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Check if password is valid and confirm password matches
+        if (newPassword.length < 8) {
+            passwordWarning.classList.remove("d-none");
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            confirmPasswordWarning.classList.remove("d-none");
+            return;
+        }
+
+        fetch("{% url 'account_profile:edit_account' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                operation: "update_password",
+                password: newPassword,
+            }),
+        })
+            .then(() => {
+                location.reload(); // Refresh page to get updated hidden messages from backend
+            })
+            .catch(() => {
+                displayPopupMessage("An error occurred. Please try again.");
+            });
+    };
+
+    // Function to display popup messages
+    function displayPopupMessage(message) {
+        popupMessage.textContent = message;
+        popup.classList.add("show");
+        setTimeout(() => {
+            popup.classList.remove("show");
+        }, 3000);
     }
 
-    fetch('/edit-account/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            operation: 'update_password',
-            password: newPassword,
-        }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert(data.message || 'Password updated successfully!');
-                closeModal('password-modal');
-            } else {
-                alert(data.error || 'Failed to update password.');
-            }
-        })
-        .catch((error) => console.error('Error:', error));
-}
+    // Process hidden messages from backend
+    const hiddenMessages = document.querySelectorAll('div[style="display:none;"] p');
+    hiddenMessages.forEach(message => {
+        const trimmedMessage = message.textContent.trim();
+        if (trimmedMessage) {
+            displayPopupMessage(trimmedMessage);
+        }
+    });
 
-// Function to open delete modal
-function openDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    if (modal) modal.classList.add('show');
-}
+    // Redirect to dashboard function
+    window.redirectToDashboard = function () {
+        window.location.href = "{% url 'index' %}"; // Redirect to the dashboard
+    };
 
-// Close modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove('show');
-}
-
-// Handle account deletion
-function confirmDelete() {
-    fetch('/edit-account/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            operation: 'delete_account',
-        }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert(data.message || 'Account deleted successfully!');
-                window.location.href = '/login/'; // Redirect to login page
-            } else {
-                alert(data.error || 'Failed to delete account.');
-            }
-        })
-        .catch((error) => console.error('Error:', error));
-}
+    // Attach redirect function to cancel buttons
+    const cancelButtons = document.querySelectorAll(".cancel-button");
+    cancelButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            redirectToDashboard(); // Redirect to dashboard when cancel is clicked
+        });
+    });
+});

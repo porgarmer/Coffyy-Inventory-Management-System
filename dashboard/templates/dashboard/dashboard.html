@@ -34,7 +34,7 @@
             <h4 class="card-title">{{ category_count }}</h4>
             <h5 class="card-title">Categories</h5>
         </div>
-        {% if user.role != "owner" %}  <!-- Only owner can view employees -->
+        {% if user.role == "owner" %}  <!-- Only owner can view employees -->
         <div class="card card-6">
             <h4 class="card-title">6</h4>
             <h5 class="card-title">Employees</h5>

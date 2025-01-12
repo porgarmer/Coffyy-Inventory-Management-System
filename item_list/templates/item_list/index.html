@@ -31,7 +31,7 @@
                         <a href="{% url 'item_list:add_item' %}" class="btn btn-custom fw-bold px me-2" id="add-item">+ ADD ITEM</a>
                     <form id="delete-form" action="{% url 'item_list:delete_items' %}">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-custom btn-custom-cancel fw-bold px d-none" id="delete-button"><img 
+                        <button type="button" class="btn btn-custom btn-custom-cancel px d-none" id="delete-button"><img 
                             src="{% static 'images/ICON_DELETE_WHITE.png' %}" 
                             alt="Delete Icon" 
                             style="width: 16px; height: 16px; margin-right: 5px;"

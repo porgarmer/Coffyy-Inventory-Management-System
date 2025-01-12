@@ -63,7 +63,7 @@
                 <img src="{% static 'images/edit.png' %}" alt="Edit Icon" onclick="editPassword()">
             </div>
         </div>
-        {% if user.role != "owner" %}
+        {% if user.role == "owner" %} <!-- Only owner can delete account -->
         <div class="delete-account">
             <p>Delete account</p>
             <img src="{% static 'images/delete.png' %}" alt="Delete Icon" onclick="openDeleteModal()">
@@ -106,7 +106,7 @@
 <!-- Delete Account Confirmation Modal -->
 <div class="modal" id="delete-modal">
     <div class="modal-content">
-        <p>Are you sure you want to delete your account?<br>This action cannot be undone.</p>
+        <p>Are you sure you want to delete your account?<br> All accounts will be deleted and cannot be undone.</p>
         <button class="btn btn-yes" onclick="confirmDelete()">Yes</button>
         <button class="btn btn-no" onclick="closeModal('delete-modal')">No</button>
     </div>

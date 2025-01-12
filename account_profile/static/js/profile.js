@@ -136,7 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
             emailWarning.classList.remove("d-none");
             return;
         }
-    
+        
+        //update profile function
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Get CSRF token
         fetch("/account-profile/edit/", {
             method: "POST",
@@ -172,27 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     };
     
-    
-
-    window.confirmDelete = function () {
-        fetch("{% url 'account_profile:delete_account' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                operation: "delete_account",
-            }),
-        })
-            .then(() => {
-                location.reload(); // Refresh page to get updated hidden messages from backend
-            })
-            .catch(() => {
-                displayPopupMessage("An error occurred. Please try again.");
-            });
-    };
-
     // Save password function
     window.savePassword = function () {
         const newPassword = newPasswordInput.value;
@@ -263,4 +243,32 @@ document.addEventListener("DOMContentLoaded", function () {
             redirectToDashboard(); // Redirect to dashboard when cancel is clicked
         });
     });
-});
+
+    // Function to confirm account deletion
+    window.confirmDelete = function () {
+        fetch("/account-profile/delete-account/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value, // CSRF token for security
+            },
+        })
+        .then((response) => {
+            return response.json().then((data) => {
+                if (response.ok) {
+                    displayPopupMessage("Account deleted successfully.");
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/login/'; // Redirect to login page after success
+                    }, 1500); 
+                } else {
+                    // General error message if response is not OK
+                    alert("Failed to delete account. Please try again.");
+                }
+            });
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        });
+    };
+    });

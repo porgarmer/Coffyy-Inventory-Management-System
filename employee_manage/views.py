@@ -14,22 +14,30 @@ def add_employee(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
-        email = request.POST['email']
+        email_address = request.POST['email']
         contact_number = request.POST['contact_number']
         username = request.POST['username']
         password = request.POST['password']
         
         try:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists.')
+                return redirect('add_employee')
+            if User.objects.filter(email_address=email_address).exists():
+                messages.error(request, 'Email address already exists.')
+                return redirect('add_employee')
+            
             with transaction.atomic():
-                user = User.objects.create_user(
+                user = User(
                     username=username,
-                    email=email,
+                    email_address=email_address,
                     password=password,
                     first_name=first_name,
                     last_name=last_name,
                     contact_number=contact_number,
-                    role='employee'
                 )
+                user.role = 'employee'  # Explicitly set the role
+                user.save()
                 messages.success(request, 'Employee added successfully.')
                 return redirect('employee_list')
         except Exception as e:

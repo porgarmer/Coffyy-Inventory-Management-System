@@ -13,4 +13,5 @@ urlpatterns = [
     path('edit-page/', views.view_account, name='edit_account_page'),  # Load edit page
     path('edit/', views.edit_account, name='edit_account'),  # URL for editing account
     path('update-password/', views.update_password, name='update_password'),  # New URL for password update
+    path("delete-account/", views.delete_accounts, name="delete_account"), # URL for deleting account
 ]

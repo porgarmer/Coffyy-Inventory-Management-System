@@ -1,6 +1,6 @@
 from django.db import models
 from item_category.models import Category
-#from supplier.models import Supplier  # Assuming supplier model exists
+from supplier.models import Supplier  # Assuming supplier model exists
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
@@ -19,6 +19,7 @@ class Item(models.Model):
     cost_per_m = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     #supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.SET_NULL)
     is_composite = models.BooleanField(default=False)
+    supplier = models.ForeignKey(Supplier, null=True, blank=True, on_delete=models.SET_NULL, default=None)  # Add Supplier foreign key
 
     def __str__(self):
         return self.name

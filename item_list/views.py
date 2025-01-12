@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 from .models import Item, CompositeItem
 from item_category.models import Category
+from supplier.models import Supplier
 from django.core.serializers.json import DjangoJSONEncoder  # Import JSON encoder
 from django.views.decorators.cache import never_cache
 
@@ -171,6 +172,7 @@ def search_items_edit(request):
 
 def add_item(request):
     categories = Category.objects.all()
+    suppliers = Supplier.objects.all()  # Fetch supplier data
 
     if request.method == "POST":
         # Parse general item details
@@ -220,6 +222,10 @@ def add_item(request):
         category_id = request.POST.get("category")
         category = Category.objects.filter(id=category_id).first() if category_id else None
 
+        supplier_id = request.POST.get("supplier")
+        supplier = Supplier.objects.filter(supp_id=supplier_id).first() if supplier_id else None
+        
+
         try:
             # Create the parent item
             parent_item = Item.objects.create(
@@ -238,6 +244,7 @@ def add_item(request):
                 is_for_sale=request.POST.get("is_for_sale") == "on",
                 sold_by=sold_by,
                 is_composite=is_composite,
+                supplier=supplier,  # Assign supplier
             )
 
             # Handle composite items
@@ -273,7 +280,7 @@ def add_item(request):
         redirect_url = f"{reverse('item_list:item_list_index')}?page={page}&rows={rows}"
         return redirect(redirect_url)
 
-    return render(request, "item_list/add_item.html", {"categories": categories})
+    return render(request, "item_list/add_item.html", {"categories": categories, "suppliers": suppliers,})
 
 def cancel_redirect(request):
     # Retrieve page and rows from session or set defaults
@@ -325,6 +332,7 @@ def edit_item(request, item_id):
     # Get the item to be edited
     item = get_object_or_404(Item, id=item_id)
     categories = Category.objects.all()
+    suppliers = Supplier.objects.all()  # Fetch all suppliers
 
     sold_by = request.POST.get('sold_by', None)  # Default to None if not provided
 
@@ -344,6 +352,7 @@ def edit_item(request, item_id):
         item.reorder_level = request.POST.get('reorder_level')
         item.purchase_cost = request.POST.get('default_purchase_cost')
         item.optimal_stock = request.POST.get('optimal_stock')
+        item.supplier = Supplier.objects.get(supp_id=request.POST.get('supplier')) if request.POST.get('supplier') else None
 
         def parse_float(field, default=0.00):
             try:
@@ -409,6 +418,7 @@ def edit_item(request, item_id):
         'volume_weight_per_unit': item.volume_per_unit,
         'remaining_volume': item.remaining_volume,
         'default_purchase_cost': item.purchase_cost,
+        'supplier': item.supplier.supp_id if item.supplier else '',
     }
 
     # Prepopulate composite item data
@@ -422,6 +432,7 @@ def edit_item(request, item_id):
     context = {
         'item': item,
         'categories': categories,
+        'suppliers': suppliers,
         'form_data': form_data,
         'is_composite': item.is_composite,  # True if the item is composite
         'composite_data': json.dumps(composite_data, cls=DjangoJSONEncoder),  # Use DjangoJSONEncoder

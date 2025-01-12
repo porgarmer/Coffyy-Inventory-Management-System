@@ -107,25 +107,41 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.confirmSave = function () {
+        const contactNumberInput = document.getElementById("contact-number");
+        const emailInput = document.getElementById("email");
+    
+        if (!contactNumberInput || !emailInput) {
+            console.error("One or more required inputs are missing from the DOM.");
+            return;
+        }
+    
         const contactNumber = contactNumberInput.value;
         const firstName = document.getElementById("first-name").value;
         const lastName = document.getElementById("last-name").value;
         const email = emailInput.value;
-
+    
+        console.log("Contact Number:", contactNumber);
+        console.log("First Name:", firstName);
+        console.log("Last Name:", lastName);
+        console.log("Email:", email);
+    
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (contactNumber.length !== 11 || isNaN(contactNumber)) {
+            console.error("Invalid contact number.");
             contactWarning.classList.remove("d-none");
             return;
         }
         if (!emailPattern.test(email)) {
+            console.error("Invalid email format.");
             emailWarning.classList.remove("d-none");
             return;
         }
-
-        fetch("{% url 'account_profile:edit_account' %}", {
+    
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Get CSRF token
+        fetch("/account-profile/edit/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
+                "X-CSRFToken": csrfToken,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -136,13 +152,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 email: email,
             }),
         })
-            .then(() => {
-                location.reload(); // Refresh page to get updated hidden messages from backend
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                return response.json();
             })
-            .catch(() => {
+            .then((data) => {
+                if (data.success) {
+                    displayPopupMessage("Profile updated successfully!");
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    displayPopupMessage(data.error || "An error occurred.");
+                }
+            })
+            .catch((error) => {
                 displayPopupMessage("An error occurred. Please try again.");
+                console.error("Error:", error);
             });
     };
+    
+    
 
     window.confirmDelete = function () {
         fetch("{% url 'account_profile:delete_account' %}", {
@@ -167,8 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
     window.savePassword = function () {
         const newPassword = newPasswordInput.value;
         const confirmPassword = confirmPasswordInput.value;
-
-        // Check if password is valid and confirm password matches
+    
+        // Validate password
         if (newPassword.length < 8) {
             passwordWarning.classList.remove("d-none");
             return;
@@ -177,25 +207,31 @@ document.addEventListener("DOMContentLoaded", function () {
             confirmPasswordWarning.classList.remove("d-none");
             return;
         }
-
-        fetch("{% url 'account_profile:edit_account' %}", {
+    
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        fetch("/account-profile/update-password/", {  // Updated URL
             method: "POST",
             headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
+                "X-CSRFToken": csrfToken,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                operation: "update_password",
-                password: newPassword,
-            }),
+            body: JSON.stringify({ password: newPassword }),
         })
-            .then(() => {
-                location.reload(); // Refresh page to get updated hidden messages from backend
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayPopupMessage("Password updated successfully!");
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    displayPopupMessage(data.error || "An error occurred.");
+                }
             })
-            .catch(() => {
+            .catch(error => {
                 displayPopupMessage("An error occurred. Please try again.");
+                console.error("Error:", error);
             });
     };
+    
 
     // Function to display popup messages
     function displayPopupMessage(message) {

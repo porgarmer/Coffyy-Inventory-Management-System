@@ -82,6 +82,7 @@
 <div class="modal" id="confirm-modal">
     <div class="modal-content">
         <p>Are you sure you want to save changes?</p>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         <button class="btn btn-yes" onclick="confirmSave()">Yes</button>
         <button class="btn btn-no" onclick="closeModal('confirm-modal')">No</button>
     </div>
@@ -110,6 +111,8 @@
         <button class="btn btn-no" onclick="closeModal('delete-modal')">No</button>
     </div>
 </div>
+
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'js/profile.js' %}"></script>

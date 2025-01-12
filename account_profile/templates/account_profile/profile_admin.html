@@ -63,7 +63,7 @@
                 <img src="{% static 'images/edit.png' %}" alt="Edit Icon" onclick="editPassword()">
             </div>
         </div>
-        {% if user.role == "owner" %}
+        {% if user.role != "owner" %}
         <div class="delete-account">
             <p>Delete account</p>
             <img src="{% static 'images/delete.png' %}" alt="Delete Icon" onclick="openDeleteModal()">

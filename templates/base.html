@@ -11,112 +11,146 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     {% block stylesheet %}
-    
     {% endblock stylesheet %}
 </head>
 <body>
-        {% comment %} <div class="square"></div> {% endcomment %} 
-        <div class="wrapper">
-            <aside id="sidebar">
-                    <div class="d-flex">
-                        <button id="toggle-btn" type="button">
-                            <i class="lni lni-menu-hamburger-1"></i>
-                        </button>
-                        <div class="sidebar-logo">
-                            <a href="#">Coffyy</a>
-                        </div>
-                    </div>
-                    <ul class="sidebar-nav">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#account-profile""
-                                aria-expanded="false" aria-controls="account-profile"">
-                                <i class="lni lni-user-4"></i>
-                                <span>Account Profile</span>
-                            </a>
-                            <ul id="account-profile"" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Sign Out</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Edit Account</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-dashboard-square-1"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#items""
-                                aria-expanded="false" aria-controls="items"">
-                                <i class="lni lni-basket-shopping-3"></i>
-                                <span>Items</span>
-                            </a>
-                            <ul id="items" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                                <li class="sidebar-item">
-                                    <a href="{% url 'item_list:item_list_index' %}?page=1&rows=10" class="sidebar-link">Item List</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="{% url 'item_categories_index' %}?page=1&rows=10" class="sidebar-link">Item Categories</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#inventory-management""
-                                aria-expanded="false" aria-controls="inventory-management"">
-                                <i class="lni lni-cart-1"></i>
-                                <span>Inventory Management</span>
-                            </a>
-                            <ul id="inventory-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                                <li class="sidebar-item">
-                                    <a href="{% url 'purchase-order' %}" class="sidebar-link">Purchase Order</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Item Requests</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Suppliers</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#employee-management""
-                                aria-expanded="false" aria-controls="employee-management"">
-                                <i class="lni lni-user-multiple-4"></i>
-                                <span>Employee Management</span>
-                            </a>
-                            <ul id="employee-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Employees</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Roles</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-gear-1"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
-                    </ul>
-            </aside>
-            <div class="main p-3">
-                <div class="text-center">
-                    {% block content %}
-                    <!-- Page-specific content goes here -->
-                    
-                    {% endblock %}
-                </div>
+
+    <div id="right-popup" class="right-popup">
+        <div class="popup-content">
+            <span id="popup-message"></span>
+        </div>
+    </div>
+    
+    {% if messages %}
+        <div style="display:none;"> <!-- Hide messages but include them for the script -->
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="custom-header">
+        <div class="header-logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <div class="header-user">
+            <div class="header-user">
+                {% if request.session.username %}
+                    Welcome, {{ request.session.username }}!
+                {% else %}
+                    Welcome, Guest!
+                {% endif %}
             </div>
         </div>
+    </div>
+    <div class="wrapper">
+        <aside id="sidebar">
+            <div class="d-flex">
+                <button id="toggle-btn" type="button">
+                    <i class="lni lni-menu-hamburger-1"></i>
+                </button>
+                <div class="sidebar-logo">
+                    {% comment %} <img src="{% static 'images/logo.png' %}" alt="Logo" width=80px> {% endcomment %}
+
+                    <a href="#"></a>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#account-profile"
+                        aria-expanded="false" aria-controls="account-profile">
+                        <i class="lni lni-user-4"></i>
+                        <span>Account Profile</span>
+                    </a>
+                    <ul id="account-profile" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+
+                        <li class="sidebar-item">
+                            <a href="{% url 'login:login_index' %}" class="sidebar-link">Sign Out</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'account_profile:edit_account_page' %}" class="sidebar-link">Edit Account</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'dashboard:index' %}" class="sidebar-link">
+                        <i class="lni lni-dashboard-square-1"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#items"
+                        aria-expanded="false" aria-controls="items">
+                        <i class="lni lni-basket-shopping-3"></i>
+                        <span>Items</span>
+                    </a>
+                    <ul id="items" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                        <li class="sidebar-item">
+                            <a href="{% url 'item_list:item_list_index' %}?page=1&rows=10" class="sidebar-link">Item List</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'item_categories_index' %}?page=1&rows=10" class="sidebar-link">Item Categories</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#inventory-management"
+                        aria-expanded="false" aria-controls="inventory-management">
+                        <i class="lni lni-cart-1"></i>
+                        <span>Inventory Management</span>
+                    </a>
+                    <ul id="inventory-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                        <li class="sidebar-item">
+                              <a href="{% url 'purchase-order' %}?page=1&rows=10" class="sidebar-link">Purchase Order</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">Item Requests</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'suppliers' %}?page=1&rows=10"" class="sidebar-link">Suppliers</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#employee-management"
+                        aria-expanded="false" aria-controls="employee-management">
+                        <i class="lni lni-user-multiple-4"></i>
+                        <span>Employee Management</span>
+                    </a>
+                    <ul id="employee-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">Employees</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">Roles</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="lni lni-gear-1"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <div class="main p-3">
+            <div class="text-center">
+                {% block content %}
+                <!-- Page-specific content goes here -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="custom-footer">
+    </div>
+{% comment %} 
+    <footer>
+    </footer> {% endcomment %}
+
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     {% block scripts %}
-    
-    {% endblock  %}
+    {% endblock %}
 </body>
 </html>

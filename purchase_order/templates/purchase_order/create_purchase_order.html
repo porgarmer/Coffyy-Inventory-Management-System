@@ -10,9 +10,9 @@
 {% endblock stylesheet %}
 
 {% block content %}
-<h1> Purchase Order</h1>
+<h1>Create Purchase Order</h1>
 <br>
-<form action="{% url 'purchase-order' %}" method="post">
+<form action="{% url 'create-purchase-order' %}?page=1&rows=10" method="post" id="purchase-form" name="item-form">
     {% csrf_token %}
     <div class="container my-4">
         <!-- Supplier Section -->
@@ -20,50 +20,59 @@
             <div class="row">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <select id="supplier" name="supplier" class="form-control select2">
+                        <select id="supplier" name="supplier" class="form-control select2" required>
                             <option value="">Select a supplier</option>
-                            {% comment %} {% for supplier in suppliers %} {% endcomment %}
-                            {% comment %} <option value="{{ supplier.id }}">{{ supplier.name }}</option>
-                        {% endfor %} {% endcomment %}
-                            <option value="oten" >Test 1</option>
-                            <option value="2" >Test 2</option>
+                            {% for supplier in suppliers %}
+                                <option value="{{ supplier.supp_id }}">{{ supplier.supp_name }}</option>
+                            {% endfor %} 
                         </select>
                     </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="purchaseOrderDate" class="form-label d-flex ">Purchase Order Date</label>
-                    <input type="date" id="purchaseOrderDate" class="form-control">
+                    <input type="date" name="date" id="purchaseOrderDate" class="form-control" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="expectedDate" class="form-label d-flex">Expected On</label>
-                    <input type="date" id="expectedDate" class="form-control">
+                    <input type="date" name="expected-date" id="expectedDate" class="form-control" required>
+                    <div id="date-alert" class="text-danger" style="display: none; font-size: 0.9rem; margin-top: 5px;">
+                        The expected date must be later than the purchase order date.
+                    </div>
                 </div>
             </div>
             <div class="mb-3 d">
                 <label for="notes" class="form-label d-flex">Notes</label>
-                <textarea id="notes" class="form-control" rows="3"></textarea>
+                <textarea id="notes" name="notes" class="form-control" rows="3" form="item-form"></textarea>
             </div>
         </div>
 
     </div>
 
-
-
         <!-- Items Section -->
         <div class="form-section">
             <div class="row">
-                <div class="d-flex justify-content-between">
-                    <h4>Items</h4>
-                    <div>
+                <div class="d-flex mb-3 gap-3">
+                    <h4 class="me-auto p-2">Items</h4>                    
+                    <div class="p-2">
+                        <select id="item" name="item" class="form-control">
+                            <option value="">Select items</option>
+                            {% for item in items %}
+                                <option value='{"item_id":"{{ item.id }}", "item_name": "{{ item.name }}", "item_in_stock": {{ item.in_stock }} }'>{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="p-2">
                         <select name="autofill" id="autofill" class="form-control autofill">
                             <option value="" disabled selected>Autofill</option>
                             <option value="" >All items from supplier</option>
                             <option value="" >Low stock items from suppler</option>
                         </select>
                     </div>
+
+                    
                 </div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="item_table">
                         <thead>
                             <tr>
                                 <th>Item</th>
@@ -72,29 +81,18 @@
                                 <th>Quantity</th>
                                 <th>Purchase Cost</th>
                                 <th>Amount</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Search item">
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>
-                                    <input type="number" class="form-control" min="0" value="0">
-                                </td>
-                                <td>
-                                    <input type="number" class="form-control" step="0.01" value="0.00">
-                                </td>
-                                <td>0.00</td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
                 <div class="d-flex justify-content-between">
                     <div>
-                        <strong>Total:</strong> <span>0.00</span>
+                        <strong>Total:</strong> <input type="number" name="items-total-amount" id="items-total-amount" value="0.00" readonly>
+
                     </div>
                 </div>  
         </div>
@@ -103,18 +101,13 @@
         <!-- Action Buttons -->
     <div class="btn-group d-flex flex-wrap justify-content-end gap-4">
             <div class="d-flex justify-content-center">
-                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="#">
+                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'purchase-order' %}?page=1&rows=10">
                     CANCEL
                 </a>
             </div>    
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-custom btn-custom-draft fw-bold px">
-                    SAVE AS DRAFT
-                </button>
-            </div>
 
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-custom btn-custom-save fw-bold px">
+                <button type="submit" id="save" class="btn btn-custom btn-custom-save fw-bold px">
                     SAVE
                 </button>
             </div>       
@@ -128,5 +121,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{% static 'js/create_purchase_order.js' %}"></script>
+<script src="{% static 'js/select2.js' %}"></script>
+
 {% endblock scripts %}

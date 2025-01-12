@@ -177,11 +177,13 @@
             <div class="right-column">
                 <div class="form-group">
                     <label for="primary-supplier">Primary Supplier</label>
-                    <select id="primary-supplier" name="primary_supplier" class="form-control underline-input">
+                    <select id="supplier" name="supplier" class="form-control underline-input">
                         <option value="">No supplier</option>
-                            <!-- {% for category in categories %}
-                                <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %} -->
+                        {% for supplier in suppliers %}
+                            <option value="{{ supplier.supp_id }}" {% if supplier.supp_id|stringformat:"s" == form_data.supplier %}selected{% endif %}>
+                                {{ supplier.supp_name }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -208,6 +210,7 @@
 </div>
 
 </form>
-<script src="/static/js/add_items.js"></script>
+<script src="/static/js/add_itemsxsx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {% endblock %}

@@ -1,25 +1,12 @@
-/* General Styles */
+/* Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Apply Poppins Font Globally */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f7f7;
+    font-family: 'Poppins', sans-serif;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px 20px;
-    background-color: #50260E;
-    color: white;
-}
-
-.header .logo {
-    height: 60px; 
-    margin-right: 10px;
-}
-
+/* General Styles */
 .container {
     display: flex;
     flex-direction: column;
@@ -28,6 +15,7 @@ body {
     min-height: 100vh;
     position: relative;
     padding: 20px;
+    text-align: left;
 }
 
 .profile-icon {
@@ -64,6 +52,7 @@ body {
     font-weight: bold;
     font-size: 14px;
     display: block;
+    margin-bottom: 5px;
 }
 
 .card .input-group {
@@ -71,6 +60,7 @@ body {
     align-items: center;
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 
 .card input {
@@ -86,6 +76,7 @@ body {
     width: 16px;
     height: 16px;
     cursor: pointer;
+    margin-left: 10px;
 }
 
 .delete-account {
@@ -94,12 +85,13 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Align text to the left and icon to the right */
     margin-top: 20px;
 }
 
 .delete-account p {
     margin: 0;
+    text-align: left; /* Ensure text aligns to the left */
 }
 
 .delete-account img {
@@ -111,6 +103,7 @@ body {
 .delete-info {
     color: #d32f;
     font-size: 12px;
+    text-align: left; /* Align delete-info text to the left */
 }
 
 .buttons {
@@ -128,26 +121,243 @@ body {
     border-radius: 5px;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .buttons .btn-cancel {
     background-color: white;
     color: black;
+    border: 1px solid #ccc;
+}
+
+.buttons .btn-cancel:hover {
+    background-color: #f5f5f5;
 }
 
 .buttons .btn-save {
     background-color: #ffeb3b;
     color: black;
+    border: 1px solid #e0c200;
 }
 
-.footer {
-    background-color: #50260E;
-    color: white;
-    text-align: center;
-    padding: 20px 20px;
-    position: relative;
-    bottom: 0;
+.buttons .btn-save:hover {
+    background-color: #ffd600;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.modal-content .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.modal-content .btn-yes {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-yes:hover {
+    background-color: #43a047;
+}
+
+.modal-content .btn-no {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-no:hover {
+    background-color: #e53935;
+}
+.modal-content .btn-save {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-save:hover {
+    background-color: #43a047;
+}
+
+.modal-content .btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-cancel:hover {
+    background-color: #e53935;
+}
+
+.modal-content label{
+    text-align: left;
+}
+
+/* Password Fields */
+.modal-content input[type="password"] {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .buttons .btn {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    .modal-content {
+        max-width: 90%;
+    }
+}
+
+/* Popup */
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+/* Delete Button Style */
+.buttons .btn-delete {
+    background-color: #f44336; /* Red color */
+    color: white;
+    border: 1px solid #e53935;
+}
+
+.buttons .btn-delete:hover {
+    background-color: #e53935;
+}
+
+/* Delete Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.modal-content .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.modal-content .btn-yes {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-yes:hover {
+    background-color: #43a047;
+}
+
+.modal-content .btn-no {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.modal-content .btn-no:hover {
+    background-color: #e53935;
+}
+
+/* Warning Text Styles */
+.warning-text {
+    font-size: 0.8em; 
+    margin-top: 5px;
+    display: none; 
+}
+
+.text-danger {
+    font-size: 0.8em; 
+    color: #d32f2f; 
 }
 
 

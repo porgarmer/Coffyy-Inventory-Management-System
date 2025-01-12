@@ -1,3 +1,11 @@
+/* Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Apply Poppins Font Globally */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
 /* Card Styles */
 .custom-row {
     display: flex;
@@ -29,13 +37,13 @@
 }
 
 /* Background images for each card */
-.card-1 { background-image: url('c1.jpg'); }
-.card-2 { background-image: url('c2.jpg'); }
-.card-3 { background-image: url('c3.jpg'); }
-.card-4 { background-image: url('c4.jpg'); }
-.card-5 { background-image: url('c5.jpg'); }
-.card-6 { background-image: url('c6.jpg'); }
-.card-7 { background-image: url('c7.jpg'); }
+.card-1 { background-image: url( ../images/c1.jpg); }
+.card-2 { background-image: url(../images/c2.jpg); }
+.card-3 { background-image: url(../images/c3.jpg); }
+.card-4 { background-image: url(../images/c4.jpg); }
+.card-5 { background-image: url(../images/c5.jpg); }
+.card-6 { background-image: url(../images/c6.jpg); }
+.card-7 { background-image: url(../images/c7.jpg); }
 
 /* Text styling inside cards */
 .card h4, .card h5 {
@@ -80,8 +88,8 @@
     }
 
     .card {
-        width: 120px;
-        height: 100px;
+        width: 250px;
+        height: 200px;
     }
 
     .card h4 {
@@ -91,4 +99,8 @@
     .card h5 {
         font-size: 0.7rem;
     }
+}
+
+a{
+    text-decoration: none;
 }

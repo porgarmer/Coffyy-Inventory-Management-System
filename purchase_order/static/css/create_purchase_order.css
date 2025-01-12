@@ -9,6 +9,18 @@
     font-size: 2em; /* Font size */
 }
 
+.select2-container--custom-theme .select2-selection--single{
+    background-color: #f9f9f9; /* Light background */
+    border: none;
+    border-bottom: 2px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    height: 2em; /* Height of the dropdown */
+    display: flex;
+    align-items: center; /* Center text vertically */
+    font-size: 1em; /* Font size */
+    min-width: 10em;
+}
+
 .form-section {
     background-color: #f9f9f9;
     padding: 20px;
@@ -17,9 +29,31 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+td{
+    background-color: #f9f9f9!important; 
+}
 .autofill{
     margin-bottom: 1em;
 }
+
+input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#amount, #items-total-amount{
+    border: none;
+    max-width: 10em;
+    background-color: #f9f9f9; /* Light background */
+
+}
+
 
 .btn-custom {
     border: none !important;

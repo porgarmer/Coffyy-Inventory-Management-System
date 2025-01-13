@@ -1,3 +1,23 @@
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+
+
+
 .card-no-purchase-order {
     max-width: 70vh; /* Set a maximum width */
     min-height: 70vh;
@@ -14,7 +34,8 @@
 .btn-custom {
     background-color: #FFFFFF;
     color: #B20727;
-    border: none !important
+    border: none !important;
+    margin-right: 10px;
     
 }
 .btn-custom:hover {
@@ -37,3 +58,10 @@
     border: none !important
 }
 
+.card {
+    background-color: #EED659;
+}
+
+.item-row{
+    cursor: pointer;
+}

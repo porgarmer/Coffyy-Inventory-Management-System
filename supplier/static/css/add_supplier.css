@@ -1,0 +1,26 @@
+#supplierName {
+    height: 3em;
+}
+
+#supplierName,
+#supplierName::-webkit-input-placeholder {
+    font-size: 25px;
+}
+
+#alert-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px; /* Start off-screen */
+    z-index: 9999;
+    width: 300px;
+    padding: 10px;
+    background-color: #dc3545; /* Red background */
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: right 0.5s ease; /* Smooth slide-in animation */
+}
+
+#alert-popup.show {
+    right: 20px; /* Slide into view */
+}

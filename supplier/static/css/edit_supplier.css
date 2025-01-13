@@ -1,0 +1,9 @@
+#supplierName {
+    height: 3em;
+}
+
+#supplierName,
+#supplierName::-webkit-input-placeholder {
+    font-size: 25px;
+}
+

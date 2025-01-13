@@ -23,8 +23,8 @@
             <h4 class="card-title">3</h4>
             <h5 class="card-title">Pending Requests</h5>
         </div>
-        <div class="card card-4">
-            <h4 class="card-title">4</h4>
+        <div class="card card-4" onclick="window.location.href='{% url 'suppliers' %}'">
+            <h4 class="card-title">{{ supplier_count }}</h4>
             <h5 class="card-title">Suppliers</h5>
         </div>
     </div>

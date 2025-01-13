@@ -3,7 +3,6 @@ from django.db.models import Q, F
 from item_list.models import Item  # Import the Item model
 from supplier.models import Supplier
 
-
 def index(request):
     
     # Calculate the number of low-stock items

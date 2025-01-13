@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q, F
 from item_list.models import Item  # Import the Item model
 from supplier.models import Supplier
+from item_category.models import Category
 
 def index(request):
     

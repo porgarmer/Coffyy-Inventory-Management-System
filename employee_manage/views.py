@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from login.models import User
 from django.db import transaction
+from django.contrib.auth.hashers import make_password, check_password
 
 # @login_required
 def employee_list(request):
@@ -31,7 +32,7 @@ def add_employee(request):
                 user = User(
                     username=username,
                     email_address=email_address,
-                    password=password,
+                    password=make_password(password),
                     first_name=first_name,
                     last_name=last_name,
                     contact_number=contact_number,

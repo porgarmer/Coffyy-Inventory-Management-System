@@ -136,7 +136,7 @@ def delete_accounts(request):
             return JsonResponse({"success": False, "error": "User not found. Please ensure you're registered before attempting to login."})
         try:
             User.objects.all().delete()  # Delete all user accounts
-            return JsonResponse({"success": True, "redirect": "/login/"})
+            return JsonResponse({"success": True, "redirect": "/"})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method."}, status=400)

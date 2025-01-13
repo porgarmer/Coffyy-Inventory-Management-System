@@ -5,24 +5,33 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 
 
-
 def index(request):
+    """
+    Handles user login.
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        if not username or not password:
+            messages.error(request, "Username and password are required.")
+            return render(request, "login/login.html")
+
         try:
             user = User.objects.get(username=username)
             if check_password(password, user.password):
+                # Store user information in the session
                 request.session['username'] = user.username
-                request.session['user_id'] = user.id  # Store user ID for hidden purposes
+                request.session['user_id'] = user.id  # Hidden purposes
+                request.session['role'] = user.role  # Store role for role-based access
+
                 messages.success(request, f"Welcome back, {user.first_name}!")
                 return redirect('dashboard:index')  # Redirect to the dashboard
             else:
                 messages.error(request, "Incorrect password. Please try again.")
         except User.DoesNotExist:
             messages.error(request, "Account does not exist. Please register first.")
-    
+
     return render(request, "login/login.html")
 
 @csrf_exempt
@@ -59,7 +68,7 @@ def register(request):
             contact_number=contact_number,
             email_address=email_address,
             password=make_password(password),
-            role='owner'
+            role='owner'  
         )
         user.save()
 

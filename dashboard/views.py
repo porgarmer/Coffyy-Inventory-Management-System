@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.db.models import Q, F
 from item_list.models import Item  # Import the Item model
 from item_category.models import Category  # Import the Category model from item_category app
-from login.models import User  # Import the User model from login app
 def index(request):
     
     # Calculate the number of low-stock items

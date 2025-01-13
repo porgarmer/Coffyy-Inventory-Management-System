@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'supplier.apps.SupplierConfig',
     'login',
     'account_profile',
+    'employee_manage',
 ] 
 
 MIDDLEWARE = [

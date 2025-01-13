@@ -4,7 +4,6 @@ from item_list.models import Item  # Import the Item model
 from supplier.models import Supplier
 from item_category.models import Category  # Import the Category model from item_category app
 
-
 def index(request):
     
     # Calculate the number of low-stock items

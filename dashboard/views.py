@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.db.models import Q, F
 from item_list.models import Item  # Import the Item model
-from item_category.models import Category  # Import the Category model from item_category app
 from supplier.models import Supplier
 
+
 def index(request):
+    
     # Calculate the number of low-stock items
     low_stock_count = Item.objects.filter(in_stock__lte=F('reorder_level')).count()
 

@@ -7,7 +7,7 @@ from django.db.models import Sum, Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
 # Create your views here.
 
 #Purchase order table
@@ -127,7 +127,7 @@ def create_purchase_order(request):
             index += 1
             
         messages.success(request, "Purchase order created.")
-        return redirect(reverse('purchase-order'))
+        return redirect(reverse('order-details', kwargs={"po_id": purchase_order_entry.po_id}))
             
     suppliers = Supplier.objects.all()
     items = Item.objects.all()
@@ -136,6 +136,138 @@ def create_purchase_order(request):
         'items': items
     })
     
+def order_details(request, po_id):
+    order = PurchaseOrder.objects.filter(po_id=po_id).annotate(
+        total_qty=Sum("items__pur_item_qty"),
+        total_received=Sum("items__pur_item_received_items")
+    ).first()
+    
+    if order.total_received == order.total_qty:
+        order.po_status = "Closed"
+        order.save()
+        
+    elif (order.total_received != 0) and (order.total_received < order.total_qty):
+        order.po_status = "Partially Received"
+        order.save()
+    items = order.items.all()
+    
+    return render(request, "purchase_order/purchase_order_details.html",{
+        "purchase_order": order,
+        "items": items,
+    })
+    
+def receive_items(request, po_id):
+    if request.method == "POST":
+                # Retrieve all IDs as a list
+        item_ids = request.POST.getlist("pur-item-id")
+        to_receive = request.POST.getlist("to-receive")
+        
+        for item_id, receive in zip(item_ids, to_receive):
+            if receive:
+                pur_item = PurchaseItem.objects.get(pur_item_id=item_id)
+                pur_item.pur_item_received_items += int(receive)
+                pur_item.item_id.in_stock += int(receive)
+                pur_item.item_id.save()
+                pur_item.save()
+
+        return redirect(reverse('order-details', kwargs={"po_id": po_id}))
+
+    items = PurchaseItem.objects.filter(po_id=po_id)
+    return render(request, "purchase_order/receive_items.html", {
+        "po_id": po_id,
+        "items": items
+    })
+
+def edit_purchase_order(request, po_id=None):
+
+    if request.method == "POST":
+        order = PurchaseOrder.objects.get(po_id=po_id)
+        
+        supp_id = request.POST.get("supplier")
+        supplier = Supplier.objects.get(supp_id=supp_id)
+        date = request.POST.get("date")
+        expected_date = request.POST.get("expected-date")
+        notes = request.POST.get("notes", '')
+        total_amount = request.POST.get("items-total-amount")
+    
+        order.po_date = date
+        order.po_expected_date = expected_date
+        order.po_notes = notes
+        order.po_total_amount = total_amount
+        order.supp_id = supplier
+        order.save()
+
+        # For existing items
+        index = 1
+        while True:
+            pur_item_id = request.POST.get(f'items-{index}-pur_item-exist')
+            item_id = request.POST.get(f'items-{index}-id-exist')
+            purchase_cost = request.POST.get(f'items-{index}-purchase-cost-exist')
+            quantity = request.POST.get(f'items-{index}-quantity-exist')
+            amount = request.POST.get(f'items-{index}-amount-exist')
+            
+            if not pur_item_id:  # Stop if no more items are found
+                break
+            
+            else:
+                try:
+                    pur_item = PurchaseItem.objects.get(pur_item_id=pur_item_id)
+                    pur_item.pur_item_qty = int(quantity)
+                    pur_item.pur_item_purchase_cost = float(purchase_cost)
+                    pur_item.pur_item_amount = float(amount)
+                    pur_item.save()
+                except pur_item.DoesNotExist:
+                    pass
+                
+            index += 1
+            
+        # For newly added items
+        index = 0
+        while True:
+            item_id = request.POST.get(f'items-{index}-id')
+            purchase_cost = request.POST.get(f'items-{index}-purchase-cost')
+            quantity = request.POST.get(f'items-{index}-quantity')
+            amount = request.POST.get(f'items-{index}-amount')
+            
+            if not item_id:  # Stop if no more items are found
+                break
+            
+            PurchaseItem.objects.create(
+                    po_id = order,
+                    item_id = Item.objects.get(id=item_id),
+                    pur_item_qty = quantity,
+                    pur_item_purchase_cost = purchase_cost,
+                    pur_item_amount = amount
+                )
+
+            index += 1
+        
+        # Get the list of deleted items from the hidden input
+        deleted_items = request.POST.get('deleted_items', '')
+        
+        # Split the string of deleted item IDs into a list of integers
+        if deleted_items:
+            deleted_item_ids = [int(item_id) for item_id in deleted_items.split(',')]
+            
+            # Delete the items from the database
+            PurchaseItem.objects.filter(pur_item_id__in=deleted_item_ids).delete()
+            
+        messages.success(request, "Purchase order edited.")
+        return redirect(reverse('order-details', kwargs={"po_id": po_id}))
+        
+    order = PurchaseOrder.objects.filter(po_id=po_id).first()
+    pur_items = order.items.all()
+    items = Item.objects.all()
+    
+    suppliers = Supplier.objects.all()
+    
+    return render(request, "purchase_order/edit_purchase_order.html",{
+        "purchase_order": order,
+        "suppliers": suppliers,
+        "pur_items": pur_items,
+        "items": items
+    })
+
 @csrf_exempt
 def delete_purchase_order(request):
     if request.method == "POST":
@@ -171,3 +303,4 @@ def delete_purchase_order(request):
         current_page = request.session.get('page', 1)
         rows = request.session.get('rows', 10)
         return redirect(f"{reverse('purchase-order')}?page={current_page}&rows={rows}")
+    

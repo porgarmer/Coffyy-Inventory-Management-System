@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/order_details.css' %}">
+{% endblock stylesheet %}
+
+
+
+
+{% block content %}
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+    <div style="display:none;"> <!-- Hide messages but include them for the script -->
+        {% for message in messages %}
+            <p></p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card bg-secondary text-white shadow-sm">
+                <div class="card-header text-center">
+                    <h5 class="mb-0">PURCHASE ORDER NO. {{ purchase_order.po_id }}</h5>
+                    <p class="mb-0">{{ purchase_order.po_status }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Date:</strong> {{ purchase_order.po_date }}</p>
+                            <p class="mb-1"><strong>Expected on:</strong> {{ purchase_order.po_expected_date  }}</p>
+                            <p class="mb-1"><strong>Ordered by:</strong> Owner</p>
+                        </div>
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Received:</strong> {{purchase_order.total_received}} of {{purchase_order.total_qty}} </p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Supplier:</strong></p>
+                            <p class="mb-1">{{purchase_order.supp_id.supp_name}}</p>
+                            <p class="mb-1">{{purchase_order.supp_id.supp_contact_person}}</p>
+                            <p class="mb-1">{{purchase_order.supp_id.supp_address}}</p>
+                            <p class="mb-1">{{purchase_order.supp_id.supp_contact_number}}</p>
+                            <p class="mb-1">{{purchase_order.supp_id.supp_email}}</p>
+                        </div>
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Destination store:</strong></p>
+                            <p class="mb-1">Coffyy</p>
+                            <p class="mb-1">address</p>
+                        </div>
+                    </div>
+                    {% if purchase_order.po_notes %}
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Notes:</strong></p>
+                            <p class="mb-1">{{purchase_order.po_notes }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="table-responsive">
+                        <table class="table text-white">
+                            <thead>
+                                <tr>
+                                    <th>Items</th>
+                                    <th>Quantity</th>
+                                    <th>Purchase Cost</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                
+                                <tr> 
+                                    <td class="text-center">{{item.item_id.name}}</td>
+                                    <td class="text-center">{{item.pur_item_qty}}</td>
+                                    <td class="text-center">{{item.pur_item_purchase_cost}}</td>
+                                    <td class="text-center">{{item.pur_item_amount}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th>{{purchase_order.po_total_amount}}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-back"  href="{% url 'purchase-order' %}">BACK</a>
+                    <div class="d-flex gap-2">
+                        {% if purchase_order.total_received == purchase_order.total_qty %}
+                        {% else %}
+                        <a class="btn btn-success" href="{% url 'receive-items' po_id=purchase_order.po_id %}">RECEIVE</a>
+                        <a class="btn btn-primary" href="{% url 'edit-purchase-order' po_id=purchase_order.po_id %}">EDIT</a>
+                        {% endif %}
+                        <button class="btn btn-danger">MORE</button>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+
+
+
+{% block scripts %}
+
+
+{% endblock scripts %}
+
+

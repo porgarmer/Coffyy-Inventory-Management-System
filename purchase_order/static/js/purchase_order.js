@@ -167,10 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.appendChild(form);
             form.submit();
     
-            // Show popup message
-            popupMessage.textContent = "Purchase order/s deleted successfully!";
-            popup.classList.add('show');
-            setTimeout(() => popup.classList.remove('show'), 30000);
+            // // Show popup message
+            // popupMessage.textContent = "Purchase order/s deleted successfully!";
+            // popup.classList.add('show');
+            // setTimeout(() => popup.classList.remove('show'), 30000);
         });
     });    
     deleteModalElement.addEventListener('hidden.bs.modal', function () {

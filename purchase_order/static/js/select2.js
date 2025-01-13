@@ -23,8 +23,80 @@ $(document).ready(function() {
           // Hide the alert text (optional)
           $("#date-alert").fadeOut();
         }
+
+        
+        // Check if there are items
+        const rowCount = $("#item_table_body tr").length
+        errorMessage = "Please select an item.";
+
+        if (rowCount === 0){
+          e.preventDefault();
+
+          $("#alert-popup").remove(); // Remove any existing alert
+            $("body").append(`
+                <div id="alert-popup" class="alert alert-danger" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                    ${errorMessage}
+                </div>
+            `);
+
+            // Trigger the slide-in animation
+            setTimeout(function () {
+                $("#alert-popup").addClass("show");
+            }, 100); 
+
+             // Automatically hide the alert after 3 seconds
+             setTimeout(function () {
+                $("#alert-popup").removeClass("show");
+                setTimeout(() => $("#alert-popup").remove(), 500); // Wait for slide-out animation
+            }, 3000);
+        }
+        else{
+          e.preventDefault()
+          let isValid = true; // Flag to track if all inputs are valid
+
+            //Check if items has quantity
+          $("#item_table tbody tr").each(function () {
+              const itemQuantityInput = $(this).find("#item-quantity")
+
+              const itemQuantity = parseInt(itemQuantityInput.val())
+              
+              if (itemQuantity === 0 || isNaN(itemQuantity)) {
+                  isValid = false
+                  itemQuantityInput.addClass("no-item-quantity")
+
+                  let errorMessage = "Please enter quantity.";
+                  $("#alert-popup").remove(); // Remove any existing alert
+                  $("body").append(`
+                      <div id="alert-popup" class="alert alert-danger" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                          ${errorMessage}
+                      </div>
+                  `);
+
+                  // Trigger the slide-in animation
+                  setTimeout(function () {
+                      $("#alert-popup").addClass("show");
+                  }, 100); 
+
+                  // Automatically hide the alert after 3 seconds
+                  setTimeout(function () {
+                      $("#alert-popup").removeClass("show");
+                      setTimeout(() => $("#alert-popup").remove(), 500); // Wait for slide-out animation
+                  }, 3000);
+              }
+              else{
+                itemQuantityInput.removeClass("no-item-quantity")
+              }
+          });
+          
+          if (isValid) {
+            this.submit()
+          }
+
+        }
+
       });
 
+    
     $("#expectedDate").on("change", function () {
         // Get the values from the date inputs
         const purchaseOrderDate = new Date($("#purchaseOrderDate").val());
@@ -37,8 +109,6 @@ $(document).ready(function() {
       });
 
 
-
-
     $('#item').select2({
         width: '100%',
         placeholder: "Select item",
@@ -48,21 +118,42 @@ $(document).ready(function() {
     let rowIndex = 0; // Track the row index
 
     $('#item').on("select2:select", function (params) {
-        data = JSON.parse(params.params.data.id)
-        console.log(data)
+      const selectedItem = parseInt(JSON.parse($(this).val()).item_id)
+      console.log("selected item:", selectedItem);
 
+      let exists = false;
+      $("#item_table tbody tr").each(function () { 
+        const itemId = $(this).find("td:first input[type='hidden']")
+        const itemIdVal = parseInt(itemId.val());
+
+
+        if (selectedItem === itemIdVal) {
+            exists = true;
+            return false;
+        }
+      })
+
+      if (exists) {
+        // alert('This item is already in the table!');
+        const itemExistsModal = new bootstrap.Modal(document.getElementById('item-exists'));
+        itemExistsModal.show();
+        $(this).val(null).trigger('change');
+      }else{
+
+      
+        data = JSON.parse(params.params.data.id);
         let html = "";
         html += "<tr>";
-        html += `<td style="display: none"><input type="hidden" name="items-${rowIndex}-id" value="${data.item_id}"></td>`
+        html += `<td style="display: none"><input type="hidden" class="id-of-item" name="items-${rowIndex}-id" value="${data.item_id}"></td>`
         html += `<td>${data.item_name}</td>`
         html += `<td>${data.item_in_stock}</td>`
         html += `<td>0</td>`
         html += `<td>
-                    <input type="number" name="items-${rowIndex}-quantity" class="form-control quantity" min="0" value="0" 
-                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" >
-                </td>`  
+                  <input id="item-quantity" type="number" name="items-${rowIndex}-quantity" class="form-control quantity" min="0" value="0" 
+                  onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" >
+              </td>`  
         html += `<td>
-                    <input type="number" id="purchase-cost" name="items-${rowIndex}-purchase-cost" class="form-control purchase-cost" min="0.00" value="0.00"
+                    <input type="number" id="purchase-cost" name="items-${rowIndex}-purchase-cost" class="form-control purchase-cost" min="0.00" value="${data.item_purchase_cost}" step="0.01" 
                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))">
                 </td>`
         html += `<td class="amount">
@@ -77,6 +168,7 @@ $(document).ready(function() {
         $(this).val(null).trigger('change');
 
         rowIndex++;
+      }
 
     })
 
@@ -106,6 +198,27 @@ $(document).ready(function() {
     $("#item_table").on("input", ".quantity, .purchase-cost", function () {
         calculateTotalAmount();
       });
+
+
+    $('.existing-item').on('click', function() {
+        const itemId = $(this).data('item-id');  // Get the item ID from a data attribute
+        const row = $(this).closest('tr');  // Get the table row to be removed
+
+        // Remove the row from the table
+        row.remove();    
+        calculateTotalAmount()
+   
+        // Add the deleted item's ID to the hidden input field
+        let deletedItems = $('#deleted-items').val();
+        if (deletedItems) {
+            deletedItems = deletedItems + ',' + itemId;  // Append to the list of deleted items
+        } else {
+            deletedItems = itemId;  // Start the list with the first item ID
+        }
+
+        // Update the value of the hidden input field
+        $('#deleted-items').val(deletedItems);
+    });
 
 });
 

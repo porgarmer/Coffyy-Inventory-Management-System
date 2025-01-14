@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'item_list',
     'purchase_order.apps.PurchaseOrderConfig',
     'supplier.apps.SupplierConfig',
+    'item_request.apps.ItemRequestConfig',
     'login',
     'account_profile',
     'employee_manage',

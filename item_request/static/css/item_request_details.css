@@ -1,0 +1,33 @@
+.card {
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: #873d0c;
+    color: #fff;
+    padding: 1rem;
+    border-bottom: none;
+}
+
+.card-body {
+    background-color: #d36f2c;
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: #873d0c;
+    border-top: none;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.btn-back{
+    color: white !important;
+}

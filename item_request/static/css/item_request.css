@@ -1,0 +1,65 @@
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+
+
+.card-no-purchase-order {
+    max-width: 70vh; /* Set a maximum width */
+    min-height: 70vh;
+    margin: auto; /* Center the card horizontally */
+    background-color: #EED659;
+}
+.card-icon {
+    width: 50%;
+    height: auto;
+    margin: auto;
+    margin-bottom: 2%;
+    margin-top: 5vh;
+}
+.btn-custom {
+    background-color: #FFFFFF;
+    color: #B20727;
+    border: none !important
+    
+}
+.btn-custom:hover {
+    background-color: #F4F4F4;
+    color: #B20727;
+}
+.btn-custom:active {
+    background-color: #E9E9E9 !important; /* Custom active background color */
+    color: #B20727 !important; /* Custom active text color */
+    transform: scale(0.98); /* Optional: Add a slight scale effect */
+    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
+    border: none !important
+}
+
+.btn-custom:active {
+    background-color: #E9E9E9 !important; /* Custom active background color */
+    color: #B20727 !important; /* Custom active text color */
+    transform: scale(0.98); /* Optional: Add a slight scale effect */
+    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
+    border: none !important
+}
+
+.card {
+    background-color: #EED659;
+}
+
+.item-row{
+    cursor: pointer;
+}

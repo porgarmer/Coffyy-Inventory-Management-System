@@ -38,7 +38,8 @@ def purchase_order(request):
     selected_supplier = request.GET.get('supplier', '')
 
     purchase_orders = PurchaseOrder.objects.annotate(
-        total_received_items=Sum('items__pur_item_received_items')
+        total_received_items=Sum('items__pur_item_received_items'),
+        total_ordered=Sum('items__pur_item_qty')
     )
     
     if search_query:
@@ -178,6 +179,7 @@ def receive_items(request, po_id):
             if receive:
                 pur_item = PurchaseItem.objects.get(pur_item_id=item_id)
                 pur_item.pur_item_received_items += int(receive)
+                pur_item.pur_item_incoming = int(pur_item.pur_item_qty) - (pur_item.pur_item_received_items)
                 pur_item.item_id.in_stock += int(receive)
                 pur_item.item_id.save()
                 pur_item.save()
@@ -306,7 +308,10 @@ def delete_purchase_order(request):
                     current_page = max(total_pages, 1) 
                     
                 # Show success message to the user
-                messages.success(request, "Purchase order/s deleted successfully!")
+                if selected_ids > 1:
+                    messages.success(request, "Purchase orders deleted successfully!")
+                else:
+                    messages.success(request, "Purchase order deleted successfully!")
 
                 return redirect(f"{reverse('purchase-order')}?page={current_page}&rows={rows}")
 

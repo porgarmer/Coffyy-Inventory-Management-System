@@ -24,7 +24,7 @@
     </div>
 {% endif %}
 
-{% if suppliers%}
+{% comment %} {% if suppliers%} {% endcomment %}
 
 <div class="container mt-5">
     <div class="card">
@@ -152,7 +152,7 @@
     </div>
 </div>
 
-{% else %}
+{% comment %} {% else %}
 
 <div class="container">
     <div class="row">
@@ -170,7 +170,7 @@
         </div>
     </div>
 </div>
-{% endif %}
+{% endif %} {% endcomment %}
 <!-- Modal Popup for Deletion Confirmation -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">

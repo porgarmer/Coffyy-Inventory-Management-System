@@ -4,13 +4,22 @@ from django.contrib import messages
 from login.models import User
 from django.db import transaction
 from django.contrib.auth.hashers import make_password, check_password
-
+from django.db.models import Q
 
 
 def employee_list(request):
     if request.session['role'] == 'owner':
+        query = request.GET.get('q', '')
         employees = User.objects.filter(role='employee')
-        return render(request, 'employee_manage/employee_list.html', {'employees': employees})
+        if query:
+            employees = employees.filter(
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(username__icontains=query) |
+                Q(contact_number__icontains=query) |
+                Q(email_address__icontains=query)
+            )
+        return render(request, 'employee_manage/employee_list.html', {'employees': employees, 'query': query})
     else:
         return redirect('dashboard:index')
     

@@ -18,7 +18,7 @@ def index(request):
     # Calculate the number of suppliers
     supplier_count = Supplier.objects.count()
     
-    employee_count = User.objects.count(role = 'employee')
+    #employee_count = User.objects.count(role = 'employee')
 
     # Pass the counts to the template
     context = {
@@ -26,6 +26,6 @@ def index(request):
         'total_items_count': total_items_count,
         'category_count': category_count,
         'supplier_count': supplier_count,
-        'employee_count': employee_count,
+        #'employee_count': employee_count,
     }
     return render(request, "dashboard/dashboard.html", context)

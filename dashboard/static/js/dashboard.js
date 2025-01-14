@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const userRole = dashboard.dataset.userRole;
 
     // Check if the user role is not "owner"
-    if (userRole !== "owner") {
+    if (userRole === "owner") {
         // Hide the employee card
         const employeeCard = document.querySelector(".employee-card");
         if (employeeCard) {

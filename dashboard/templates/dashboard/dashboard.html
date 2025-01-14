@@ -35,7 +35,7 @@
             <h5 class="card-title">Categories</h5>
         </div>
         {% if request.session.role == 'owner' %} <!-- Only owner can view employees -->
-            <div class="card card-6">
+            <div class="card card-6" onclick="window.location.href='{% url 'employee_list' %}'">
                 <h4 class="card-title">{{ employee_count }}</h4>
                 <h5 class="card-title">Employees</h5>
             </div>

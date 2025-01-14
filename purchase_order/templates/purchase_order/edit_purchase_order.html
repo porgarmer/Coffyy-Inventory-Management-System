@@ -95,7 +95,7 @@
                                 <td style="display: none"><input type="hidden" name="items-{{forloop.counter}}-pur_item-exist" value="{{pur_item.pur_item_id}}"></td>
                                 <td>{{pur_item.item_id.name}}</td>
                                 <td>{{pur_item.item_id.in_stock}}</td>
-                                <td>0</td>
+                                <td>{{pur_item.pur_item_incoming}}</td>
                                 <td> 
                                     <input id="item-quantity" type="number" name="items-{{forloop.counter}}-quantity-exist" class="form-control quantity" min="0" value="{{pur_item.pur_item_qty}}" 
                                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" >
@@ -127,7 +127,7 @@
         <!-- Action Buttons -->
     <div class="btn-group d-flex flex-wrap justify-content-end gap-4">
             <div class="d-flex justify-content-center">
-                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'purchase-order' %}?page=1&rows=10">
+                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'order-details' po_id=purchase_order.po_id%}">
                     CANCEL
                 </a>
             </div>    

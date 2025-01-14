@@ -26,5 +26,6 @@ urlpatterns = [
     path('item-category/', include('item_category.urls')),  # Include the app's URLs
     path('purchase-order/', include('purchase_order.urls')),  #purchase-order URLs
     path('supplier/', include('supplier.urls')),
+    path('item-request/', include('item_request.urls') ),
     path('employees/', include('employee_manage.urls')),
 ]

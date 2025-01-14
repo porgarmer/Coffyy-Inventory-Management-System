@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Item Request{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/create_purchase_order.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+{% endblock stylesheet %}
+
+{% block content %}
+<div id="alert-popup">
+    <span id="alert-message"></span>
+</div>
+
+
+
+<h1>Create Item Request</h1>
+<br>
+<form action="{% url 'create-item-request' %}?page=1&rows=10" method="post" id="purchase-form" name="item-form">
+    
+    {% csrf_token %}
+    <div class="container my-4">
+        <!-- Supplier Section -->
+        <div class="form-section">
+            <div class="row">
+                <div class="row">
+                    
+                {% comment %} <div class="col-md-12 mb-3">
+                    <label for="expectedDate" class="form-label d-flex">Request Date</label>
+                    <input type="date" name="expected-date" id="expectedDate" class="form-control" required>
+                    <div id="date-alert" class="text-danger" style="display: none; font-size: 0.9rem; margin-top: 5px;">
+                        The expected date must be later than the purchase order date.
+                    </div>
+                </div> {% endcomment %}
+                <div class="col-md-12 mb-3">
+                    <label for="purchaseOrderDate" class="form-label d-flex ">Request Date</label>
+                    <input type="date" name="date" id="purchaseOrderDate" class="form-control" required>
+                </div>
+            </div>
+            <div class="mb-3 d">
+                <label for="notes" class="form-label d-flex">Notes</label>
+                <textarea name="notes" class="form-control" rows="3" id="">{{purchase_order.po_notes}}</textarea>
+            </div>
+        </div>
+
+    </div>
+
+        <!-- Items Section -->
+        <div class="form-section">
+            <div class="row">
+                <div class="d-flex mb-3 gap-3">
+                    <h4 class="me-auto p-2">Items</h4>                    
+                    <div class="p-2">
+                        <select id="item" name="item" class="form-control">
+                            <option value="">Select items</option>
+                            {% for item in items %}
+                                <option value='{"item_id":"{{ item.id }}", "item_name": "{{ item.name }}", "item_in_stock": {{ item.in_stock }}, "item_purchase_cost": {{ item.purchase_cost }} }'>{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% comment %} <div class="p-2">
+                        <select name="autofill" id="autofill" class="form-control autofill">
+                            <option value="" disabled selected>Autofill</option>
+                            <option value="" >All items from supplier</option>
+                            <option value="" >Low stock items from suppler</option>
+                        </select>
+                    </div> {% endcomment %}
+
+                    
+                </div>
+                <div class="table-responsive">
+                    <table class="table" id="item_table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>In Stock</th>
+                                {% comment %} <th>Incoming</th> {% endcomment %}
+                                <th>Quantity</th>
+                                <th>Purchase Cost</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="item_table_body">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>Total:</strong> <input type="number" name="items-total-amount" id="items-total-amount" value="0.00" readonly>
+
+                    </div>
+                </div>  
+        </div>
+    </div>
+
+        <!-- Action Buttons -->
+    <div class="btn-group d-flex flex-wrap justify-content-end gap-4">
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-custom btn-custom-cancel fw-bold px" href="{% url 'item-request' %}?page=1&rows=10">
+                    CANCEL
+                </a>
+            </div>    
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" id="save" class="btn btn-custom btn-custom-save fw-bold px">
+                    SAVE
+                </button>
+            </div>       
+    </div>
+</form>
+<!-- Modal -->
+<div class="modal fade" id="item-exists" tabindex="-1" aria-labelledby="item-exists-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Item already exists.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/item_request_select2.js' %}"></script>
+
+{% endblock scripts %}

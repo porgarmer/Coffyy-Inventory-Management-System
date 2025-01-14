@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Item Requests{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/item_request.css' %}">
+<h1>Item Requests</h1>
+<br>
+
+<div id="right-popup" class="right-popup">
+    <div class="popup-content">
+        <span id="popup-message"></span>
+    </div>
+</div>
+
+{% if messages %}
+    <div style="display:none;"> <!-- Hide messages but include them for the script -->
+        {% for message in messages %}
+            <p></p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex">
+                        <a href="{% url 'create-item-request' %}" class="btn btn-success me-2 btn-custom" id="add-item">+ Create Item Request</a>
+                    <form id="delete-form" action="{% url 'delete-item-request' %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger d-none" id="delete-button">Delete Selected</button>
+                    </form>
+                </div>
+
+                <!-- Search Bar with Combo Boxes for Category and Stock Alert -->
+                <div class="d-flex ms-auto">
+                    <!-- Category Combo Box -->
+                    <select id="status-filter" name="status" class="form-select form-select-sm me-2" aria-label="Select Category">
+                
+                        <option value="All" {% if status == 'All' %}selected{% endif %}>All</option>
+                        <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Approved" {% if status == 'Approved' %}selected{% endif %}>Approved</option>
+                        <option value="Denied" {% if status == 'Denied' %}selected{% endif %}>Denied</option>
+
+                    </select>
+
+                    <!-- Stock Alert Combo Box -->
+                    <select 
+                        id="supplier-filter" 
+                        class="form-select form-select-sm me-2" 
+                        aria-label="Select Stock Alert" 
+                        style="width: 150px !important;"
+                        name="requester"
+                    >
+                        <option option value="All Employee" {% if selected_requester == 'All Employees' %}{% endif %}>All Employees</option>
+                        {% comment %} {% for supplier in suppliers %}
+                            <option option value="{{supplier.supp_name}}" {% if selected_supplier == supplier.supp_name %}selected{% endif %}>{{supplier.supp_name}}</option>
+
+                        {% endfor %}  {% endcomment %}
+
+
+                    </select>
+
+
+                    <!-- Search Input -->
+                    <form method="GET" action="{% url 'item-request' %}" id="search-form" class="d-flex w-100 align-items-center">
+                        <input
+                            type="text"
+                            id="item-search-bar"
+                            name="search"
+                            value="{{ search_query|default:'' }}"
+                            class="form-control me-2"
+                            placeholder="Search items..."
+                            aria-label="Search Items"
+                        >
+                        <button type="submit" class="btn p-0" style="border: none; background: none;">
+                            <img 
+                                src="{% static 'images/ICON_SEARCH.png' %}" 
+                                alt="Search Icon" 
+                                style="height: 24px; width: 24px;"
+                            >
+                        </button>
+                        <input type="hidden" name="page" value="1">
+                        <input type="hidden" name="rows" value="{{ rows_per_page }}">
+                    </form>            
+                </div>
+            </div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 50px;">
+                                    <input type="checkbox" id="select-all">
+                                </th>
+                                <th scope="col">Request No.</th>
+                                <th scope="col" >Date</th>
+                                <th scope="col">Requester</th>
+                                <th scope="col">Store</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Total</th>
+                                <!-- <th scope="col" style="text-align: right;">
+                                    <span style="white-space: nowrap; display: inline-block; line-height: 1;">Remaining<br>Volume</span>
+                                </th> -->
+                            </tr>
+                        </thead>
+                        {% if item_requests %}
+                        <tbody id="item-table-body">
+                            {% for item_request in item_requests  %}
+                                <tr class="item-row" data-id="{{ item_request.id }}">
+                                    <td><input type="checkbox" name="selected_items" value="{{ item_request.id }}"></td>
+                                    <td>{{ item_request.id}}</td>
+                                    <td>{{ item_request.date}}</td>
+                                    <td>To be added</td>
+                                    <td>Coffyy</td>
+                                    <td
+                                    {% if item_request.status == "Pending" %}
+                                    style="color: #8B7818;"
+                                    {% elif item_request.status == "Approved"  %}
+                                    style="color: green;"
+                                    {% elif item_request.status == "Denied"  %}
+                                    style="color: red;"
+                                    {% endif %}
+                                    >{{ item_request.status }}</td>
+                                    <td>₱{{item_request.total_amount}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                        {% else %}
+                        {% if search_query or status %}
+                    </table>
+                    <div class="alert alert-warning text-center">
+                        No purchase order found. 
+                    </div>
+                        {% else %}
+                            
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 col-sm-8 col-md-6 mx-auto">
+                                    <div class="card-no-purchase-order p-4 shadow-sm">
+                                        <img class="card-icon" src="{% static 'image/grocery-store.png' %}" alt="" srcset="">
+                                        <h5 class="card-title">Item Requests</h5>
+                                        <p class="card-text">No item requests added yet.</p>
+                                        <div class="d-flex justify-content-center">
+                                            <a class="btn btn-custom fw-bold px" href="{% url 'create-purchase-order' %}">
+                                                + Create Item Request   
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+
+                    <!-- Updated Pagination -->
+                    <div class="d-flex justify-content-between mt-3">
+                        <div>Page {{ item_requests.number }} of {{ item_requests.paginator.num_pages }}</div>
+                        <div>
+                            <ul class="pagination justify-content-center">
+                                {%if item_requests.has_previous  %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ item_requests.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&supplier={{ selected_supplier }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in item_requests.paginator.page_range %}
+                                    {% if num >= item_requests.number|add:-5 and num <= item_requests.number|add:5 %}
+                                    <li class="page-item {% if num == item_requests.number %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ num }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&requester={{ selected_requester }}">{{ num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if item_requests.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ item_requests.next_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&requester={{ selected_requester }}">Next</a>
+                                </li> 
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Last</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div>
+                            <form id="rows-per-page-form" method="get">
+                                Rows per page:
+                                <select
+                                    name="rows"
+                                    id="rows-per-page"
+                                    class="form-select form-select-sm d-inline-block w-auto"
+                                >
+                                    <option value="10" {% if rows_per_page == 10 %}selected{% endif %}>10</option>
+                                    <option value="20" {% if rows_per_page == 20 %}selected{% endif %}>20</option>
+                                    <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
+                                </select>
+                                <!-- Preserve the current search query and page -->
+                                <input type="hidden" name="search" value="{{ search_query }}">
+                                <input type="hidden" name="status" value="{{ status }}">
+                                <input type="hidden" name="page" value="{{ requester.number }}">
+                            </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal Popup for Deletion Confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <span id="delete-count"></span> item(s)?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% block scripts %}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/item_request.js' %}"></script>
+<script src="{% static 'js/request_details.js' %}"></script>
+
+{% endblock scripts %}
+
+
+{% endblock %}

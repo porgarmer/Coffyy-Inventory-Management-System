@@ -42,12 +42,12 @@ $(document).ready(function () {
         const municipalityName = $("#municipality").find(":selected").text()
 
         $.ajax({
-            url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`, // Replace with your API endpoint
+            url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/barangays/`, // Replace with your API endpoint
             method: 'GET',
             dataType: 'json',
             success: function (data) {
                 
-                const barangays = data;
+                const barangays = data.filter(item => item.municipalityCode === municipalityCode || item.cityCode === municipalityCode);
                 barangays.sort(function (a, b) {
                     return a.name.localeCompare(b.name); // Use 'value' if you want to order by value
                 });

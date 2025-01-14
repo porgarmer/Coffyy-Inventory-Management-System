@@ -12,6 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def suppliers(request):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     page = request.GET.get('page', 1)
     rows = request.GET.get('rows', 10)
     search_query = request.GET.get('search', '').strip()
@@ -37,6 +40,9 @@ def suppliers(request):
         })
 
 def add_supplier(request):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
         name = request.POST.get("supplier-name")
         contact_person = request.POST.get("contact-person")
@@ -99,6 +105,9 @@ def add_supplier(request):
     
 
 def edit_supplier(request, supp_id):    
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
         supplier = Supplier.objects.get(supp_id=supp_id)
         name = request.POST.get("supplier-name")
@@ -183,6 +192,9 @@ def edit_supplier(request, supp_id):
     
 @csrf_exempt
 def delete_supplier(request):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
         # Retrieve the list of selected item IDs from the form
         selected_ids = request.POST.getlist('selected_ids')

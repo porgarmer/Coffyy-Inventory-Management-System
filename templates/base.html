@@ -100,17 +100,19 @@
                         <span>Inventory Management</span>
                     </a>
                     <ul id="inventory-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                        {% if request.session.role == 'owner' %} 
                         <li class="sidebar-item">
                               <a href="{% url 'purchase-order' %}?page=1&rows=10" class="sidebar-link">Purchase Order</a>
                         </li>
-                        {% endif %}
+
                         <li class="sidebar-item">
                             <a href="{% url 'item-request' %}?page=1&rows=10" class="sidebar-link">Item Requests</a>
                         </li>
+                        {% if request.session.role == 'owner' %} 
                         <li class="sidebar-item">
                             <a href="{% url 'suppliers' %}?page=1&rows=10"" class="sidebar-link">Suppliers</a>
                         </li>
+                        {% endif %}
+
                     </ul>
                 </li>
                 {% if request.session.role == 'owner' %} 

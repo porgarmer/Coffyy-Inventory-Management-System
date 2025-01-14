@@ -1,6 +1,7 @@
 from django.db import models
 from item_list.models import Item
 from supplier.models import Supplier
+from login.models import User
 from datetime import date
 # Create your models here.
 
@@ -12,7 +13,7 @@ class PurchaseOrder(models.Model):
     po_notes = models.TextField(null=True)
     po_total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
 
-    # user_id = models.ForeignKey()
+    owner = models.ForeignKey(User, models.CASCADE, related_name='owner', null=True)
     supp_id = models.ForeignKey(Supplier, models.CASCADE, related_name="purchase_order")
     
     def __str__(self):
@@ -22,7 +23,6 @@ class PurchaseItem(models.Model):
     pur_item_id = models.AutoField(primary_key=True)   
     pur_item_qty = models.PositiveIntegerField(null=True)    
     pur_item_received_items = models.PositiveIntegerField(null=True, default=0)
-    pur_item_to_receive = models.PositiveIntegerField(null=True, default=0)
     pur_item_incoming = models.PositiveIntegerField(null=True, default=0)
     pur_item_purchase_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
     pur_item_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)

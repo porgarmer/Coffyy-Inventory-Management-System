@@ -29,7 +29,10 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex">
+                    {% if request.session.role == 'owner' %}
                         <a href="{% url 'create-purchase-order' %}" class="btn btn-success me-2 btn-custom" id="add-item">+ Create Purchase Order</a>
+                    {% else %}
+                    {% endif %}
                     <form id="delete-form" action="{% url 'delete_purchase_order' %}">
                         {% csrf_token %}
                         <button type="button" class="btn btn-danger d-none" id="delete-button">Delete Selected</button>
@@ -91,9 +94,12 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
+                                {% if request.session.role == 'owner' %}
                                 <th scope="col" style="width: 50px;">
                                     <input type="checkbox" id="select-all">
                                 </th>
+                                {% else %}
+                                {% endif %}
                                 <th scope="col">Purchase Order No.</th>
                                 <th scope="col" >Date</th>
                                 <th scope="col">Supplier</th>
@@ -112,7 +118,10 @@
                         <tbody id="item-table-body">
                             {% for purchase_order in purchase_orders  %}
                                 <tr class="item-row" data-id="{{ purchase_order.po_id }}">
+                                    {% if request.session.role == 'owner' %}
                                     <td><input type="checkbox" name="selected_items" value="{{ purchase_order.po_id }}"></td>
+                                    {% else %}
+                                    {% endif %}
                                     <td>{{ purchase_order.po_id}}</td>
                                     <td>{{ purchase_order.po_date}}</td>
                                     <td>{{ purchase_order.supp_id }}</td>

@@ -38,7 +38,7 @@
                         <div class="text-start">
                             <p class="mb-1"><strong>Date:</strong> {{ purchase_order.po_date }}</p>
                             <p class="mb-1"><strong>Expected on:</strong> {{ purchase_order.po_expected_date  }}</p>
-                            <p class="mb-1"><strong>Ordered by:</strong> Owner</p>
+                            <p class="mb-1"><strong>Ordered by:</strong> {{purchase_order.owner.first_name}} {{purchase_order.owner.last_name}}</p>
                         </div>
                         <div class="text-start">
                             <p class="mb-1"><strong>Received:</strong> {{purchase_order.total_received}} of {{purchase_order.total_qty}} </p>
@@ -62,7 +62,7 @@
                         <div class="text-start">
                             <p class="mb-1"><strong>Destination store:</strong></p>
                             <p class="mb-1">Coffyy</p>
-                            <p class="mb-1">address</p>
+                            <p class="mb-1">Hon. B Tudtud Banilad 6000 Cebu City, Philippines</p>
                         </div>
                     </div>
                     {% if purchase_order.po_notes %}
@@ -111,7 +111,10 @@
                         {% if purchase_order.total_received == purchase_order.total_qty %}
                         {% else %}
                         <a class="btn btn-success" href="{% url 'receive-items' po_id=purchase_order.po_id %}">RECEIVE</a>
-                        <a class="btn btn-primary" href="{% url 'edit-purchase-order' po_id=purchase_order.po_id %}">EDIT</a>
+                            {% if request.session.role == 'owner' %}
+                                <a class="btn btn-primary" href="{% url 'edit-purchase-order' po_id=purchase_order.po_id %}">EDIT</a>
+                            {% else %}
+                            {% endif %}
                         {% endif %}
                         {% comment %} <button class="btn btn-danger">MORE</button> {% endcomment %}
                     </div>

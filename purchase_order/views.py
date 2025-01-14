@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from supplier.models import Supplier
 from .models import PurchaseOrder, PurchaseItem
+from login.models import User
 from item_list.models import Item
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -12,9 +13,6 @@ from django.http import JsonResponse
 
 #Purchase order table
 def purchase_order(request):
-
-    if request.session['role'] == "employee":
-        return redirect(reverse('dashboard:index'))
     
     page = request.session.get('page', 1)
     rows = request.session.get('rows', 10)
@@ -108,9 +106,9 @@ def create_purchase_order(request):
             po_status = "Pending",
             po_notes = notes,
             po_total_amount = total_amount,
-            supp_id = supplier
+            supp_id = supplier,
+            owner=User.objects.get(username=request.session['username'])
         )
-        
         
         index = 0
         while True:
@@ -143,9 +141,6 @@ def create_purchase_order(request):
     })
     
 def order_details(request, po_id):
-    if request.session['role'] == "employee":
-        return redirect(reverse('dashboard:index'))
-    
     
     order = PurchaseOrder.objects.filter(po_id=po_id).annotate(
         total_qty=Sum("items__pur_item_qty"),
@@ -167,8 +162,6 @@ def order_details(request, po_id):
     })
     
 def receive_items(request, po_id):
-    if request.session['role'] == "employee":
-        return redirect(reverse('dashboard:index'))
     
     if request.method == "POST":
                 # Retrieve all IDs as a list
@@ -183,7 +176,7 @@ def receive_items(request, po_id):
                 pur_item.item_id.in_stock += int(receive)
                 pur_item.item_id.save()
                 pur_item.save()
-
+        messages.success(request, "Items received.")
         return redirect(reverse('order-details', kwargs={"po_id": po_id}))
 
     items = PurchaseItem.objects.filter(po_id=po_id)

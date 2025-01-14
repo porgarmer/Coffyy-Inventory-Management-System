@@ -49,7 +49,7 @@ def index(request):
         
         incoming_items = PurchaseItem.objects.annotate(
             incoming=F('pur_item_qty') - F('pur_item_received_items')
-        ).aggregate(total_incoming=Sum('incoming'))['total']
+        ).aggregate(total=Sum('incoming'))['total']
         
         incoming_items = incoming_items or 0
 

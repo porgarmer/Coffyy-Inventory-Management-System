@@ -14,7 +14,7 @@
     <span id="alert-message"></span>
 </div>
 
-<h1>Edit Purchase Order {{purchase_order.po_id}}</h1>
+<h1>Edit Purchase Order No. {{purchase_order.po_id}}</h1>
 <br>
 <form action="{% url 'edit-purchase-order' po_id=purchase_order.po_id %}" method="post" id="purchase-form" name="item-form">
     {% csrf_token %}

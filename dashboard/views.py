@@ -5,6 +5,7 @@ from supplier.models import Supplier
 from item_category.models import Category  # Import the Category model from item_category app
 from login.models import User
 
+
 def index(request):
     if request.session['role'] == 'owner':
         # Calculate the number of low-stock items
@@ -37,6 +38,8 @@ def index(request):
     else:
         return redirect('https://www.google.com')
         
+
+    employee_count = User.objects.exclude(role='owner').count()
 
     # Pass the counts to the template
     context = {

@@ -61,6 +61,11 @@ def edit_account(request):
                     validate_email(email)
                 except ValidationError:
                     return JsonResponse({"success": False, "error": "Invalid email format."})
+                
+                # Validate contact number uniqueness
+                if User.objects.filter(contact_number=contact_number).exclude(id=user_id).exists():
+                    return JsonResponse({"success": False, "error": "Contact number already exists. Please use a different one."})
+
 
                 # Update user details
                 user.contact_number = contact_number

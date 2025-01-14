@@ -112,16 +112,10 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link has-dropdown collapsed" data-bs-toggle="collapse" data-bs-target="#employee-management"
-                        aria-expanded="false" aria-controls="employee-management">
+                    <a href="{% url 'employee_list' %}" class="sidebar-link">
                         <i class="lni lni-user-multiple-4"></i>
-                        <span>Employee Management</span>
+                        <span>Employees</span>
                     </a>
-                    <ul id="employee-management" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                        <li class="sidebar-item">
-                            <a href="{% url 'employee_list' %}" class="sidebar-link">Employees</a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
@@ -144,7 +138,6 @@
 {% comment %} 
     <footer>
     </footer> {% endcomment %}
-
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     {% block scripts %}

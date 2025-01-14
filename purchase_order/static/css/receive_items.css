@@ -1,21 +1,20 @@
-.right-popup {
+#alert-popup {
     position: fixed;
     top: 20px;
-    right: -300px;
-    width: 250px;
-    background-color: #141414;
-    color: #FFFFFF;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease;
+    right: -300px; /* Start off-screen */
     z-index: 9999;
+    width: 300px;
+    padding: 10px;
+    background-color: #dc3545; /* Red background */
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: right 0.5s ease; /* Smooth slide-in animation */
 }
 
-.right-popup.show {
-    right: 20px;
+#alert-popup.show {
+    right: 20px; /* Slide into view */
 }
-
 
 .card-no-purchase-order {
     max-width: 70vh; /* Set a maximum width */
@@ -60,6 +59,26 @@
     background-color: #EED659;
 }
 
-.item-row{
-    cursor: pointer;
+.to-receive-input{
+ text-align: right;
+ border: none;
+ border-bottom: solid;
+ border-width: .1em;
+ width: 50%;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.btn-group{
+    margin-top: 20px;
 }

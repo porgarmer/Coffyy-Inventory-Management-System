@@ -20,7 +20,7 @@
             <h5 class="card-title">Total Items</h5>
         </div>
         <div class="card card-3">
-            <h4 class="card-title">3</h4>
+            <h4 class="card-title">{{pending_requests_count}}</h4>
             <h5 class="card-title">Pending Requests</h5>
         </div>
         <div class="card card-4" onclick="window.location.href='{% url 'suppliers' %}'">
@@ -41,8 +41,8 @@
             </div>
         {%endif%}
         <div class="card card-7">
-            <h4 class="card-title">7</h4>
-            <h5 class="card-title">Incoming Products</h5>
+            <h4 class="card-title">{{incoming_items}}</h4>
+            <h5 class="card-title">Incoming Items</h5>
         </div>
     </div>
 </div>

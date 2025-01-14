@@ -29,7 +29,9 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex">
-                        <a href="{% url 'create-item-request' %}" class="btn btn-success me-2 btn-custom" id="add-item">+ Create Item Request</a>
+                    {% if request.session.role != 'owner' %}
+                    <a href="{% url 'create-item-request' %}" class="btn btn-success me-2 btn-custom" id="add-item">+ Create Item Request</a>
+                    {% endif %}
                     <form id="delete-form" action="{% url 'delete-item-request' %}">
                         {% csrf_token %}
                         <button type="button" class="btn btn-danger d-none" id="delete-button">Delete Selected</button>
@@ -49,22 +51,25 @@
                     </select>
 
                     <!-- Stock Alert Combo Box -->
+                    {% if request.session.role == 'owner' %}
                     <select 
-                        id="supplier-filter" 
+                        id="requester-filter" 
                         class="form-select form-select-sm me-2" 
                         aria-label="Select Stock Alert" 
                         style="width: 150px !important;"
                         name="requester"
                     >
-                        <option option value="All Employee" {% if selected_requester == 'All Employees' %}{% endif %}>All Employees</option>
-                        {% comment %} {% for supplier in suppliers %}
-                            <option option value="{{supplier.supp_name}}" {% if selected_supplier == supplier.supp_name %}selected{% endif %}>{{supplier.supp_name}}</option>
+                        <option option value="All Employees" {% if selected_requester == 'All Employees' %}{% endif %}>All Employees</option>
+                        {% for employee in employees %}
+                            <option option value="{{employee.username}}" {% if selected_requester == employee.username %}selected{% endif %}>{{employee.first_name}} {{employee.last_name}}</option>
 
-                        {% endfor %}  {% endcomment %}
+                        {% endfor %} 
 
 
                     </select>
+                    {% else %}
 
+                    {% endif %}
 
                     <!-- Search Input -->
                     <form method="GET" action="{% url 'item-request' %}" id="search-form" class="d-flex w-100 align-items-center">
@@ -113,7 +118,7 @@
                                     <td><input type="checkbox" name="selected_items" value="{{ item_request.id }}"></td>
                                     <td>{{ item_request.id}}</td>
                                     <td>{{ item_request.date}}</td>
-                                    <td>To be added</td>
+                                    <td>{{ item_request.user.first_name }} {{item_request.user.last_name}}</td>
                                     <td>Coffyy</td>
                                     <td
                                     {% if item_request.status == "Pending" %}
@@ -164,7 +169,7 @@
                             <ul class="pagination justify-content-center">
                                 {%if item_requests.has_previous  %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page={{ item_requests.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&supplier={{ selected_supplier }}">Previous</a>
+                                    <a class="page-link" href="?page={{ item_requests.previous_page_number }}&rows={{ rows_per_page }}&search={{ search_query }}&status={{ status }}&requester={{ selected_requester }}">Previous</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">

@@ -1,5 +1,6 @@
 from django.db import models
 from item_list.models import Item
+from login.models import User
 from datetime import date
 # Create your models here.
 
@@ -11,7 +12,7 @@ class ItemRequest(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
     denial_reason = models.TextField(null=True)
 
-    #user = models.ForeignKey()
+    user = models.ForeignKey(User, models.CASCADE, related_name='user', null=True)
     
     def __str__(self):
         return f"{self.id} - {self.date} - {self.status} - {self.notes} - {self.denial_reason}"

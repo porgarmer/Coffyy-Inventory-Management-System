@@ -106,19 +106,25 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteModal.classList.remove("show"); // Hide the delete modal
     };
 
+    //save function
     window.confirmSave = function () {
         const contactNumberInput = document.getElementById("contact-number");
         const emailInput = document.getElementById("email");
+        const firstNameInput = document.getElementById("first-name");
+        const lastNameInput = document.getElementById("last-name");
+        const contactWarning = document.getElementById("contact-warning");
+        const emailWarning = document.getElementById("email-warning");
     
-        if (!contactNumberInput || !emailInput) {
+        if (!contactNumberInput || !emailInput || !firstNameInput || !lastNameInput) {
             console.error("One or more required inputs are missing from the DOM.");
+            displayPopupMessage("Some fields are missing. Please reload the page.");
             return;
         }
     
-        const contactNumber = contactNumberInput.value;
-        const firstName = document.getElementById("first-name").value;
-        const lastName = document.getElementById("last-name").value;
-        const email = emailInput.value;
+        const contactNumber = contactNumberInput.value.trim();
+        const firstName = firstNameInput.value.trim();
+        const lastName = lastNameInput.value.trim();
+        const email = emailInput.value.trim();
     
         console.log("Contact Number:", contactNumber);
         console.log("First Name:", firstName);
@@ -126,19 +132,35 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Email:", email);
     
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let isValid = true;
+    
+        // Validate contact number
         if (contactNumber.length !== 11 || isNaN(contactNumber)) {
             console.error("Invalid contact number.");
+            contactWarning.textContent = "Contact number must be 11 digits.";
             contactWarning.classList.remove("d-none");
-            return;
+            isValid = false;
+        } else {
+            contactWarning.classList.add("d-none");
         }
+    
+        // Validate email format
         if (!emailPattern.test(email)) {
             console.error("Invalid email format.");
+            emailWarning.textContent = "Please enter a valid email address.";
             emailWarning.classList.remove("d-none");
+            isValid = false;
+        } else {
+            emailWarning.classList.add("d-none");
+        }
+    
+        if (!isValid) {
+            displayPopupMessage("Please fix the errors and try again.");
             return;
         }
-        
-        //update profile function
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Get CSRF token
+    
+        // CSRF token and AJAX update profile request
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         fetch("/account-profile/edit/", {
             method: "POST",
             headers: {
@@ -163,8 +185,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     displayPopupMessage("Profile updated successfully!");
                     setTimeout(() => location.reload(), 1000);
+                } else if (data.error === "Contact number already exists. Please use a different one.") {
+                    closeModal("confirm-modal");
+                    displayPopupMessage(data.error);
                 } else {
-                    displayPopupMessage(data.error || "An error occurred.");
+                    displayPopupMessage(data.error || "An error occurred while updating the profile.");
                 }
             })
             .catch((error) => {
@@ -172,6 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error:", error);
             });
     };
+    
     
     // Save password function
     window.savePassword = function () {

@@ -30,6 +30,9 @@ class User(models.Model):
         Check if the provided password matches the hashed password stored in the database.
         """
         return check_password(raw_password, self.password)
+    
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
+    
+    

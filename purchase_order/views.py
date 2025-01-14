@@ -13,6 +13,9 @@ from django.http import JsonResponse
 #Purchase order table
 def purchase_order(request):
 
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     page = request.session.get('page', 1)
     rows = request.session.get('rows', 10)
     page = request.GET.get('page', page)
@@ -86,6 +89,8 @@ def purchase_order(request):
     })
 #Add purchase order
 def create_purchase_order(request):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
     
     
     if request.method == "POST":
@@ -137,6 +142,10 @@ def create_purchase_order(request):
     })
     
 def order_details(request, po_id):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
+    
     order = PurchaseOrder.objects.filter(po_id=po_id).annotate(
         total_qty=Sum("items__pur_item_qty"),
         total_received=Sum("items__pur_item_received_items")
@@ -157,6 +166,9 @@ def order_details(request, po_id):
     })
     
 def receive_items(request, po_id):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
                 # Retrieve all IDs as a list
         item_ids = request.POST.getlist("pur-item-id")
@@ -179,7 +191,9 @@ def receive_items(request, po_id):
     })
 
 def edit_purchase_order(request, po_id=None):
-
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
         order = PurchaseOrder.objects.get(po_id=po_id)
         
@@ -270,6 +284,9 @@ def edit_purchase_order(request, po_id=None):
 
 @csrf_exempt
 def delete_purchase_order(request):
+    if request.session['role'] == "employee":
+        return redirect(reverse('dashboard:index'))
+    
     if request.method == "POST":
         # Retrieve the list of selected item IDs from the form
         selected_ids = request.POST.getlist('selected_ids')

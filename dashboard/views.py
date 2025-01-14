@@ -44,12 +44,14 @@ def index(request):
         # Calculate the number of suppliers
         supplier_count = Supplier.objects.count()
         
-        pending_request_count = ItemRequest.objects.filter(status="Pending").count() or 0
+        pending_request_count = ItemRequest.objects.filter(
+            status="Pending",
+            user=User.objects.get(id=int(request.session['user_id']))).count() or 0
 
         
         incoming_items = PurchaseItem.objects.annotate(
             incoming=F('pur_item_qty') - F('pur_item_received_items')
-        ).aggregate(total_incoming=Sum('incoming'))['total']
+        ).aggregate(total=Sum('incoming'))['total']
         
         incoming_items = incoming_items or 0
 

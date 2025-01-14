@@ -3,6 +3,7 @@ from django.urls import reverse
 from supplier.models import Supplier
 from item_list.models import Item
 from .models import ItemRequest, RequestedItem
+from login.models import User
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
@@ -30,11 +31,16 @@ def item_request(request):
     
     status = request.GET.get('status', 'All')
     search_query = request.GET.get('search', '').strip()
-    #selected_requester = request.GET.get('requester')
+    employees = User.objects.filter(role='employee')
+    selected_requester = request.GET.get('requester')
 
+    # Check if user is employee
+    if request.session['role'] == 'employee':
+        user = User.objects.get(id=int(request.session['user_id']))
+        item_requests = ItemRequest.objects.filter(user=user)
+    else:
+        item_requests = ItemRequest.objects.all()
 
-    item_requests = ItemRequest.objects.all()
-    
     if search_query:
         item_requests = item_requests.filter(
                 Q(id__icontains=search_query) |
@@ -42,6 +48,13 @@ def item_request(request):
                 Q(status__icontains=search_query) |
                 Q(denial_reason__icontains=search_query) 
             )
+    if selected_requester == "All Employees":
+        item_requests = item_requests.all()
+    elif selected_requester:
+        item_requests = item_requests.filter(
+            user=User.objects.get(username=selected_requester)
+        )
+
         
     if status == "All":
         item_requests = item_requests.all()
@@ -71,7 +84,8 @@ def item_request(request):
         'rows_per_page': rows,
         'page_range': page_range,
         "search_query": search_query,
-        #"selected_requester": selected_requester,
+        "employees": employees,
+        "selected_requester": selected_requester,
         "status": status,
     })
 #Create item request
@@ -86,6 +100,7 @@ def create_item_request(request):
             status = "Pending",
             notes = notes,
             total_amount = total_amount,
+            user = User.objects.get(id=int(request.session['user_id']))
         )
         
         
@@ -273,4 +288,22 @@ def delete_item_request(request):
         rows = request.session.get('rows', 10)
         return redirect(f"{reverse('item-request')}?page={current_page}&rows={rows}")
     
+    
+def approve_item_request(request, id):
+    if request.method == "POST":
+        item_request_entry = ItemRequest.objects.get(id=id)
+        
+        item_request_entry.status = "Approved"
+        item_request_entry.save()
+        messages.success(request, "Request approved.")
+        return redirect(reverse('request-details', kwargs={'id': id}))
 
+def deny_item_request(request, id):
+    if request.method == "POST":
+        item_request_entry = ItemRequest.objects.get(id=id)
+        
+        item_request_entry.status = "Denied"
+        item_request_entry.denial_reason = request.POST.get('reason', '')
+        item_request_entry.save()
+        messages.success(request, "Request denied.")
+        return redirect(reverse('request-details', kwargs={'id': id}))

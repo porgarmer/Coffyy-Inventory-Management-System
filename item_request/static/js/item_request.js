@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const rowCheckboxes = document.querySelectorAll('#item-table-body input[type="checkbox"]');
     const deleteForm = document.getElementById('delete-form');
     const statusFilter = document.getElementById('status-filter');
-    const supplierFilter = document.getElementById('supplier-filter');
+    const requesterFilter = document.getElementById('requester-filter');
     const deleteModalElement = document.getElementById('deleteModal');
 
 
@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (supplierFilter) {
-        supplierFilter.addEventListener('change', function () { 
-            const selectedSupplier = supplierFilter.value;
-            updateUrlParam('supplier', selectedSupplier)
+    if (requesterFilter) {
+        requesterFilter.addEventListener('change', function () { 
+            const selectedRequester = requesterFilter.value;
+            updateUrlParam('requester', selectedRequester)
          })
     }
     // Handle rows per page change

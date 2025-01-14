@@ -3,7 +3,7 @@ from django.db.models import Q, F
 from item_list.models import Item  # Import the Item model
 from supplier.models import Supplier
 from item_category.models import Category  # Import the Category model from item_category app
-
+from login.models import User
 def index(request):
     
     # Calculate the number of low-stock items
@@ -17,6 +17,8 @@ def index(request):
 
     # Calculate the number of suppliers
     supplier_count = Supplier.objects.count()
+    
+    employee_count = User.objects.count(role = 'employee')
 
     # Pass the counts to the template
     context = {
@@ -24,5 +26,6 @@ def index(request):
         'total_items_count': total_items_count,
         'category_count': category_count,
         'supplier_count': supplier_count,
+        'employee_count': employee_count,
     }
     return render(request, "dashboard/dashboard.html", context)

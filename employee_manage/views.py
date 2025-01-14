@@ -15,7 +15,7 @@ def add_employee(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
-        email_address = request.POST['email']
+        email_address = request.POST['email_address']
         contact_number = request.POST['contact_number']
         username = request.POST['username']
         password = request.POST['password']

@@ -1,0 +1,164 @@
+
+/* Popup */
+.right-popup {
+    position: fixed;
+    top: 20px;
+    right: -300px;
+    width: 250px;
+    background-color: #141414;
+    color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 9999;
+}
+
+.right-popup.show {
+    right: 20px;
+}
+
+/* Table styling */
+.table-hover th, .table-hover td {
+    padding: 8px;
+}
+
+.table-hover th {
+    text-align: left;
+}
+
+.table-hover td:nth-child(4), 
+.table-hover td:nth-child(5), 
+.table-hover td:nth-child(6), 
+.table-hover td:nth-child(7) {
+    text-align: right;
+}
+
+/* Button hover effect */
+#delete-button {
+    transition: background-color 0.3s;
+}
+
+#delete-button:hover {
+    background-color: #ffcccc;
+}
+
+.small-select {
+    width: 150px;
+}
+
+
+h1{
+    font-weight: bold;
+    color: black;
+}
+
+.btn-custom {
+    background-color: #FFFFFF;
+    color: #B20727;
+    border: none !important
+    
+}
+.btn-custom:hover {
+    background-color: #F4F4F4;
+    color: #B20727;
+}
+.btn-custom:active {
+    background-color: #E9E9E9 !important; /* Custom active background color */
+    color: #B20727 !important; /* Custom active text color */
+    transform: scale(0.98); /* Optional: Add a slight scale effect */
+    box-shadow: none !important; /* Remove Bootstrap's box-shadow */
+    border: none !important
+}
+
+
+.btn-custom-save{
+    background-color: #FDF21D;
+    color: #50260E;
+}
+
+.btn-custom-save:hover{
+    background-color: #f7ec2a;
+    color: #50260E;
+}
+
+.btn-custom-save:active{
+    background-color: #e2d92d !important; /* Custom active background color */
+    color: #50260E !important; /* Custom active text color */
+}
+
+.btn-custom-cancel{
+    background-color: #B20727;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:hover{
+    background-color: #9e0722;
+    color: #FFFFFF;
+}
+
+.btn-custom-cancel:active{
+    background-color: #8f061f !important; 
+    color: #FFFFFF !important;
+}
+.card {
+    background-color: #EED659;
+}
+.custom-card {
+    max-width: 70vh; /* Set a maximum width */
+    min-height: 70vh;
+    margin: auto; /* Center the card horizontally */
+    background-color: #EED659;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.125); /* Default border */
+}
+.card-icon {
+    width: 50%;
+    height: auto;
+    margin: auto;
+    margin-bottom: 2%;
+    margin-top: 5vh;
+}
+p, h5, label, h4 {
+    color: black !important;
+}
+
+/* Style the search form container */
+.search-form {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Full width if needed */
+    border: 1px solid #ccc; /* Border around the search bar */
+    border-radius: 7px; /* Rounded edges for a smooth look */
+    overflow: hidden; /* Ensure no overflow */
+    background-color: #f9f9f9; /* Optional background color */
+}
+
+/* Style the search button */
+.search-button {
+    background-color: transparent; /* Transparent background */
+    border: none; /* Remove button border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px; /* Adjust padding */
+    cursor: pointer;
+    height: 100%; /* Make it stretch vertically */
+}
+
+
+/* Style the search input */
+.search-input {
+    border: none; /* Remove default border */
+    padding: 5px; /* Padding for text */
+    flex: 1; /* Take up remaining space */
+    outline: none; /* Remove outline */
+    font-size: 1rem;
+    background-color: transparent; /* Match form background */
+}
+
+/* Add focus styling for input */
+.search-input:focus {
+    outline: none; /* Remove default focus outline */
+    background-color: #fff; /* Optional background color on focus */
+}

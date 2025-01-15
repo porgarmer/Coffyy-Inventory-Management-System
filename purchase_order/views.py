@@ -308,7 +308,7 @@ def delete_purchase_order(request):
                     current_page = max(total_pages, 1) 
                     
                 # Show success message to the user
-                if selected_ids > 1:
+                if len(selected_ids) > 1:
                     messages.success(request, "Purchase orders deleted successfully!")
                 else:
                     messages.success(request, "Purchase order deleted successfully!")

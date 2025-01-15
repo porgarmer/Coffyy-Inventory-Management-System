@@ -14,10 +14,7 @@ def employee_list(request):
         if query:
             employees = employees.filter(
                 Q(first_name__icontains=query) |
-                Q(last_name__icontains=query) |
-                Q(username__icontains=query) |
-                Q(contact_number__icontains=query) |
-                Q(email_address__icontains=query)
+                Q(last_name__icontains=query) 
             )
         return render(request, 'employee_manage/employee_list.html', {'employees': employees, 'query': query})
     else:
